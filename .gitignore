@@ -1,0 +1,64 @@
+# Data files (large, stored on scratch)
+*.parquet
+*.csv
+*.rds
+*.RData
+*.Rdata
+*.rda
+*.dta
+*.sas7bdat
+*.xlsx
+*.xls
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.7z
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+ENV/
+
+# R
+.Rhistory
+.Rproj.user/
+*.Rproj
+
+# Logs
+*.log
+*.out
+*.err
+slurm-*.out
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Data directories (if any exist in home)
+data/
+outputs/
+intermediate/
+
+# Credentials
+*.json
+!package.json
+.env
+*credentials*
+*secret*
+dewey_api_keys.csv
