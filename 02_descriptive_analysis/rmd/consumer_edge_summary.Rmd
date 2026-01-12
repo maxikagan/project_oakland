@@ -69,13 +69,12 @@ This report summarizes the **Consumer Edge "Brand and Geography Cohort Breakout 
 # 1. Data Loading
 
 ```{r load-data}
-data_dir <- "/global/scratch/users/maxkagan/consumer_edge_data_2026-01-12/brand-and-geography-cohort-breakout-usa-1"
+data_dir <- "/global/scratch/users/maxkagan/01_foot_traffic_location/consumer_edge_data_2026-01-12/brand-and-geography-cohort-breakout-usa-1"
 
 files <- list.files(data_dir, pattern = "\\.csv\\.gz$", full.names = TRUE)
 n_total_files <- length(files)
 
-sample_files <- files[1:3]
-dt <- rbindlist(lapply(sample_files, fread), fill = TRUE)
+dt <- rbindlist(lapply(files, fread), fill = TRUE)
 
 n_rows_sample <- nrow(dt)
 n_cols <- ncol(dt)
@@ -83,9 +82,8 @@ n_cols <- ncol(dt)
 
 **Data Source:** `r data_dir`
 
-- **Total files available:** `r n_total_files`
-- **Files loaded (sample):** `r length(sample_files)`
-- **Rows in sample:** `r format(n_rows_sample, big.mark = ",")`
+- **Total files loaded:** `r n_total_files`
+- **Total rows:** `r format(n_rows_sample, big.mark = ",")`
 - **Columns:** `r n_cols`
 
 ---
@@ -517,7 +515,362 @@ data.frame(Brand_Name = brand_sample) %>%
 
 ---
 
-# 8. Summary & Next Steps
+# 8. Data Reliability Analysis: Brand × CSA × Period Granularity
+
+This section assesses whether the Consumer Edge data has sufficient coverage and variation at the **brand × CSA × time period** level to serve as a reliable dependent variable.
+
+## 8.1 Period Type Detailed Breakdown
+
+```{r period-detail}
+period_detail <- dt[, .(
+  N_Rows = .N,
+  N_Brands = uniqueN(BRAND_ID),
+  N_CSAs = uniqueN(GEO[GEO_TYPE == "CSA"]),
+  N_Periods = uniqueN(PERIOD),
+  Min_Date = min(PERIOD_START_DT, na.rm = TRUE),
+  Max_Date = max(PERIOD_END_DT, na.rm = TRUE),
+  Total_Spend = sum(SPEND_AMOUNT, na.rm = TRUE)
+), by = PERIOD_TYPE][order(-N_Rows)]
+
+period_detail %>%
+  mutate(
+    N_Rows = format(N_Rows, big.mark = ","),
+    N_Brands = format(N_Brands, big.mark = ","),
+    N_CSAs = format(N_CSAs, big.mark = ","),
+    Total_Spend = paste0("$", format(round(Total_Spend / 1e9, 2), big.mark = ","), "B")
+  ) %>%
+  kable(caption = "Detailed Period Type Breakdown") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r period-lengths}
+period_lengths <- dt[, .(
+  Period_Days = as.numeric(difftime(PERIOD_END_DT[1], PERIOD_START_DT[1], units = "days"))
+), by = .(PERIOD_TYPE, PERIOD)][, .(
+  Avg_Days = mean(Period_Days, na.rm = TRUE),
+  Min_Days = min(Period_Days, na.rm = TRUE),
+  Max_Days = max(Period_Days, na.rm = TRUE)
+), by = PERIOD_TYPE]
+
+period_lengths %>%
+  kable(caption = "Period Length in Days by Type", digits = 0) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.2 Top 200 Brands Definition
+
+```{r top-200-brands}
+brand_totals_full <- dt[GEO_TYPE == "TOTAL_US" & PERIOD_TYPE == "MONTH", .(
+  Total_Spend = sum(SPEND_AMOUNT, na.rm = TRUE),
+  Total_Trans = sum(TRANS_COUNT, na.rm = TRUE),
+  Total_Individuals = sum(INDIVIDUAL_COUNT, na.rm = TRUE)
+), by = .(BRAND_ID, BRAND_NAME)][order(-Total_Spend)]
+
+top_200_brands <- brand_totals_full[seq_len(min(200, .N))]
+top_200_ids <- top_200_brands$BRAND_ID
+
+total_spend_all <- sum(brand_totals_full$Total_Spend)
+pct_top_200 <- if(total_spend_all > 0) round(sum(top_200_brands$Total_Spend) / total_spend_all * 100, 1) else NA
+cat("Top 200 brands account for", pct_top_200, "% of total national monthly spend\n")
+cat("Brands in top 200:", length(top_200_ids))
+```
+
+## 8.3 CSA Universe
+
+```{r csa-universe}
+csa_list <- unique(dt[GEO_TYPE == "CSA", GEO])
+n_csas <- length(csa_list)
+
+cat("Total unique CSAs in data:", n_csas, "\n\n")
+
+csa_spend <- dt[GEO_TYPE == "CSA" & PERIOD_TYPE == "MONTH", .(
+  Total_Spend = sum(SPEND_AMOUNT, na.rm = TRUE),
+  N_Brands = uniqueN(BRAND_ID),
+  N_Periods = uniqueN(PERIOD)
+), by = GEO][order(-Total_Spend)]
+
+csa_spend[1:20] %>%
+  mutate(
+    Total_Spend = paste0("$", format(round(Total_Spend / 1e9, 2), big.mark = ","), "B"),
+    N_Brands = format(N_Brands, big.mark = ",")
+  ) %>%
+  kable(caption = "Top 20 CSAs by Spend (Monthly Data)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.4 Cell Coverage Analysis: Brand × CSA × Period
+
+```{r cell-coverage}
+dt_csa_monthly <- dt[GEO_TYPE == "CSA" & PERIOD_TYPE == "MONTH" & BRAND_ID %in% top_200_ids]
+
+unique_periods <- uniqueN(dt_csa_monthly$PERIOD)
+unique_csas <- uniqueN(dt_csa_monthly$GEO)
+unique_brands_in_csa <- uniqueN(dt_csa_monthly$BRAND_ID)
+
+theoretical_cells <- unique_brands_in_csa * unique_csas * unique_periods
+actual_cells <- nrow(dt_csa_monthly)
+
+cell_coverage <- dt_csa_monthly[, .(
+  N_Cells = .N,
+  N_Periods = uniqueN(PERIOD),
+  N_CSAs = uniqueN(GEO)
+), by = BRAND_ID]
+
+cell_coverage <- merge(cell_coverage, top_200_brands[, .(BRAND_ID, BRAND_NAME, Total_Spend)], by = "BRAND_ID")
+
+cat("For Top 200 Brands × CSA × Monthly:\n")
+cat("- Unique brands appearing in CSA data:", unique_brands_in_csa, "\n")
+cat("- Unique CSAs:", unique_csas, "\n")
+cat("- Unique periods:", unique_periods, "\n")
+cat("- Theoretical maximum cells (brand × CSA × period):", format(theoretical_cells, big.mark = ","), "\n")
+cat("- Actual cells with data:", format(actual_cells, big.mark = ","), "\n")
+fill_rate <- if(theoretical_cells > 0) round(actual_cells / theoretical_cells * 100, 1) else 0
+cat("- Overall fill rate:", fill_rate, "%\n")
+```
+
+## 8.5 Cell Size Distribution
+
+How many observations (rows) exist per brand × CSA combination?
+
+```{r cell-size-dist, fig.height=5}
+brand_csa_cells <- dt_csa_monthly[, .(
+  N_Periods = .N,
+  Total_Spend = sum(SPEND_AMOUNT, na.rm = TRUE),
+  Avg_Spend = mean(SPEND_AMOUNT, na.rm = TRUE)
+), by = .(BRAND_ID, GEO)]
+
+brand_csa_cells <- merge(brand_csa_cells,
+                         top_200_brands[, .(BRAND_ID, BRAND_NAME)],
+                         by = "BRAND_ID")
+
+ggplot(brand_csa_cells, aes(x = N_Periods)) +
+  geom_histogram(binwidth = 1, fill = "steelblue", color = "white", alpha = 0.8) +
+  labs(
+    title = "Distribution of Time Periods per Brand × CSA Cell",
+    subtitle = paste("Top 200 brands,", format(nrow(brand_csa_cells), big.mark = ","), "unique brand-CSA combinations"),
+    x = "Number of Monthly Periods with Data",
+    y = "Count of Brand × CSA Cells"
+  ) +
+  scale_y_continuous(labels = comma)
+
+cell_size_stats <- brand_csa_cells[, .(
+  Min = min(N_Periods),
+  P10 = quantile(N_Periods, 0.10),
+  P25 = quantile(N_Periods, 0.25),
+  Median = median(N_Periods),
+  P75 = quantile(N_Periods, 0.75),
+  P90 = quantile(N_Periods, 0.90),
+  Max = max(N_Periods)
+)]
+
+cell_size_stats %>%
+  kable(caption = "Distribution of Periods per Brand × CSA Cell", digits = 0) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.6 Brand-Level CSA Coverage
+
+How many CSAs does each top brand appear in?
+
+```{r brand-csa-coverage, fig.height=6}
+brand_coverage <- brand_csa_cells[, .(
+  N_CSAs = uniqueN(GEO),
+  N_Total_Periods = sum(N_Periods),
+  Total_Spend = sum(Total_Spend)
+), by = .(BRAND_ID, BRAND_NAME)][order(-Total_Spend)]
+
+ggplot(brand_coverage[1:50], aes(x = reorder(BRAND_NAME, N_CSAs), y = N_CSAs)) +
+  geom_col(fill = "steelblue", alpha = 0.8) +
+  geom_hline(yintercept = unique_csas, linetype = "dashed", color = "red") +
+  coord_flip() +
+  labs(
+    title = "CSA Coverage by Brand (Top 50 by Spend)",
+    subtitle = paste("Red line = total CSAs in data (", unique_csas, ")", sep = ""),
+    x = NULL,
+    y = "Number of CSAs with Data"
+  )
+```
+
+```{r brand-coverage-table}
+brand_coverage[1:30] %>%
+  mutate(
+    Pct_CSA_Coverage = paste0(round(N_CSAs / max(unique_csas, 1) * 100, 1), "%"),
+    Total_Spend = paste0("$", format(round(Total_Spend / 1e9, 2), big.mark = ","), "B")
+  ) %>%
+  select(BRAND_NAME, N_CSAs, Pct_CSA_Coverage, N_Total_Periods, Total_Spend) %>%
+  kable(caption = "Top 30 Brands: CSA Coverage Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.7 Coefficient of Variation Analysis
+
+How variable is spending **within** each brand × CSA over time?
+
+```{r cv-analysis, fig.height=6}
+cv_analysis <- dt_csa_monthly[, .(
+  N_Periods = .N,
+  Mean_Spend = mean(SPEND_AMOUNT, na.rm = TRUE),
+  SD_Spend = sd(SPEND_AMOUNT, na.rm = TRUE),
+  Mean_Trans = mean(TRANS_COUNT, na.rm = TRUE),
+  SD_Trans = sd(TRANS_COUNT, na.rm = TRUE),
+  Mean_Individuals = mean(INDIVIDUAL_COUNT, na.rm = TRUE),
+  SD_Individuals = sd(INDIVIDUAL_COUNT, na.rm = TRUE)
+), by = .(BRAND_ID, GEO)]
+
+cv_analysis[N_Periods >= 2 & Mean_Spend > 0, CV_Spend := SD_Spend / Mean_Spend]
+cv_analysis[N_Periods >= 2 & Mean_Trans > 0, CV_Trans := SD_Trans / Mean_Trans]
+cv_analysis[N_Periods >= 2 & Mean_Individuals > 0, CV_Individuals := SD_Individuals / Mean_Individuals]
+
+cv_analysis <- merge(cv_analysis, top_200_brands[, .(BRAND_ID, BRAND_NAME)], by = "BRAND_ID")
+
+cv_long <- melt(cv_analysis[N_Periods >= 2],
+                id.vars = c("BRAND_ID", "BRAND_NAME", "GEO", "N_Periods"),
+                measure.vars = c("CV_Spend", "CV_Trans", "CV_Individuals"),
+                variable.name = "Metric", value.name = "CV")
+
+cv_long[, Metric := gsub("CV_", "", Metric)]
+
+ggplot(cv_long[!is.na(CV) & is.finite(CV)], aes(x = CV, fill = Metric)) +
+  geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
+  facet_wrap(~Metric, scales = "free_y", ncol = 1) +
+  labs(
+    title = "Coefficient of Variation: Within Brand × CSA Over Time",
+    subtitle = "Higher CV = more period-to-period variation (potentially more signal)",
+    x = "Coefficient of Variation",
+    y = "Count of Brand × CSA Cells"
+  ) +
+  scale_fill_brewer(palette = "Set1", guide = "none") +
+  xlim(0, 2)
+
+cv_summary <- cv_long[!is.na(CV) & is.finite(CV), .(
+  Min = min(CV),
+  P10 = quantile(CV, 0.10),
+  P25 = quantile(CV, 0.25),
+  Median = median(CV),
+  P75 = quantile(CV, 0.75),
+  P90 = quantile(CV, 0.90),
+  Max = min(max(CV), 10)
+), by = Metric]
+
+cv_summary %>%
+  kable(caption = "CV Distribution by Metric (capped at 10)", digits = 3) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.8 Period-over-Period Variation
+
+What's the typical month-over-month % change in spending?
+
+```{r mom-variation, fig.height=6}
+dt_csa_monthly_sorted <- dt_csa_monthly[order(BRAND_ID, GEO, PERIOD_START_DT)]
+
+dt_csa_monthly_sorted[, `:=`(
+  Prev_Spend = shift(SPEND_AMOUNT, 1),
+  Prev_Trans = shift(TRANS_COUNT, 1),
+  Prev_Individuals = shift(INDIVIDUAL_COUNT, 1)
+), by = .(BRAND_ID, GEO)]
+
+dt_csa_monthly_sorted[Prev_Spend > 0, MoM_Spend_Pct := (SPEND_AMOUNT - Prev_Spend) / Prev_Spend * 100]
+dt_csa_monthly_sorted[Prev_Trans > 0, MoM_Trans_Pct := (TRANS_COUNT - Prev_Trans) / Prev_Trans * 100]
+dt_csa_monthly_sorted[Prev_Individuals > 0, MoM_Individuals_Pct := (INDIVIDUAL_COUNT - Prev_Individuals) / Prev_Individuals * 100]
+
+mom_valid <- dt_csa_monthly_sorted[!is.na(MoM_Spend_Pct)]
+
+ggplot(mom_valid[abs(MoM_Spend_Pct) <= 100], aes(x = MoM_Spend_Pct)) +
+  geom_histogram(bins = 100, fill = "steelblue", alpha = 0.8) +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    title = "Month-over-Month % Change in Spending",
+    subtitle = paste("Brand × CSA cells (trimmed to ±100%),", format(nrow(mom_valid[abs(MoM_Spend_Pct) <= 100]), big.mark = ","), "observations"),
+    x = "Month-over-Month % Change",
+    y = "Count"
+  ) +
+  scale_y_continuous(labels = comma)
+
+mom_summary <- mom_valid[, .(
+  N_Obs = .N,
+  P5 = quantile(MoM_Spend_Pct, 0.05, na.rm = TRUE),
+  P10 = quantile(MoM_Spend_Pct, 0.10, na.rm = TRUE),
+  P25 = quantile(MoM_Spend_Pct, 0.25, na.rm = TRUE),
+  Median = median(MoM_Spend_Pct, na.rm = TRUE),
+  P75 = quantile(MoM_Spend_Pct, 0.75, na.rm = TRUE),
+  P90 = quantile(MoM_Spend_Pct, 0.90, na.rm = TRUE),
+  P95 = quantile(MoM_Spend_Pct, 0.95, na.rm = TRUE)
+)]
+
+mom_summary %>%
+  mutate(N_Obs = format(N_Obs, big.mark = ",")) %>%
+  kable(caption = "Month-over-Month Spend % Change Distribution", digits = 1) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## 8.9 Sparsity Heat Map: Top Brands × Top CSAs
+
+```{r sparsity-heatmap, fig.height=10, fig.width=12}
+top_30_brands_ids <- brand_coverage[1:30, BRAND_ID]
+top_30_csas <- csa_spend[1:30, GEO]
+
+heatmap_data <- dt_csa_monthly[BRAND_ID %in% top_30_brands_ids & GEO %in% top_30_csas, .(
+  N_Periods = uniqueN(PERIOD),
+  Total_Spend = sum(SPEND_AMOUNT, na.rm = TRUE)
+), by = .(BRAND_ID, GEO)]
+
+heatmap_data <- merge(heatmap_data, top_200_brands[, .(BRAND_ID, BRAND_NAME)], by = "BRAND_ID")
+
+heatmap_complete <- CJ(BRAND_NAME = brand_coverage[BRAND_ID %in% top_30_brands_ids, BRAND_NAME],
+                       GEO = top_30_csas)
+heatmap_complete <- merge(heatmap_complete, heatmap_data[, .(BRAND_NAME, GEO, N_Periods)],
+                          by = c("BRAND_NAME", "GEO"), all.x = TRUE)
+heatmap_complete[is.na(N_Periods), N_Periods := 0]
+
+ggplot(heatmap_complete, aes(x = GEO, y = BRAND_NAME, fill = N_Periods)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  scale_fill_gradient2(low = "white", mid = "steelblue", high = "darkblue",
+                       midpoint = unique_periods / 2,
+                       name = "# Periods") +
+  labs(
+    title = "Data Coverage: Top 30 Brands × Top 30 CSAs",
+    subtitle = paste("Max possible periods:", unique_periods, "| White = no data"),
+    x = "CSA",
+    y = "Brand"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8)
+  )
+```
+
+## 8.10 Reliability Summary Statistics
+
+```{r reliability-summary}
+reliability_stats <- list(
+  "Total Brand × CSA × Period cells" = format(nrow(dt_csa_monthly), big.mark = ","),
+  "Unique brand × CSA combinations" = format(nrow(brand_csa_cells), big.mark = ","),
+  "Median periods per brand × CSA" = cell_size_stats$Median,
+  "Brand × CSA cells with 6+ periods" = paste0(
+    format(sum(brand_csa_cells$N_Periods >= 6), big.mark = ","),
+    " (", round(mean(brand_csa_cells$N_Periods >= 6) * 100, 1), "%)"
+  ),
+  "Brand × CSA cells with 12+ periods" = paste0(
+    format(sum(brand_csa_cells$N_Periods >= 12), big.mark = ","),
+    " (", round(mean(brand_csa_cells$N_Periods >= 12) * 100, 1), "%)"
+  ),
+  "Median CV of spending (within brand × CSA)" = round(cv_summary[Metric == "Spend", Median], 3),
+  "Median MoM % change" = paste0(round(mom_summary$Median, 1), "%"),
+  "IQR of MoM % change" = paste0(round(mom_summary$P25, 1), "% to ", round(mom_summary$P75, 1), "%")
+)
+
+data.frame(
+  Metric = names(reliability_stats),
+  Value = unlist(reliability_stats)
+) %>%
+  kable(caption = "Reliability Summary: Brand × CSA × Period Level") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+---
+
+# 9. Summary & Next Steps
 
 ## Key Findings
 
