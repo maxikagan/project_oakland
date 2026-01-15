@@ -162,29 +162,39 @@ $$\text{two\_party\_rep\_share\_2016} = \frac{\text{Trump\_2016}}{\text{Trump\_2
 - Correlation between 2016 and 2020 measures
 - Mean shift (2020 minus 2016)
 
-### 2.3 Step 3: Filter Foot Traffic Data by State
+### 2.3 Step 3: Compute Visitor Partisan Lean (Single-Pass Processing)
 
-**Purpose:** Extract relevant columns from raw foot traffic data, filter by state, and add MSA information.
+**Purpose:** For each POI-month observation, compute the weighted average Republican vote share of visitors based on their home CBGs. This step combines data filtering and partisan lean computation in a single pass through the source files.
 
-**Process (executed as parallel array job across 51 geographic units: 50 states + DC):**
+**Architecture:** The raw Advan data consists of 2,096 compressed CSV files. Rather than filtering by state first (which would require reading each file 51 times), we process each file exactly once, computing partisan lean for all POIs in that file regardless of state.
 
-1. **Identify input files:** Locate all `.csv.gz` files in the foot traffic data directory
-2. **Validate schema:** Read first 5 rows of first file to confirm required columns exist
-3. **Parallel processing:** Using up to 8 worker processes (respecting SLURM allocation):
-   - Read each compressed CSV file
-   - Select only required columns (to reduce memory footprint):
-     - `PLACEKEY`, `DATE_RANGE_START`, `BRANDS`, `TOP_CATEGORY`, `SUB_CATEGORY`
-     - `NAICS_CODE`, `CITY`, `REGION`, `POI_CBG`, `PARENT_PLACEKEY`
-     - `MEDIAN_DWELL`, `VISITOR_HOME_CBGS`, `RAW_VISITOR_COUNTS`
-   - Filter to rows where `REGION` equals the target state code
-4. **Combine results:** Concatenate all filtered chunks
-5. **Rename columns:** Convert uppercase column names to lowercase (e.g., `PLACEKEY` → `placekey`)
-6. **Add CBSA information:**
-   - Zero-pad `poi_cbg` to 12 digits: `poi_cbg.fillna('').astype(str).str.zfill(12)`
+**Process (executed as parallel array job with 2,096 tasks, one per source file):**
+
+#### 2.3.1 Load Lookup Data
+
+At the start of each task, load lookup tables into memory:
+- **CBG partisan lean lookup** (~24 MB): Python dictionaries for O(1) lookup
+  - `CBG_DICT_2020`: Maps GEOID → `two_party_rep_share_2020`
+  - `CBG_DICT_2016`: Maps GEOID → `two_party_rep_share_2016`
+- **CBSA crosswalk** (~1 MB): Maps county FIPS → MSA name
+
+#### 2.3.2 Read and Process Single Source File
+
+For each array task:
+
+1. **Identify input file:** Map task index to filename via pre-generated sorted file list
+2. **Read with column selection:** Load only required columns to minimize memory:
+   - `PLACEKEY`, `DATE_RANGE_START`, `BRANDS`, `TOP_CATEGORY`, `SUB_CATEGORY`
+   - `NAICS_CODE`, `CITY`, `REGION`, `POI_CBG`, `PARENT_PLACEKEY`
+   - `MEDIAN_DWELL`, `VISITOR_HOME_CBGS`, `RAW_VISITOR_COUNTS`
+3. **Rename columns:** Convert uppercase to lowercase (e.g., `PLACEKEY` → `placekey`, `BRANDS` → `brand`)
+4. **Add CBSA information:**
+   - Zero-pad `poi_cbg` to 12 digits
    - Extract county FIPS: `county_fips = poi_cbg[:5]`
-   - Map to CBSA title using the crosswalk
-   - Drop intermediate `county_fips` column
-7. **Save output:** Write to Parquet format with Snappy compression
+   - Map to CBSA title using crosswalk
+5. **Compute partisan lean** for each row (see Section 2.3.3)
+6. **Filter output:** Exclude rows with zero total visitors
+7. **Save output:** Write to Parquet with Snappy compression
 
 **Column rename mapping:**
 | Original | Renamed |
@@ -203,23 +213,11 @@ $$\text{two\_party\_rep\_share\_2016} = \frac{\text{Trump\_2016}}{\text{Trump\_2
 | `VISITOR_HOME_CBGS` | `visitor_home_cbgs` |
 | `RAW_VISITOR_COUNTS` | `raw_visitor_counts` |
 
-**Output file:** `advan_{STATE}_filtered.parquet` (one per state)
+**Output file:** One parquet file per source file, preserving original filename with `.parquet` extension
 
-### 2.4 Step 4: Compute Visitor Partisan Lean
+#### 2.3.3 Partisan Lean Computation
 
-**Purpose:** For each POI-month observation, compute the weighted average Republican vote share of visitors based on their home CBGs.
-
-**Process (executed as parallel array job across 51 geographic units):**
-
-#### 2.4.1 Load Lookup Data
-
-Load the national CBG partisan lean lookup into memory as Python dictionaries for O(1) lookup performance:
-- `CBG_DICT_2020`: Maps GEOID → `two_party_rep_share_2020`
-- `CBG_DICT_2016`: Maps GEOID → `two_party_rep_share_2016`
-
-#### 2.4.2 Process Each POI-Month Observation
-
-For each row in the state's filtered data:
+For each POI-month row:
 
 1. **Parse visitor CBGs:** Parse the `visitor_home_cbgs` JSON string into a dictionary
    - Handle null/missing values by returning empty dictionary
