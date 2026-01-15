@@ -1,0 +1,234 @@
+% Methodological Appendix: Constructing Visitor Partisan Lean from Foot Traffic Data
+
+\section{Methodological Appendix: Visitor Partisan Lean}\label{app:methodology}
+
+This appendix describes the complete methodology for constructing measures of visitor partisan lean for points of interest (POIs) across the United States. The methodology links anonymized mobile phone location data to Census Block Group (CBG)-level presidential election results to estimate the political composition of visitors to retail establishments, restaurants, and other commercial locations.
+
+The final output is a panel dataset at the POI-month level containing weighted average Republican vote share of visitors, computed using both 2016 and 2020 presidential election results.
+
+\subsection{Data Sources}
+
+\subsubsection{Foot Traffic Data: Advan Monthly Patterns}
+
+The primary foot traffic data comes from Advan (formerly SafeGraph) Monthly Patterns covering January 2019 through July 2025 (79 months) across all 50 U.S.\ states plus the District of Columbia\nocite{advanresearchfoot}. The dataset comprises approximately 804 GB across 2,096 compressed CSV files.
+
+The Advan Monthly Patterns dataset provides aggregated foot traffic statistics for approximately 6 million POIs in the United States. For each POI-month observation, the dataset includes the fields described in Table~\ref{tab:advan_fields}.
+
+\begin{table}[htbp]
+\centering
+\caption{Advan Monthly Patterns Data Fields}
+\label{tab:advan_fields}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+\texttt{PLACEKEY} & Unique identifier for each POI using the Placekey standard \\
+\texttt{DATE\_RANGE\_START} & First day of the month (YYYY-MM-DD format) \\
+\texttt{BRANDS} & Brand name if the POI is part of a chain \\
+\texttt{TOP\_CATEGORY} & High-level business category \\
+\texttt{SUB\_CATEGORY} & Detailed business category \\
+\texttt{NAICS\_CODE} & 6-digit North American Industry Classification System code \\
+\texttt{CITY} & City where the POI is located \\
+\texttt{REGION} & Two-letter U.S.\ state abbreviation \\
+\texttt{POI\_CBG} & 12-digit Census Block Group FIPS code where the POI is located \\
+\texttt{PARENT\_PLACEKEY} & Parent location identifier (for POIs within larger complexes) \\
+\texttt{MEDIAN\_DWELL} & Median dwell time in minutes for visitors \\
+\texttt{VISITOR\_HOME\_CBGS} & JSON object mapping visitor home CBGs to visitor counts \\
+\texttt{RAW\_VISITOR\_COUNTS} & Total raw visitor count for the month \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The critical field for our methodology is \texttt{VISITOR\_HOME\_CBGS}, which contains a JSON-encoded dictionary where keys are 12-digit CBG FIPS codes and values are integer visitor counts. For example:
+\begin{equation*}
+\{``060371234001": 45, ``060371234002": 23, ``060371235001": 12\}    
+\end{equation*}
+
+This indicates that 45 visitors came from CBG 060371234001, 23 from CBG 060371234002, and 12 from CBG 060371235001.
+
+Advan applies differential privacy techniques to protect individual privacy. CBGs with fewer than 4 visitors are suppressed, and visitor counts are subject to noise injection. These protections may introduce measurement error but do not systematically bias partisan lean estimates.
+
+\subsubsection{Election Data: CBG-Level Presidential Vote Estimates}
+
+Election results are geocoded to Census Block Groups using the Regional Land Cover Regression (RLCR) methodology developed by \citet{fekrazad2025dataset}. This approach addresses a fundamental challenge in electoral geography: official election returns are reported at the precinct level, but precincts do not align with Census geographies, making it difficult to link voting patterns with demographic and economic data.
+
+The RLCR method allocates precinct-level votes to Census block groups through a two-step process. First, it models the spatial distribution of population within precincts using land cover data from the National Land Cover Database (NLCD), which classifies each $30 \times 30$-meter pixel across the United States into land cover categories (developed areas, forests, agricultural land, etc.). Residential population is assumed to concentrate in developed areas, with density varying by development intensity. Second, votes within each precinct are allocated to overlapping block groups in proportion to their estimated share of the precinct's household population.
+
+This methodology offers several advantages over simpler allocation approaches. Area-weighted allocation (assigning votes proportionally to geographic overlap) performs poorly because population is not uniformly distributed within precincts. Population-weighted allocation using block-level Census counts improves accuracy but still assumes uniform distribution within blocks. The RLCR approach uses land cover data to model sub-block population distribution, achieving higher precision particularly in rural areas where blocks may span large, heterogeneous areas.
+
+The resulting data files (\texttt{bg-2016-RLCR.csv} and \texttt{bg-2020-RLCR.csv}) provide estimated vote counts at the Census Block Group level for the 2016 and 2020 presidential elections. For 2020, the key fields are \texttt{bg\_GEOID} (12-digit Census Block Group FIPS code), \texttt{G20PRERTRU} (estimated votes for Trump), and \texttt{G20PREDBID} (estimated votes for Biden). For 2016, the corresponding fields are \texttt{G16PRERTRU} (Trump) and \texttt{G16PREDCLI} (Clinton).
+
+Validation analyses in \citet{fekrazad2025dataset} demonstrate that RLCR estimates closely match actual block group-level returns in jurisdictions where such data are available, with mean absolute errors substantially lower than alternative allocation methods.
+
+\subsubsection{Metropolitan Statistical Area Crosswalk}
+
+We use the National Bureau of Economic Research (NBER) CBSA-to-FIPS County Crosswalk (2023 delineations) to map 5-digit county FIPS codes to CBSA codes and titles. This allows assignment of each POI to its Metropolitan Statistical Area based on the county portion of the POI's CBG code.
+
+\subsection{Data Processing Pipeline}
+
+\subsubsection{Construct CBSA Crosswalk}
+
+The first step creates a lookup table mapping county FIPS codes to Metropolitan Statistical Area names. We download the NBER CBSA-to-FIPS crosswalk CSV file, extract relevant columns, and construct 5-digit county FIPS codes by concatenating the 2-digit state FIPS (zero-padded) with the 3-digit county FIPS (zero-padded). The output contains 1,915 county-to-CBSA mappings covering 935 unique CBSAs.
+
+\subsubsection{Construct National CBG Partisan Lean Lookup}
+
+This step creates a national lookup table containing Republican two-party vote share for each Census Block Group using both 2016 and 2020 election data.
+
+For each election year, we:
+\begin{enumerate}
+    \item Extract the relevant CSV file from the national zip file
+    \item Select vote count columns and rename appropriately
+    \item Zero-pad GEOID to 12 digits to ensure consistent matching
+    \item Convert vote counts to numeric, replacing non-numeric values with 0
+    \item Compute two-party Republican vote share
+\end{enumerate}
+
+The two-party Republican vote share for 2020 is computed as:
+\begin{equation}
+\text{two\_party\_rep\_share\_2020} = \frac{\text{Trump\_2020}}{\text{Trump\_2020} + \text{Biden\_2020}}
+\end{equation}
+
+For CBGs where the total two-party vote equals zero, we set the Republican share to 0.5 (neutral). We then perform an outer join on GEOID to retain all CBGs from both years, filling missing values with 0.5 for CBGs that appear in only one year.
+
+\subsubsection{Filter Foot Traffic Data by State}
+
+This step extracts relevant columns from raw foot traffic data, filters by state, and adds MSA information. Processing is executed as parallel array jobs across 51 geographic units (50 states plus DC).
+
+For each state:
+\begin{enumerate}
+    \item Read each compressed CSV file and select only required columns
+    \item Filter to rows where \texttt{REGION} equals the target state code
+    \item Concatenate all filtered chunks
+    \item Zero-pad \texttt{poi\_cbg} to 12 digits
+    \item Extract county FIPS (first 5 digits) and map to CBSA title
+    \item Save to Parquet format with Snappy compression
+\end{enumerate}
+
+\subsubsection{Compute Visitor Partisan Lean}
+
+For each POI-month observation, we compute the weighted average Republican vote share of visitors based on their home CBGs. The election data is loaded into Python dictionaries for O(1) lookup performance.
+
+For each row in a state's filtered data:
+\begin{enumerate}
+    \item Parse the \texttt{visitor\_home\_cbgs} JSON string into a dictionary
+    \item For each (CBG GEOID, visitor count) pair:
+    \begin{itemize}
+        \item Zero-pad the CBG GEOID to 12 digits
+        \item Look up the Republican vote share for that CBG
+        \item Accumulate weighted sums
+    \end{itemize}
+    \item Compute weighted averages
+\end{enumerate}
+
+The weighted Republican lean for 2020 is:
+\begin{equation}
+\text{rep\_lean\_2020} = \frac{\sum_{c \in C} \left(\text{rep\_share}_{c,2020} \times \text{visitors}_c\right)}{\sum_{c \in C} \text{visitors}_c}
+\end{equation}
+where $C$ is the set of matched CBGs (those found in the election data lookup).
+
+We also compute the match rate:
+\begin{equation}
+\text{pct\_visitors\_matched} = \frac{\text{matched\_visitors}}{\text{total\_visitors}} \times 100
+\end{equation}
+
+\subsubsection{Combine States and Partition by Month}
+
+The final processing step combines all state-level outputs into a single national dataset, then partitions by month for efficient downstream analysis. For memory efficiency, we process one month at a time, reading each state file, filtering to the target month, concatenating, and writing to a month-specific Parquet file.
+
+\subsection{Brand Heterogeneity Analysis}
+
+We decompose variance in visitor partisan lean into between-MSA (geographic) and within-MSA (brand/location) components. For each unique POI, we first compute time-averaged partisan lean measures. We then filter to brands meeting minimum coverage thresholds: at least 10 unique locations and presence in at least 3 distinct MSAs.
+
+For each eligible brand, we compute:
+
+\textbf{Between-MSA Variance (Geography):} First compute the mean partisan lean for each MSA ($\bar{y}_{m}$), then compute the variance of these MSA means: $\sigma^2_{\text{between}} = \text{Var}(\bar{y}_{m})$.
+
+\textbf{Within-MSA Variance (Location):} For each MSA, compute the variance of locations within that MSA, then average across MSAs: $\sigma^2_{\text{within}} = \frac{1}{M} \sum_{m=1}^{M} \sigma^2_{m}$.
+
+\textbf{Intraclass Correlation Coefficient (ICC):}
+\begin{equation}
+\text{ICC} = \frac{\sigma^2_{\text{between}}}{\sigma^2_{\text{between}} + \sigma^2_{\text{within}}}
+\end{equation}
+
+An ICC close to 1 indicates that most variance is between MSAs (geography dominates), while an ICC close to 0 indicates that most variance is within MSAs (brand/location effects dominate).
+
+\subsection{Key Methodological Decisions}
+
+\subsubsection{Use of Two-Party Vote Share}
+
+We compute Republican vote share as a proportion of the two-party (Republican + Democratic) vote rather than total votes. This approach excludes third-party and write-in votes, creates a bounded measure in $[0, 1]$, is standard in political science literature, and facilitates interpretation (0.5 represents a perfectly competitive area).
+
+\subsubsection{Handling of Zero-Vote CBGs}
+
+CBGs with zero recorded votes for both major-party candidates are assigned a partisan lean of 0.5 (neutral). This conservative assumption avoids excluding these CBGs while not biasing results in either partisan direction.
+
+\subsubsection{Weighting by Visitor Count}
+
+Partisan lean is computed as a visitor-count-weighted average rather than a simple average across CBGs. This ensures that CBGs contributing more visitors have proportionally greater influence on the final measure, reflecting the actual composition of the visitor population.
+
+\subsubsection{Use of Both 2016 and 2020 Election Data}
+
+We compute partisan lean using both election years for robustness, temporal coverage (the data spans 2019--2025), methodological flexibility, and validation (high correlation between measures provides confidence in the methodology). We do \emph{not} use 2016 data for pre-2020 periods and 2020 data for post-2020 periods; both measures are computed for all POI-months.
+
+\subsubsection{Handling of Unmatched CBGs}
+
+Some visitor home CBGs cannot be matched to the election data lookup due to CBG boundary changes, data entry errors, or CBGs in non-contiguous states. We track the match rate for each observation, allowing researchers to exclude observations with low match rates.
+
+\subsubsection{Geographic Assignment via POI Location}
+
+MSA assignment is based on the POI's physical location (derived from \texttt{poi\_cbg}), not the home locations of visitors. This reflects where consumption occurs rather than where consumers reside.
+
+\subsection{Output Data Dictionary}
+
+\subsubsection{Primary Output: POI-Month Panel}
+
+Table~\ref{tab:output_schema} describes the primary output schema for the POI-month panel data.
+
+\begin{table}[htbp]
+\centering
+\caption{POI-Month Panel Output Schema}
+\label{tab:output_schema}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\midrule
+\texttt{placekey} & string & Unique POI identifier \\
+\texttt{date\_range\_start} & datetime & First day of month \\
+\texttt{brand} & string & Brand name (null if unbranded) \\
+\texttt{top\_category} & string & High-level category \\
+\texttt{sub\_category} & string & Detailed category \\
+\texttt{naics\_code} & string & NAICS code \\
+\texttt{city} & string & City \\
+\texttt{region} & string & State \\
+\texttt{poi\_cbg} & string & POI's Census Block Group \\
+\texttt{cbsa\_title} & string & Metropolitan Statistical Area \\
+\texttt{parent\_placekey} & string & Parent location ID \\
+\texttt{median\_dwell} & float & Median dwell time (minutes) \\
+\texttt{rep\_lean\_2020} & float & Republican lean (2020 election), range $[0, 1]$ \\
+\texttt{rep\_lean\_2016} & float & Republican lean (2016 election), range $[0, 1]$ \\
+\texttt{total\_visitors} & integer & Total visitors from all CBGs \\
+\texttt{matched\_visitors} & integer & Visitors matched to election data \\
+\texttt{pct\_visitors\_matched} & float & Match rate percentage \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Limitations}
+
+Several limitations merit discussion:
+
+\textbf{Mobile Phone Sampling.} The Advan data is derived from mobile phone location signals, which may not be representative of all visitors. Demographic groups with lower smartphone adoption or location-sharing rates may be underrepresented.
+
+\textbf{Privacy-Preserving Noise.} Advan applies differential privacy protections that introduce noise into visitor counts. This may attenuate measured partisan differences, biasing results toward null findings.
+
+\textbf{CBG-Level Election Estimates.} The election data uses modeled estimates of block group-level vote shares rather than actual precinct-level returns. This introduces measurement error, though the methodology is well-established in political science.
+
+\textbf{Ecological Inference.} We observe aggregate CBG-level voting patterns, not individual-level political preferences. The partisan lean measure reflects the voting behavior of the CBG as a whole, which may differ from the specific individuals who visited the POI.
+
+\textbf{Home Location vs.\ Current Residence.} The ``home'' CBG in Advan data is inferred from nighttime location patterns and may not reflect current residence for all individuals (e.g., college students, seasonal residents).
+
+\subsection{Computational Requirements}
+
+The full pipeline requires approximately 1 TB of storage for raw inputs and outputs, 128--386 GB RAM for state-level processing, and approximately 24--48 hours of compute time on an HPC cluster. Steps 3 and 4 are implemented as SLURM array jobs, processing each state independently in parallel.

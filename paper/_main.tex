@@ -1,68 +1,67 @@
 \documentclass[10pt, letterpaper]{article}
-%\documentclass[mnsc]{informs4}
 
 % ===================== CAPTIONS ==========================
-\usepackage{caption} % Customize captions
-\usepackage{subcaption} % Subfigures/subcaptions
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{threeparttable}
 
 % ===================== FLOAT SETTINGS ====================
-\renewcommand{\topfraction}{0.9}      % Max fraction of floats at top (increase from current)
-\renewcommand{\bottomfraction}{0.9}   % Max fraction of floats at bottom (increase from 0.8)
-\setcounter{topnumber}{3}             % Max floats at top of page (increase from 2)
-\setcounter{bottomnumber}{3}          % Max floats at bottom of page (increase from 2)
-\setcounter{totalnumber}{6}           % Max floats on a page (increase from 4)
-\setcounter{dbltopnumber}{3}          % Max floats on two-column pages (increase from 2)
-\renewcommand{\dbltopfraction}{0.9}   % Fraction for big floats
-\renewcommand{\textfraction}{0.05}    % Allow minimal text (decrease from 0.07)
-\renewcommand{\floatpagefraction}{0.5} % Fraction for float-only pages (decrease from 0.7)
-\renewcommand{\dblfloatpagefraction}{0.5} % Fraction for two-column float pages (decrease from 0.7)
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}
+\setcounter{dbltopnumber}{3}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.5}
+\renewcommand{\dblfloatpagefraction}{0.5}
 
 % ===================== FIGURES ===========================
 \usepackage{float}
-\usepackage{pgfplots} % Create plots in LaTeX
-\usepackage{mwe} % Placeholder images
+\usepackage{pgfplots}
+\usepackage{mwe}
 \pgfplotsset{compat=1.16}
 \usepackage{placeins}
 
 % ========================= FONTS =========================
-\usepackage{libertine} % Set Libertine font
-\usepackage[libertine]{newtxmath} % Matching math font
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
 
 % ===================== FOOTNOTES =========================
-\usepackage[hang,flushmargin]{footmisc} % Hanging footnotes
+\usepackage[hang,flushmargin]{footmisc}
 
 % ====================== GRAPHICS =========================
-\usepackage{graphicx} % Insert graphics
-\usepackage{adjustbox} % Adjust and align content
-\usepackage{lscape} % Landscape mode
-\usepackage{pdflscape} % PDF landscape pages
-\usepackage{rotating} % Rotate tables/figures
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{lscape}
+\usepackage{pdflscape}
+\usepackage{rotating}
 
 % ===================== HYPERLINKS ========================
-\usepackage[hidelinks]{hyperref} % Hyperlinks without colors
-\usepackage{url} % URL formatting
-\urlstyle{sf} % Sans-serif URL style
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\urlstyle{sf}
 
 % ==================== MATH AND SYMBOLS ===================
 \let\Bbbk\relax
-\usepackage{amsmath} % Math symbols and environments
-\usepackage{amssymb} % Additional math symbols
-\usepackage{bbm} % Blackboard bold for math
-\usepackage{mathtools} % Math extensions
-\usepackage{siunitx} % SI units and number formatting
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage{siunitx}
 
 % ==================== OTHER FEATURES =====================
-\usepackage{authblk} % Author affiliations
-\usepackage{atbegshi,picture} % Additions to shipout and picture mode
-\usepackage{markdown} % Markdown environment
-\usepackage{tocbibind} % Include bibliography in TOC
-\usepackage{minitoc} % Mini tables of contents
+\usepackage{authblk}
+\usepackage{atbegshi,picture}
+\usepackage{markdown}
+\usepackage{tocbibind}
+\usepackage{minitoc}
 
 % ====================== PAGE LAYOUT ======================
-\usepackage[margin=1in]{geometry} % Set page margins
-\usepackage{setspace} % For line spacing
-\usepackage{changepage} % Adjust margins
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{changepage}
 
 % ===================== REFERENCES ========================
 \usepackage{natbib}
@@ -70,37 +69,31 @@
 \usepackage{bibunits}
 
 % ====================== TABLES ===========================
-\usepackage{array} % Additional table features
-\usepackage{booktabs} % Professional-quality tables
+\usepackage{array}
+\usepackage{booktabs}
 \usepackage{makecell}
 \usepackage{ragged2e}
 \usepackage{multirow}
-\usepackage{siunitx}
 \usepackage{tabularray}
 \usepackage{longtable}
 \usepackage{tabu}
 
 % ====================== TEXT =============================
-\usepackage{csquotes} % Context-sensitive quotes
-\usepackage{indentfirst} % Indent first paragraph of sections
-\usepackage{verbatim} % Block comments
-\usepackage{xifthen} % Conditional expressions
-\usepackage{enumitem} % Enumerations
+\usepackage{csquotes}
+\usepackage{indentfirst}
+\usepackage{verbatim}
+\usepackage{xifthen}
+\usepackage{enumitem}
 \usepackage{lipsum}
 
 % ====================== BIBLIOGRAPHY =====================
-\bibpunct[, ]{(}{)}{;}{a}{}{,} % Bibliography punctuation style
-\def\bibhang{24pt} % Hanging indentation for references
-\def\newblock{\ } % Remove "newblock" in BibTeX
-\def\BIBand{and} % Replace "and" in references
-\def\bibfont{\small} % Font size for bibliography
-\def\bibsep{\smallskipamount} % Bibliography spacing
-\setcitestyle{notesep={:}} % Separator for notes
-
-% ===================== TABLE OF CONTENTS FOR APPENDIX =====================
-\renewcommand{\mtcTitle}{Appendix Table of Contents}
-\renewcommand{\mtcfont}{\Large\bfseries}
-\mtcsetfeature{appendix}{toc*}{true}
+\bibpunct[, ]{(}{)}{;}{a}{}{,}
+\def\bibhang{24pt}
+\def\newblock{\ }
+\def\BIBand{and}
+\def\bibfont{\small}
+\def\bibsep{\smallskipamount}
+\setcitestyle{notesep={: },aysep={,}}
 
 % ===================== NEW COMMANDS ======================
 \newcommand{\nocontentsline}[3]{}
@@ -112,340 +105,74 @@
 
 \begin{document}
 
-\title{Business on the Ballot: \\ Employee Voting as Nonmarket Strategy\thanks{For helpful comments and suggestions, I thank Vanessa Burbano, Sinziana Dorobantu, Justin Frake, Genevieve Gregorich, Alexander Hertel-Fernandez, Reuben Hurst, Asher Lasday, Zhao Li, Daniel Keum, Chris Poliquin, Sukrit Puri, Anna Szerb, Calvin Thrall, and Alan Yan, as well as audiences at the Columbia--Cornell Political Economy of Work Junior Scholars Workshop and at Columbia Business School, Rice, and UT Austin. I acknowledge funding from the National Science Foundation's Learning the Earth with Artificial Intelligence and Physics (LEAP) Science and Technology Center (STC) (award \#2019625) as well as the Institute for Humane Studies. The Politics at Work project received financial support from the University of Maryland, the University of Michigan. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author and do not necessarily reflect the views of the National Science Foundation or any other funding organization.}}
+\title{Measuring Stakeholder Ideology}
 
-\author{Max Kagan\thanks{Job market paper. Website: \href{http://maxkagan.com}{maxkagan.com}. Email: \href{mailto:mik2124@columbia.edu}{mik2124@columbia.edu}}~}
+\author{Max Kagan}
 \affil{Columbia Business School}
 
 \date{\today}
 
 
-\begin{singlespacing} \maketitle
-	\begin{abstract}
+\begin{singlespacing}
+\maketitle
+
+\begin{abstract}
 \noindent
-
-% ABSTRACT =========================================================================================
-
-Firms deploy a variety of strategies to influence political outcomes. Can firms rely upon their employees to support their political goals? Theoretical work on constituency building identifies employees as a natural target and sympathetic audience for firms' political mobilization efforts, yet recent studies find that employees react negatively to firms which adopt public political stances. I examine this question in an important but understudied political context: direct democracy via ballot questions. Analyzing 183 companies across 30 ballot question campaigns in 15 elections spanning 10 U.S. states and 2 cities, I find consistent evidence that employees at politically active firms turn out to vote at significantly higher rates in elections where their employer is politically active. Using random-effects meta-analysis, I estimate an average increase of approximately 15 percentage points in employee turnout. Effect sizes vary by context. Effects are largest in low-turnout off-cycle elections and for ballot questions which relate to regulatory or project approval issues; there are no positive effects when firms are politically active on topics which do not clearly relate to their business. In addition to employees' self-interest and top-down influence or pressure from managers, one key mechanism appears to be peer encouragement. Turnout increases ``spill over'' from active employees to social contacts, including former employees, household members, and neighbors. Consistent with a peer effects mechanism, turnout effects are larger for employees who share the partisan affiliation of the majority of their coworkers, indicating that workplace discussions likely facilitate mobilization. These findings demonstrate that firms can rely upon employees to support nonmarket strategy goals and highlight circumstances under which direct democracy may be an attractive venue for corporate political activity.
-\bigskip
-
-\medskip
-
-\noindent\textbf{Keywords:} nonmarket strategy, corporate political activity, employee mobilization, elections, direct democracy
+% TODO: Write abstract
 
 \bigskip
-
-\normalsize
-
-\vfill
-
+\noindent\textbf{Keywords:} % TODO: Add keywords
 \end{abstract}
 
 \end{singlespacing}
 \thispagestyle{empty}
 \pagebreak
 
-
-
 \clearpage
-
-
-\label{S:1}
-\setcounter{page}{1}
-
 \doublespacing
 
-% BEGIN ARTICLE --------------------------------------------------------------------------
 
 % INTRODUCTION --------------------------------------------------------------------------
-\section{Introduction}\label{sec:intro}
+\section{Introduction}\label{sec:introduction}
 
-Firms compete in both market and nonmarket arenas. In high-stakes policy battles, corporate political activity (CPA) can be decisive in shaping the ``rules of the game'' to a firm's advantage \citep{baron1995nonmarket, henisz2012strategy}. One potentially powerful but understudied CPA strategy is employee mobilization---firms' attempts to influence employees' political behaviors and attitudes \citep{hertel-fernandez2018politics}. Employees appear to be an especially promising constituency for CPA: they are a captive audience \citep{hertel-fernandez2017american} who may share core economic interests with their employer. Yet there are good reasons to question whether employee mobilization is effective. Experimental research finds evidence of costly backlash from employees when firms communicate political stances \citep{burbano2021demotivating, hurst2025filtering}, and survey evidence shows that employees often react negatively when employers attempt to mobilize them for political ends \citep{hertel-fernandez2018politics, frye2025workplace}. This raises a fundamental empirical question: can firms actually rely on their employees to support their nonmarket strategy goals?
-
-I address this question by examining employee voting behavior in a context where firms have clear strategic stakes: ballot questions in the United States. Unlike candidate elections, where voters can rely on partisan heuristics, ballot questions require voters to evaluate specific policy proposals---often ones with direct implications for particular firms and industries. I identify over 180 companies which made direct financial contributions to political committees active on over 30 different ballot questions across 15 separate U.S. state and local elections. Using newly-available individual-level microdata from the Politics at Work (VRscores) project \citep{kagan2025vrscores, frake2025partisan} which links employees' work histories with administrative voter turnout data, I examine whether employees at these politically active firms turn out to vote at higher rates in elections where their employer has clear strategic stakes.
-
-Using random-effects meta-analysis across 183 companies in 30 ballot question campaigns spanning 15 elections, I estimate an average increase of approximately 15 percentage points in employee turnout, with considerable heterogeneity across contexts. Effects are largest in low-turnout elections held outside the regular November cycle, and for issues involving utility regulation or project approvals where strategic stakes are especially salient.
-
-Beyond documenting the main effect, I investigate mechanisms through which employee mobilization operates. I find that turnout increases ``spill over'' from directly affected employees to their social contacts---including former employees who have left the firm, current employees' household members, and geographic neighbors. This pattern suggests that peer encouragement through social networks is a key mechanism. Consistent with this interpretation, I examine heterogeneity by employees' partisan context within their workplace. Using novel measures of company-level partisan composition \citep{kagan2025vrscores}, I show that turnout effects are larger for employees who share the partisan affiliation of the majority of their coworkers. This finding suggests that workplace discussion networks---which are more likely to form among copartisans---facilitate the transmission of mobilization messages.
-
-These findings make several contributions. First, I provide large-scale causal evidence that firms can successfully mobilize their employees to support corporate political activity, addressing longstanding theoretical debates about the effectiveness of constituency-building strategies \citep{hillman1999corporate, lord2003constituency}. Second, by examining direct democracy, I highlight an important but understudied arena for nonmarket strategy where firms can directly shape policy outcomes \citep{baron2012business}. Third, by documenting spillover effects to employees' social contacts, I contribute to growing research on the broader societal impact of firms \citep{battilana2025democratic, hurst2025organizational}. Finally, by identifying peer encouragement as a mechanism, I connect research on corporate political activity with scholarship on social influence in political participation \citep{sinclair2012social}.
+% TODO: Write introduction
 
 
 % THEORY --------------------------------------------------------------------------
 \section{Theory}\label{sec:theory}
 
-\subsection{Corporate Political Activity and the Role of Employees}
-
-Companies' ability to navigate their nonmarket environment can help or hinder their pursuit of business goals \citep{baron1995integrated, baron1995nonmarket, hillman2004corporate}. Research into corporate political activity (CPA) typically adopts the ``market for public policy'' framework, which views firms as ``demanders'' and government policymakers as ``suppliers'' engaged in mutual exchange over policy outcomes \citep{hillman1999corporate, hillman2004corporate, katic2023corporate}. Within this framework, scholars have identified three main strategies: providing information through lobbying, providing financial incentives through campaign contributions, and building supportive constituencies \citep{hillman1999corporate}. While research has extensively examined lobbying and campaign finance, constituency building---particularly the mobilization of employees---has received comparatively less attention.
-
-This gap is surprising given that employees represent an obvious constituency for firms to target \citep{keim1986corporate, keim1988efficacy, lord2003constituency}. Relative to external stakeholders, employees are effectively a ``captive audience'' that can be reached at minimal cost. In the United States, the Supreme Court's \emph{Citizens United} decision removed prohibitions on corporate political speech to employees, and workers have limited legal protections against political pressure at work \citep{hertel-fernandez2018politics}. Furthermore, to the extent that workers identify with their employers \citep{ashforth2024my}, they may be not only captive but also sympathetic to the firm's political goals.
-
-Research in economics and political science has recognized that employee votes can constitute a politically valuable resource. \citet{bombardini2011votes} show that firms with large, geographically concentrated employee bases spend less on other forms of political influence than might otherwise be expected, suggesting that employees provide structural political power. Survey evidence from the United States \citep{hertel-fernandez2017american, hertel-fernandez2018politics} and less democratic contexts \citep{frye2014political, frye2025workplace} documents that employers do take active steps to encourage employees to vote. Yet whether such efforts actually succeed in mobilizing employees remains an open empirical question.
-
-\subsection{Why Employees Might Respond to Mobilization}
-
-Several theoretical perspectives suggest that employees may be receptive to employer mobilization efforts under certain conditions. Resource dependence theory \citep{pfeffer1978external} emphasizes that organizations seek to manage dependencies on critical external actors, including government regulators and policymakers. From the employee's perspective, their own economic welfare depends on the firm's prosperity---a dependence that creates incentives to support the firm's political goals when those goals align with job security and compensation. This alignment of economic interests distinguishes employee mobilization from other forms of political persuasion, where the communicator and audience have no direct stake in one another's welfare. When a ballot question threatens to regulate, tax, or restructure a company, employees face concrete economic consequences that may motivate political action independent of any explicit employer messaging.
-
-Social identity theory \citep{tajfel1979integrative, ashforth1989social} provides a complementary perspective centered on psychological rather than economic mechanisms. Employees who identify strongly with their organization incorporate its interests into their sense of self \citep{dutton1994organizational}. Such organizational identification predicts a range of prosocial behaviors, from extra-role performance to advocacy on behalf of the firm. When policy threats endanger the organization, highly identified employees may view political action not as a response to employer pressure but as a natural expression of their organizational membership---the ballot box becomes one more arena where employees can demonstrate loyalty and protect an institution with which they are psychologically intertwined.
-
-Relatedly, the value congruence literature \citep{chatman1989improving, kristofbrown2005consequences, cable2002relative} suggests that employees favorably evaluate employers whose values align with their own. When employees perceive congruence between their personal values and their organization's stance on an issue, their identification with the organization strengthens, increasing job satisfaction and willingness to exert discretionary effort \citep{edwards2009value}. In the context of ballot questions, if employees perceive that the firm's position reflects shared economic interests rather than partisan ideology, value congruence may be enhanced rather than threatened---particularly when the issue involves clear threats to the company and its workforce rather than abstract social-political debates.
-
-These theoretical perspectives converge on a conditional prediction: employee mobilization should be most effective when employees perceive genuine alignment between their own interests and the firm's political goals. Such alignment is more likely when the issue at hand involves concrete economic stakes for the company and its workers, when partisan cues are absent or muted, and when the firm's position can be framed as protecting shared interests rather than advancing a particular political agenda. The challenge for firms is that such favorable conditions may be relatively rare in the landscape of American politics, where partisan polarization increasingly structures attitudes across nearly all policy domains.
-
-\subsection{Skepticism About Employee Mobilization}
-
-There are strong theoretical reasons to question whether employee mobilization is effective in practice. First, the costs may be substantial. Both survey evidence \citep{hertel-fernandez2017american, hertel-fernandez2018politics} and experimental research \citep{burbano2021demotivating, hurst2025filtering} document that employees often view employer political messaging as illegitimate and resent attempts to influence their political behavior. Political stances can harm employee morale and make jobs less attractive to prospective workers. Furthermore, evidence suggests that stakeholder reactions to political stances are asymmetrically negative: those who disagree react strongly, while those who agree show little offsetting positive response \citep{kagan2025asymmetry}.
-
-Second, the benefits are uncertain because of partisan polarization. Political partisanship serves as a powerful decision-making heuristic that structures most political attitudes \citep{campbell1960american, green2002partisan}. Citizens' partisan identities are largely fixed and central to their self-concept \citep{mason2018uncivil}, making it nearly impossible for campaigns to persuade voters across party lines \citep{kalla2018minimal}. When employers attempt to mobilize employees on partisan issues, workers' pre-existing loyalties lead them to reject messages that conflict with their political identities. Studies of workplace partisanship find little evidence that prolonged contact changes political attitudes across party lines \citep{bermiss2018ideological, yan2024minimal}. Indeed, influence may flow in the opposite direction, with Democratic employees pushing firms toward more liberal stances \citep{mckean2024when} and workers' partisanship constraining firms' ability to engage with opposing-party policymakers \citep{li2018how, li2024can}.
-
-Given these obstacles, it remains unclear whether employee mobilization represents a viable CPA strategy. The most dramatic anecdotes of employer pressure may reflect executives' personal politics rather than strategic calculation \citep{hertel-fernandez2018politics}. Meanwhile, evidence from autocratic contexts suggests that employee mobilization there operates under different logic---firms comply with government pressure rather than pursuing strategic advantage \citep{frye2025workplace}. The core empirical question is whether firms can actually rely on their employees to support nonmarket strategy goals, or whether the costs and constraints make such efforts futile.
-
-\subsection{Direct Democracy as a Favorable Context}
-
-I argue that direct democracy via ballot questions represents a context where employee mobilization is most likely to succeed. Three features distinguish ballot questions from the partisan candidate elections that dominate existing research.
-
-First, ballot questions are non-partisan. Voters cannot rely on party labels to guide their choices, and political science research shows that in the absence of partisan cues, citizens struggle to identify which option matches their preferences \citep{lupia1994shortcuts, lupia1998democratic}. They must instead rely on alternative heuristics, including endorsements from trusted sources. When ballot questions directly affect a company and its workforce, employers may serve as such trusted endorsers---sources perceived as knowledgeable, with interests aligned to employees' own economic welfare.
-
-Second, many ballot questions feature clear and salient strategic stakes. When a proposition threatens to regulate, tax, or even expropriate a company, employees face concrete economic consequences that may motivate political action independent of any employer messaging. Unlike abstract partisan debates, these tangible threats can overcome employees' default apathy. In such cases, turning out to vote is not merely a response to employer pressure but a rational act of economic self-interest.
-
-Third, ballot questions---especially those held outside the regular November election cycle---often feature very low baseline turnout \citep{anzia2011election}. In low-turnout elections, each additional vote carries greater weight, and mobilization efforts that might be marginal in high-turnout contests can be decisive. This creates both strong incentives for firms to mobilize employees and a context where such mobilization is most likely to yield observable effects. If employee mobilization works anywhere, it should work here.
-
-\subsection{Peer Encouragement as a Mechanism}
-
-If firms can successfully mobilize employees in this context, through what mechanism does mobilization occur? One possibility is direct employer pressure---explicit or implicit messages from management encouraging employees to vote in particular ways. While such pressure certainly occurs \citep{hertel-fernandez2018politics}, it may be less important than a second mechanism: peer encouragement through workplace social networks.
-
-Research on voter turnout establishes that social influence is a powerful driver of political participation \citep{sinclair2012social}. People are more likely to vote when they observe or discuss voting with members of their social network. The workplace is a primary site of adult social interaction, and coworkers frequently discuss political topics \citep{mutz2006workplace}. When a ballot question threatens employees' shared economic interests, such discussions may naturally turn to the upcoming election, with employees encouraging one another to turn out and vote. This peer-to-peer mobilization requires no top-down directive---it emerges organically from the social fabric of the workplace.
-
-The peer encouragement mechanism is theoretically distinct from direct employer pressure in several important ways. First, it operates horizontally rather than vertically: influence flows among coworkers of similar status rather than down the organizational hierarchy. Second, it is embedded in existing social relationships characterized by trust and reciprocity, making it more persuasive than communications from distant management. Third, it is self-reinforcing: as more employees discuss the ballot question and express intention to vote, social norms around participation strengthen, creating positive feedback loops. Fourth, peer encouragement may feel less coercive than employer directives, reducing the backlash that can accompany top-down political messaging \citep{burbano2021demotivating}.
-
-The peer encouragement mechanism generates distinct empirical predictions. First, turnout effects should ``spill over'' to employees' social contacts---people connected to employees who do not themselves work for the affected firm. Such contacts include former employees who maintain social ties with current workers, household members who discuss politics at home, and neighbors who interact in residential communities. If mobilization operated purely through direct employer communication, we would not expect these spillovers; their presence indicates social diffusion through networks. The magnitude of spillover effects should decay with social distance from current employees, with the largest effects for those most proximate (household members) and smaller effects for those more distant (neighbors).
-
-Second, peer effects should be stronger in contexts that facilitate political discussion. Research on political communication shows that Americans are more comfortable discussing politics with copartisans \citep{carlson2019grapevine}. The literature on selective exposure and political homophily suggests that people prefer interactions with like-minded others, particularly on contentious topics \citep{mutz2006hearingotherside}. Within workplaces, employees whose partisan affiliation matches the majority of their colleagues should find it easier to discuss the ballot question and encourage turnout. These employees face lower social costs from initiating political conversations and may be embedded in denser discussion networks. Conversely, employees in the partisan minority may feel uncomfortable raising political topics and thus be less subject to peer influence. If we observe larger turnout effects among majority-party employees, this would support peer encouragement over direct employer pressure as the primary mechanism.
-
-\subsection{Theoretical Summary}
-
-In sum, I examine whether firms can successfully mobilize their employees to support nonmarket strategy goals. Existing theory and evidence provide reasons for both optimism and skepticism. On one hand, employees represent a captive audience with potentially aligned interests. On the other hand, partisan polarization, employee backlash, and asymmetric stakeholder reactions suggest that mobilization efforts may backfire.
-
-I focus on direct democracy via ballot questions as a context where mobilization is most likely to succeed. The absence of partisan cues, the presence of clear economic stakes, and the low baseline turnout in many ballot elections all create favorable conditions. The primary mechanism is likely peer encouragement through workplace social networks, which should generate spillover effects to employees' social contacts and operate most strongly among employees embedded in politically homogeneous workplaces.
-
-The empirical analysis that follows examines whether these theoretical expectations hold in practice. Across 183 firms, 30 campaigns, and 15 elections spanning 10 states and 2 cities, I measure whether employees at politically active companies turn out to vote at higher rates than comparable voters, whether these effects spill over to social contacts, and whether they vary with workplace partisan composition.
+% TODO: Write theory section
 
 
 % DATA AND METHODS --------------------------------------------------------------------------
 \section{Data and Methods}\label{sec:data}
 
-\subsection{Empirical Context: Ballot Questions}
-
-Although nonmarket strategy spans many institutional settings \citep{baron2012business, dorobantu2017nonmarket}, the majority of research into CPA focuses on how companies use lobbying and campaign finance to influence elected lawmakers \citep{katic2023corporate}. Largely missing is meaningful discussion of direct democracy. Direct democracy differs from representative institutions in that it allows the public to vote directly on specific policies. In the United States, all 50 states hold some form of ballot question elections, as do tens of thousands of local governments. During a typical election cycle, there are over 100 state-level ballot questions across 30 or more states.
-
-Campaign finance data reveal that ballot questions attract substantial business engagement. Companies can donate directly to ballot question committees without the restrictions that apply to candidate campaigns, and aggregate spending on state ballot questions exceeds \$1 billion in recent cycles. Many of the most expensive ballot races concern issues with direct consequences for specific industries: marijuana legalization, utility regulation, rent control, and insurance regulation are common topics.
-
-\subsection{Case Identification}
-
-Within this broad universe, I systematically identify ballot questions where: (a) one or more specific companies faced strategically important stakes, (b) the company clearly took a stance by contributing to a ballot question committee, and (c) there were no other major contests on the same ballot that might confound attribution of turnout changes. This last criterion leads me to focus on ``off-cycle'' elections---those held outside the regular November even-year period---where turnout is typically much lower and driven primarily by voters with specific stakes in the ballot questions at hand.
-
-Through extensive manual review of ballot questions from 2016--2024, I identify 183 companies across 30 distinct campaigns in 15 elections spanning 10 U.S. states and 2 cities. The affected companies span multiple industries, though regulated sectors (utilities, petroleum, natural gas) are disproportionately represented, consistent with prior evidence that these industries are most active in employee mobilization \citep{hertel-fernandez2018politics}. A complete inventory of cases appears in Appendix \ref{app:cases}.
-
-\subsection{Data: Linking Employment and Voter Records}
-
-Whether an individual votes in any election is a matter of public record in the United States. Voter file data contain details of registered voters' turnout history, partisan affiliation, and demographic information \citep{fraga2018using, hersh2015hacking}. However, voter files contain no information on employment, limiting their use in management research.
-
-I overcome this limitation by merging voter file data with employment records. The voter file comes from L2, a nonpartisan data vendor, and contains approximately 180 million registered voters with their complete turnout history across all election types. Employment data come from Revelio Labs, which aggregates information from online professional profiles (primarily LinkedIn) covering over 100 million U.S. employment records.
-
-Merging these datasets presents substantial computational and methodological challenges. There is no unique identifier linking the two sources, and naive fuzzy matching across datasets of this scale would be computationally infeasible. I address this through a multi-stage approach. First, I partition both datasets by metropolitan statistical area, reducing the scale of required comparisons while preserving theoretically plausible matches. Second, I apply probabilistic record linkage following \citet{enamorado2019using}, which weights multiple matching fields (name, gender, approximate age) by their discriminatory power. Third, I supplement with machine learning approaches using large language model embeddings \citep{ornstein2024probabilistic} to capture name variations that string distance measures would miss.
-
-The resulting merged dataset covers over 40 million Americans with both employment history and voter turnout records. While not a census of the working population, validation analyses confirm that the matched sample mirrors overall turnout patterns in the underlying voter file.
-
-Finally, I use residential addresses in the voter file to identify household relationships, allowing me to examine whether turnout effects extend to employees' family members.
-
-\subsection{Estimation Strategy}
-
-For each identified case, I estimate the effect of company affiliation on voter turnout using difference-in-differences. The basic specification is:
-\begin{align}
-    \text{Turnout}_{it} &= \alpha + \beta \left( \text{Post}_t \times \text{Treated}_i \right) + \gamma_i + \delta_t + \varepsilon_{it},
-\end{align}
-where $\text{Turnout}_{it}$ indicates whether individual $i$ voted in election $t$, $\text{Post}_t$ indicates the post-treatment period (elections after the company became politically active on a ballot question), $\text{Treated}_i$ indicates employment at an affected company, and $\gamma_i$ and $\delta_t$ are individual and election fixed effects. The coefficient of interest $\beta$ captures the differential change in turnout for employees at affected companies relative to other voters.
-
-To synthesize effects across cases, I employ random-effects meta-analysis. This approach accounts for heterogeneity in true effect sizes across elections while providing an overall estimate of the average effect. I report both the pooled estimate and examine heterogeneity by election characteristics (on-cycle vs. off-cycle, issue type, baseline turnout).
+% TODO: Write data and methods section
 
 
 % RESULTS --------------------------------------------------------------------------
 \section{Results}\label{sec:results}
 
-I now present the main empirical findings. Using random-effects meta-analysis across all identified cases, I examine whether employees at politically active firms turn out to vote at higher rates than comparable voters, and how these effects vary by election characteristics.
-
-\subsection{Main Effect: Employee Turnout Across All Cases}
-
-Figure \ref{fig:meta_forest} presents a forest plot of estimated effects across all campaigns, grouped by issue type. The pooled estimate across all studies is 15.2 percentage points (95\% CI: 11.8--18.6), indicating a substantial and statistically significant average effect. However, there is considerable heterogeneity across cases ($I^2 = 78\%$), suggesting that effect sizes vary meaningfully by context. Table \ref{tab:meta_summary} summarizes these findings.
-
-\begin{table}[!htbp]
-\centering
-\caption{Meta-Analysis Summary: Employee Turnout Effects}
-\label{tab:meta_summary}
-\begin{tabular}{lcccc}
-\toprule
- & Effect (p.p.) & 95\% CI & $N$ Studies & $I^2$ \\
-\midrule
-\textbf{Overall} & 15.2 & [11.8, 18.6] & 183 & 78\% \\
-\addlinespace
-\textit{By Election Type:} & & & & \\
-\quad Local elections & 21.4 & [16.2, 26.6] & 42 & 65\% \\
-\quad Off-cycle state & 16.8 & [12.4, 21.2] & 89 & 72\% \\
-\quad On-cycle state & 8.7 & [5.1, 12.3] & 52 & 81\% \\
-\addlinespace
-\textit{By Issue Type:} & & & & \\
-\quad Utility regulation & 22.1 & [17.8, 26.4] & 38 & 58\% \\
-\quad Project approval & 18.4 & [13.1, 23.7] & 45 & 71\% \\
-\quad General regulation & 12.3 & [8.2, 16.4] & 67 & 79\% \\
-\quad Other & 8.9 & [3.4, 14.4] & 33 & 82\% \\
-\bottomrule
-\end{tabular}
-\begin{minipage}{0.9\linewidth}
-\vspace{0.5em}
-\footnotesize
-Notes: Random-effects meta-analysis using restricted maximum likelihood (REML) estimation. Effect sizes are in percentage points. $I^2$ indicates the proportion of variance due to between-study heterogeneity.
-\end{minipage}
-\end{table}
-
-\begin{figure}[!htbp]
-\centering
-\caption{Meta-Analysis of Employee Turnout Effects Across Ballot Question Campaigns}
-\includegraphics[width=0.95\textwidth]{outputs/figures/company_meta_aggregated_wide.png}
-\label{fig:meta_forest}
-\begin{minipage}{0.95\linewidth}
-\footnotesize
-Forest plot showing estimated turnout effects for employees at affected companies across all identified ballot question campaigns. Effects are grouped by issue type. Diamond indicates pooled random-effects estimate. Horizontal lines indicate 95\% confidence intervals.
-\end{minipage}
-\end{figure}
-
-Examining heterogeneity by issue type reveals meaningful patterns. Effects are largest for utility regulation and project approval issues (average effects of 18--22 percentage points), where strategic stakes are most direct and salient. These are precisely the contexts where employees face the clearest economic consequences from ballot outcomes---utility regulation can affect job security, compensation, and working conditions; project approvals determine whether new facilities (and the jobs they bring) move forward. Effects are smaller but still significant for broader regulatory issues affecting multiple firms, where the link between the ballot question and any individual company's fate is more diffuse. Effects are smallest for issues where company-specific stakes are less apparent, such as general policy questions where firms' contributions may reflect ideological alignment rather than direct economic interest.
-
-\subsection{Heterogeneity by Election Timing}
-
-Figure \ref{fig:meta_cycle} examines heterogeneity by election timing, which theory suggests should be a key moderator. Consistent with theoretical expectations, effects are substantially larger in off-cycle elections (average effect: 19.4 p.p.) compared to on-cycle elections (average effect: 8.7 p.p.). This pattern likely reflects both ceiling effects (less room for turnout to increase when baseline turnout is already high) and the greater relative importance of each vote in low-turnout contests.
-
-The magnitude of these effects is striking when compared to benchmarks from the get-out-the-vote (GOTV) literature. Meta-analyses of GOTV field experiments typically find effects of 2--8 percentage points for direct contact interventions such as canvassing and phone banking \citep{green2013field}. The employee turnout effects documented here---averaging 15 percentage points overall and nearly 20 percentage points in off-cycle elections---exceed these benchmarks by a substantial margin. This comparison suggests that workplace mobilization may be an unusually potent form of political influence, perhaps because it combines informational cues, social pressure, and economic self-interest in ways that standard GOTV campaigns cannot replicate.
-
-\begin{figure}[!htbp]
-\centering
-\caption{Heterogeneity in Turnout Effects by Election Cycle}
-\includegraphics[width=0.8\textwidth]{outputs/figures/effects_by_election_type_random_effects.png}
-\label{fig:meta_cycle}
-\begin{minipage}{0.8\linewidth}
-\footnotesize
-Comparison of estimated turnout effects by election type. Local elections (held in non-standard cycles) show the largest effects, followed by off-cycle state elections, with on-cycle state elections showing the smallest effects. Error bars indicate 95\% confidence intervals from random-effects meta-analysis.
-\end{minipage}
-\end{figure}
-
-
-% MECHANISMS --------------------------------------------------------------------------
-\section{Mechanisms}\label{sec:mechanisms}
-
-The results thus far establish that employees at politically active firms turn out to vote at higher rates. But through what mechanism? I first establish that companies did actively mobilize their employees, ruling out the possibility that turnout effects are merely epiphenomenal. I then present evidence consistent with peer encouragement through workplace social networks: turnout effects spill over to employees' social contacts, and effects are larger for employees embedded in politically homogeneous workplaces.
-
-\subsection{Evidence of Active Mobilization}
-
-Before examining specific mechanisms, I establish that companies in the sample actively mobilized their employees---the observed turnout effects are not simply coincidental. Evidence comes from campaign finance disclosures, corporate communications, and visual documentation of employee political activity.
-
-Consider El Paso Electric (EPE), whose employees showed among the largest turnout effects in the meta-analysis. EPE's 2023 Corporate Sustainability Report explicitly describes mobilization efforts: the company ``rall[ied] employees and retirees to engage the community through door-to-door outreach, yard signs, and community engagement.'' Figure \ref{fig:epe_lobby} shows get-out-the-vote signage prominently displayed in the lobby of EPE's headquarters during the Proposition K campaign. Local news documented EPE employees holding ``No Way on Prop K'' signs at community events.
-
-\begin{figure}[!htbp]
-\centering
-\caption{Get-Out-The-Vote Signage in El Paso Electric HQ Lobby}
-\includegraphics[width=0.6\textwidth]{outputs/figures/epe_lobby.jpg}
-\label{fig:epe_lobby}
-\begin{minipage}{0.9\linewidth}
-\footnotesize
-Photo shows GOTV signage displayed in El Paso Electric headquarters during the Proposition K campaign. Source: Mendoza-Moyers (2023), \emph{El Paso Matters}. Photo credit: Cindy Ramirez.
-\end{minipage}
-\end{figure}
-
-Similar patterns appear in Maine, where Central Maine Power (CMP) and its parent companies spent over \$60 million on the 2021 NECEC referendum and \$40 million on the 2023 Pine Tree Power referendum. CMP workers appeared in television advertisements, with utility workers in hardhats explaining their stakes in the ballot outcomes (see Appendix \ref{app:qualitative} for additional visual evidence). The company distributed campaign materials at work sites, and employees organized grassroots campaign activities.
-
-Across the broader sample of 183 companies and 30 campaigns, the pattern is consistent: companies facing strategically important ballot questions took observable steps to engage their workforce. This qualitative evidence establishes that the quantitative turnout effects documented above reflect genuine mobilization, not mere coincidence.
-
-\subsection{Spillover Effects}
-
-If peer encouragement is a key mechanism, turnout effects should extend beyond employees themselves to their social contacts. I examine three types of spillovers: to former employees who have left the company but maintain social ties, to household members who share a residence with current employees, and to geographic neighbors.
-
-Figure \ref{fig:spillovers} presents results for El Paso Electric. Panel A shows that former EPE employees---those who worked at the company in the past but were no longer employed there in 2023---also showed elevated turnout in the Proposition K election. The estimated effect (12 percentage points) is smaller than for current employees but statistically significant. Panel B shows spillovers to household members of current EPE employees (13 percentage points). Panel C shows spillovers to geographic neighbors, defined as registered voters residing within 500 meters of an EPE employee (6 percentage points).
-
-\begin{figure}[!htbp]
-\centering
-\caption{Spillover Effects: Turnout Among Employees' Social Contacts}
-\includegraphics[width=0.95\textwidth]{outputs/figures/el_paso_epe_spillover_all_wide.png}
-\label{fig:spillovers}
-\begin{minipage}{0.95\linewidth}
-\footnotesize
-Event study estimates of differential turnout for (A) former El Paso Electric employees, (B) household members of current EPE employees, and (C) geographic neighbors of current EPE employees. Reference year is 2021. Error bars indicate 95\% confidence intervals.
-\end{minipage}
-\end{figure}
-
-These spillover patterns are consistent with peer encouragement but could also reflect other mechanisms. Former employees might follow company news and vote based on residual economic interests (e.g., pension benefits). Household members might share economic concerns. Neighbors might be exposed to yard signs or other campaign materials concentrated in areas where employees live. However, the gradient of effects---largest for current employees, intermediate for former employees and household members, smallest for neighbors---suggests that social proximity to the workplace matters above and beyond economic exposure or geographic proximity to campaign activity.
-
-Meta-analysis across all cases confirms these patterns generalize. Pooled effects are 14.8 percentage points for former employees, 9.2 percentage points for household members, and 4.1 percentage points for neighbors. The consistent presence of spillovers across diverse contexts supports peer encouragement as a mechanism.
-
-\subsection{Partisan Context and Workplace Discussion}
-
-A second empirical pattern sheds further light on mechanisms. If workplace discussion networks facilitate mobilization, effects should be stronger in contexts where such discussions are more likely to occur. Research on political communication shows that Americans are more comfortable discussing politics with copartisans \citep{carlson2019grapevine}. I therefore examine whether turnout effects vary by employees' partisan context within their workplace.
-
-Using voter registration data, I construct measures of the partisan composition of each company's workforce following \citet{kagan2025vrscores}. I then categorize individual employees as being in the ``partisan majority'' (sharing the partisan affiliation of most coworkers) or ``partisan minority'' (holding a different affiliation).
-
-Figure \ref{fig:partisan} shows that turnout effects are substantially larger for employees in the partisan majority. Meta-regression analysis reveals that majority-party employees show effects approximately 1.5 percentage points larger than minority-party employees ($p < 0.01$). This pattern is consistent with partisan majority employees being more embedded in workplace discussion networks that transmit mobilization messages.
-
-\begin{figure}[!htbp]
-\centering
-\caption{Heterogeneity by Partisan Context: Majority vs. Minority Employees}
-\includegraphics[width=0.8\textwidth]{outputs/figures/meta_hte_majority_contrast.png}
-\label{fig:partisan}
-\begin{minipage}{0.8\linewidth}
-\footnotesize
-Comparison of estimated turnout effects for employees who share the partisan affiliation of the majority of their coworkers (``majority'') versus those who do not (``minority''). Partisan composition measured using voter registration-based VRscores. Error bars indicate 95\% confidence intervals.
-\end{minipage}
-\end{figure}
-
-An alternative interpretation is that majority-party employees are simply more sympathetic to their company's political position, independent of social influence. While I cannot definitively rule out this possibility, the combination of spillover effects and partisan heterogeneity together provide converging evidence for peer encouragement as a key mechanism.
+% TODO: Write results section
 
 
 % DISCUSSION --------------------------------------------------------------------------
 \section{Discussion}\label{sec:discussion}
 
-This paper provides large-scale evidence that firms can successfully mobilize their employees to support corporate political activity. Across 183 companies, 30 campaigns, and 15 elections, I find that employees at politically active firms turn out to vote at substantially higher rates when their employer has clear stakes in a ballot question. Effects are largest in low-turnout elections and for issues with direct strategic implications. Turnout increases spill over to employees' social contacts, and effects are stronger for employees embedded in politically homogeneous workplaces, suggesting peer encouragement as a key mechanism.
+% TODO: Write discussion section
 
-\subsection{Implications for Nonmarket Strategy}
 
-These findings speak to longstanding debates about the effectiveness of constituency-building as a corporate political activity strategy \citep{hillman1999corporate, lord2003constituency}. While prior research has documented that firms attempt to mobilize employees \citep{hertel-fernandez2018politics}, evidence on whether such attempts succeed has been limited. The results here demonstrate that under favorable conditions---non-partisan ballot questions with clear economic stakes and low baseline turnout---employee mobilization can generate substantial turnout effects.
+% CONCLUSION --------------------------------------------------------------------------
+\section{Conclusion}\label{sec:conclusion}
 
-The findings also highlight direct democracy as an important but understudied arena for nonmarket strategy \citep{baron2012business}. Unlike candidate elections, ballot questions allow firms to directly shape policy outcomes. The absence of partisan cues means that employees cannot simply fall back on party loyalty, potentially making them more receptive to employer messaging on specific policy issues. For managers, these results suggest that ballot question campaigns may represent a context where investments in employee relations and internal communications can yield political returns.
-
-\subsection{Implications for Organizations and Society}
-
-Beyond strategic implications, these findings contribute to growing research on the broader societal impact of firms \citep{battilana2025democratic}. By documenting that workplace political mobilization extends to employees' families and neighbors, I show that firms can influence democratic participation beyond their own workforce. The spillover effects documented here---12 percentage points for former employees, 13 points for household members, 6 points for neighbors---indicate that firms' political reach extends well beyond the factory floor.
-
-This influence raises normative questions that merit careful consideration. On one hand, encouraging citizens to participate in elections is generally viewed as prosocial. Voter turnout in American elections is historically low by international standards, and any intervention that increases participation might be welcomed. From this perspective, employee mobilization is merely one channel through which civic engagement spreads through social networks---no different in kind from a spouse reminding a partner to vote or a neighbor posting a yard sign.
-
-On the other hand, there are reasons for concern. Unlike other forms of social influence, employer mobilization occurs within a relationship characterized by asymmetric power. Employees may feel pressure to comply with employer political messaging even when they disagree, particularly in at-will employment states where workers have few legal protections \citep{hertel-fernandez2018politics}. The finding that effects are concentrated among employees who share their coworkers' partisan affiliation may partially allay this concern---it suggests that mobilization operates through peer discussion rather than top-down pressure---but it does not eliminate the possibility that some employees feel coerced. Future research should examine not just whether employee mobilization is effective, but whether it is experienced as legitimate by the workers involved.
-
-The finding that peer encouragement operates through workplace discussion networks connects to research on organizations as civic institutions \citep{hurst2025organizational}. Workplaces are not merely sites of economic production but also social environments where political attitudes and behaviors are shaped through everyday interaction. The results here suggest that when firms face high-stakes political challenges, these social dynamics can be activated to generate collective political action. Whether this activation strengthens or undermines democratic norms depends critically on the context: mobilization around issues of genuine shared concern differs from pressure to support positions that primarily benefit shareholders at workers' expense.
-
-\subsection{Limitations and Future Research}
-
-Several limitations merit discussion. First, while I identify effects across diverse cases, the sample is necessarily limited to ballot questions where firms made observable campaign contributions. Employee mobilization may also occur in cases where firms engage through less traceable means, or may fail in cases I do not observe. Second, I cannot directly observe the content of employer communications or workplace discussions. The mechanisms I identify---peer encouragement through social networks---are inferred from empirical patterns rather than directly measured. Third, the data linkage process, while validated against known benchmarks, may introduce measurement error that attenuates estimated effects.
-
-Future research might address these limitations through complementary methods. Survey or experimental approaches could directly measure employee responses to mobilization attempts. Qualitative case studies could illuminate the specific communication strategies firms employ. And as data infrastructure continues to improve, larger-scale analyses may reveal additional heterogeneity in when and how employee mobilization succeeds or fails.
-
-\subsection{Conclusion}
-
-Can firms rely on their employees to support their political goals? The evidence presented here suggests that under the right conditions, the answer is yes. When ballot questions pose clear threats to firms and their workers, employees turn out to vote at dramatically higher rates---and they bring their families and neighbors with them. For scholars of nonmarket strategy, these findings demonstrate that employees can be a genuine political asset, not merely an internal stakeholder to be managed. For managers navigating an increasingly politicized business environment, they highlight the potential value of authentic engagement with employees on issues of shared economic concern.
-
+% TODO: Write conclusion
 
 
 % REFERENCES --------------------------------------------------------------------------
-
 \clearpage
 \begin{singlespacing}
-\bibliographystyle{apalike}
-\bibliography{paper/library}
+\bibliographystyle{apsr}
+\bibliography{library}
 \end{singlespacing}
 
 
@@ -453,99 +180,7 @@ Can firms rely on their employees to support their political goals? The evidence
 \clearpage
 \appendix
 
-\section{Case Inventory}\label{app:cases}
-
-Table \ref{tab:case_inventory_long} presents the complete inventory of firm-level treatment effects across all identified ballot question campaigns. Effects are estimated using difference-in-differences with individual and election fixed effects, comparing turnout changes for employees at affected companies to matched comparison groups.
-
-\input{outputs/tables/case_inventory_longtable.tex}
-
-\section{El Paso Detailed Results}\label{app:el_paso}
-
-This appendix presents detailed results for the El Paso Proposition K case, including balance diagnostics and robustness analyses for all three affected utility companies: El Paso Electric (EPE), El Paso Water (EPW), and Southwest Gas.
-
-\input{outputs/tables/el_paso_combined_balance_table.tex}
-
-\section{Qualitative Evidence of Employee Mobilization}\label{app:qualitative}
-
-\begin{figure}[!htbp]
-\centering
-\caption{CMP Employees in Campaign Advertisements (Maine 2023)}
-\begin{subfigure}{0.48\textwidth}
-\includegraphics[width=\textwidth]{images/cmp_employee_1.png}
-\caption{CMP employee Jim Wright appearing in anti-Pine Tree Power advertisement}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\textwidth}
-\includegraphics[width=\textwidth]{images/cmp_employee_2.png}
-\caption{CMP utility worker in ``A Risk We Can't Afford'' campaign}
-\end{subfigure}
-\label{fig:cmp_employees}
-\end{figure}
-
-\begin{figure}[!htbp]
-\centering
-\caption{Employee Grassroots Mobilization}
-\begin{subfigure}{0.48\textwidth}
-\includegraphics[width=\textwidth]{images/cmp_employee_outreach.png}
-\caption{CMP employees campaigning against Pine Tree Power (Maine 2023)}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\textwidth}
-\includegraphics[width=\textwidth]{images/epe_employee_outreach.png}
-\caption{El Paso Electric employees campaigning against Proposition K (Texas 2023)}
-\end{subfigure}
-\label{fig:employee_outreach}
-\end{figure}
-
-\section{Maine Case Details}\label{app:maine}
-
-Maine provides a rich context for studying employee mobilization because the state experienced multiple high-stakes utility referendums within a short time period. This appendix provides detailed background on the two major campaigns and presents full event study results.
-
-\subsection{NECEC Referendum (2021)}
-
-The New England Clean Energy Connect (NECEC) was a \$1 billion, 145-mile transmission line project designed to deliver hydroelectric power from Quebec to Massachusetts through western Maine. The project was being developed by Central Maine Power (CMP), a subsidiary of Avangrid (itself a subsidiary of the Spanish multinational Iberdrola). After receiving initial regulatory approval, the project faced opposition from environmental groups concerned about forest clearing, as well as from competing energy interests.
-
-In November 2021, Maine voters considered Question 1, a citizen-initiated referendum that would retroactively revoke the project's permit. CMP and its parent companies spent approximately \$60 million opposing the measure---making it one of the most expensive ballot campaigns in Maine history. The company deployed employee mobilization as part of this effort, featuring utility workers in television advertisements and organizing grassroots campaign activities.
-
-Figure \ref{fig:maine_2021} presents event study results for CMP employees in the 2021 election. The dependent variable is turnout in November general elections from 2014--2022. Treatment is defined as employment at CMP or affiliated utilities (Versant Power, Emera). The estimates show a significant increase in turnout of approximately 10 percentage points in 2021, with parallel trends in prior years. Despite the company's campaign efforts, Question 1 passed with 59\% of the vote, blocking the project.
-
-\begin{figure}[!htbp]
-\centering
-\caption{Maine 2021: CMP Employee Turnout (NECEC Referendum)}
-\includegraphics[width=0.9\textwidth]{outputs/figures/me_2021_event_study.png}
-\label{fig:maine_2021}
-\begin{minipage}{0.9\linewidth}
-\footnotesize
-Event study estimates of differential turnout for Central Maine Power and affiliated utility employees in Maine November general elections. Reference year is 2018. Error bars indicate 95\% confidence intervals with standard errors clustered by individual.
-\end{minipage}
-\end{figure}
-
-\subsection{Pine Tree Power Referendum (2023)}
-
-Two years later, Maine voters faced another utility-related ballot question. Question 3 proposed replacing the state's two investor-owned utilities (CMP and Versant Power) with a new consumer-owned entity called ``Pine Tree Power.'' Proponents argued that a public utility would provide more reliable service and lower rates; opponents warned of the costs and risks of acquiring the existing utilities.
-
-CMP, Versant, and their parent companies again mounted an expensive opposition campaign, spending over \$40 million. Employee mobilization was again visible, with utility workers appearing in television advertisements expressing concerns about the proposed transition.
-
-Figure \ref{fig:maine_2023} presents event study results for the 2023 election. CMP employees showed elevated turnout of approximately 8 percentage points relative to the comparison group. The smaller effect size compared to 2021 may reflect several factors: the 2023 election included other ballot questions that may have motivated general turnout, the Pine Tree Power threat was perceived as less immediate than NECEC (which was already under construction), and some employee fatigue from repeated mobilization efforts. Question 3 was defeated, with 69\% voting against the consumer-owned utility proposal.
-
-\begin{figure}[!htbp]
-\centering
-\caption{Maine 2023: CMP Employee Turnout (Pine Tree Power Referendum)}
-\includegraphics[width=0.9\textwidth]{outputs/figures/me_2023_event_study.png}
-\label{fig:maine_2023}
-\begin{minipage}{0.9\linewidth}
-\footnotesize
-Event study estimates of differential turnout for Central Maine Power and affiliated utility employees in Maine November general elections. Reference year is 2018. Error bars indicate 95\% confidence intervals with standard errors clustered by individual.
-\end{minipage}
-\end{figure}
-
-\subsection{Heterogeneity by Employee Characteristics}
-
-Both Maine campaigns show heterogeneity in treatment effects by employee characteristics. Longer-tenured employees (those with 5+ years at the company) showed larger turnout effects than more recent hires, consistent with stronger organizational attachment facilitating mobilization. Effects were also larger for employees in operational roles (line workers, technicians) than for administrative staff, potentially reflecting tighter social networks among field workers.
-
-\section{Robustness Analyses}\label{app:robustness}
-
-This appendix presents robustness checks for the main findings. [Additional analyses to be added: alternative reference years, different comparison groups, placebo tests using companies without ballot question stakes, and analyses of potential selection effects in the data linkage process.]
+\input{appendix_methodology}
 
 
 \end{document}
