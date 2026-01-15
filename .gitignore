@@ -62,3 +62,20 @@ intermediate/
 *credentials*
 *secret*
 dewey_api_keys.csv
+
+# LaTeX artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.nav
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.bcf
+*.run.xml
+
+# Claude temp files
+tmpclaude-*

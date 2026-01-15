@@ -1,0 +1,1355 @@
+
+%======================================================
+% Business on the Ballot (CBS) – Minimal Beamer w/ Section Tracker
+%======================================================
+\documentclass[aspectratio=169,11pt]{beamer}
+
+%--------------------------
+% Fonts: Arial if xelatex/lualatex, else Helvetica fallback
+%--------------------------
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[scaled=0.95]{helvet} % Helvetica ~ Arial
+  \renewcommand{\familydefault}{\sfdefault}
+\else
+  \usepackage{fontspec}
+  \setmainfont{Arial}
+  \setsansfont{Arial}
+\fi
+
+%--------------------------
+% Core packages
+%--------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{tabularx}
+\usepackage{setspace}
+\setstretch{1}
+
+% ===================== REFERENCES (match article style) ========================
+\usepackage{natbib}
+\setcitestyle{round,authoryear,notesep={:}}
+\bibpunct[, ]{(}{)}{;}{a}{}{,}
+\def\bibhang{24pt}
+\def\newblock{\ } 
+\def\BIBand{and}
+\def\bibfont{\small}
+\def\bibsep{\smallskipamount}
+\setcitestyle{notesep={:}}
+
+% Handy macro from paper
+\newcommand\cites[1]{\citeauthor{#1}'s\ (\citeyear{#1})}
+
+% Custom citation formatting: footnote size + grey color
+\newcommand{\gcite}[2][]{\textcolor{CitationGrey}{{\footnotesize\cite[#1]{#2}}}}
+\newcommand{\gcitep}[2][]{\textcolor{CitationGrey}{{\footnotesize\citep[#1]{#2}}}}
+\newcommand{\gcitet}[2][]{\textcolor{CitationGrey}{{\footnotesize\citet[#1]{#2}}}}
+\newcommand{\gciteauthor}[1]{\textcolor{CitationGrey}{{\footnotesize\citeauthor{#1}}}}
+\newcommand{\gciteyear}[1]{\textcolor{CitationGrey}{{\footnotesize\citeyear{#1}}}}
+
+\usepackage{csquotes}
+\usepackage{appendixnumberbeamer}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{tikzpagenodes}
+\usepackage{etoolbox}
+\usepackage{multicol}
+\usepackage{threeparttable}
+
+\usepackage{hyperref}
+
+%--------------------------
+% Colors (CBS)
+%--------------------------
+\definecolor{ColumbiaBlue}{RGB}{115,169,224} % light
+\definecolor{ColumbiaNavy}{RGB}{0,34,48}    % deep accent
+\definecolor{CitationGrey}{RGB}{128,128,128} % grey for citations
+
+%--------------------------
+% Strip default Beamer chrome
+%--------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{headline}{}
+
+% Add progress dots (smoothbars)
+\useoutertheme[subsection=false]{smoothbars}
+
+%--------------------------
+% Minimal footline: small page number on the right
+%--------------------------
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.2ex,dp=1ex]{}
+    \hfill\usebeamerfont{footline}\color{ColumbiaNavy}\insertframenumber{} / \inserttotalframenumber\hspace{1.2em}
+  \end{beamercolorbox}%
+}
+
+%--------------------------
+% Frametitle: flat text without horizontal rule
+%--------------------------
+\setbeamercolor{frametitle}{fg=ColumbiaNavy}
+\setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\setbeamertemplate{frametitle}{%
+  \vspace{0.2em}%
+  \insertframetitle\par
+  \vspace{0.35em}%
+  \vspace{-0.4em}%
+}
+
+%--------------------------
+% Body text & blocks
+%--------------------------
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=ColumbiaNavy}
+
+\setbeamercolor{block title}{fg=ColumbiaNavy,bg=ColumbiaBlue!15}
+\setbeamercolor{block body}{fg=black,bg=black!1}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\addtobeamertemplate{block begin}{}{\vspace{-0.4ex}}
+\addtobeamertemplate{block end}{}{\vspace{0.2ex}}
+
+\linespread{1.05}
+\setlength{\parskip}{0.5em}
+
+% Itemize spacing: more space between bullets, no extra space within bullets
+\setlength{\itemsep}{0.95em}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{0.3em}
+
+%--------------------------
+% Bullets & itemize styling
+%--------------------------
+% Restore bullet symbols and slightly enlarge item text
+\setbeamertemplate{itemize item}{\large\textbullet}
+\setbeamertemplate{itemize subitem}{\normalsize\textendash}
+\setbeamertemplate{itemize subsubitem}{\tiny\textbullet}
+
+% Slightly increase text size inside itemize environments
+\setbeamerfont{itemize/enumerate body}{size=\large}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\small}
+
+
+%--------------------------
+% Code (listings)
+%--------------------------
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{ColumbiaBlue!50},
+  showstringspaces=false,
+  tabsize=2
+}
+\lstset{style=code}
+
+
+%--------------------------
+% Customize smoothbars colors
+%--------------------------
+\setbeamercolor{section in head/foot}{bg=ColumbiaNavy,fg=white}
+\setbeamercolor{subsection in head/foot}{bg=ColumbiaNavy,fg=white}
+
+
+%--------------------------
+% Metadata
+%--------------------------
+\title[Business on the Ballot]{Business on the Ballot: \\
+Employee Voting as Nonmarket Strategy}
+
+\subtitle{University of Michigan Ross School of Business}
+\author[Max Kagan]{Max Kagan}
+\institute[Columbia Business School]{Columbia Business School}
+\date{\today}
+
+%--------------------------
+% BEGIN
+%--------------------------
+\begin{document}
+
+%--------------------------
+% Title slide (clean, logo centered)
+%--------------------------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    % Draw background white
+    \fill[white] (current page.south west) rectangle (current page.north east);
+
+    % Add right-side vertical image
+    \node[anchor=south east, inner sep=0pt] at (current page.south east)
+      {\includegraphics[height=\paperheight]{images/cover_page.png}};
+  \end{tikzpicture}
+
+  % Overlay text content on left side
+  \vspace*{1cm}
+  \begin{minipage}[t]{0.58\textwidth}
+    \setstretch{1.2}
+    {\bfseries\LARGE \selectfont \inserttitle}\par
+    \vspace{1em}
+    %{\insertsubtitle}\par
+    %\vspace{1.2em}
+    {\normalsize \bfseries \insertauthor\par}
+    {\small \insertinstitute\par}
+    \vspace{1em}
+    {\small November 7, 2025}
+  \end{minipage}
+\end{frame}
+
+%=====================================================================================
+\section{Introduction}\label{sec:intro}
+
+\begin{frame}{Motivation}
+    \begin{itemize}
+        \item<1-> Key tenet of strategy: firm success depends upon successfully navigating institutional environment
+        \item<2-> Politics have made this especially challenging in recent years
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Strategic challenges in the non-market environment}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{images/trump.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Strategic challenges in the non-market environment}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{images/h1b.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Strategic challenges in the non-market environment}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{images/russia.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Strategic challenges in the non-market environment}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{images/bud_light.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Strategic challenges in the non-market environment}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{images/columbia_v2.jpg}
+  \end{center}
+\end{frame}
+
+%========================
+\section{Theory}\label{sec:theory}
+
+\begin{frame}{Non-market strategy can yield strategic benefits}
+    \begin{itemize}
+        \item<1-> Firms are affected by the institutional environment {\scriptsize\textcolor{CitationGrey}{\citep{dimaggio1983iron, north1990institutions, delmas2004stakeholders}}}
+        \item<2-> The institutional environment is also affected by firms {\scriptsize\textcolor{CitationGrey}{\citep{cobb2016how}}}, including through deliberate \textbf{non-market strategy} {\scriptsize\textcolor{CitationGrey}{\citep{baron1995nonmarket, baron2012business, dorobantu2017nonmarket, henisz2012strategy}}}
+        \begin{itemize}
+          \item<3-> Corporate social responsibly (CSR) can yield strategic benefits~{\scriptsize\textcolor{CitationGrey}{\citep{werner2015gaining}}}
+          \item<4-> \textbf{Corporate political activity (CPA)} directly targets government policy {\scriptsize\textcolor{CitationGrey}{\citep{hillman1999corporate, hillman2004corporate}}}
+        \end{itemize}
+        \item<5-> Corporate political activity can yield strategic benefits, e.g.,
+        \begin{itemize}
+          \item Improved foreign market access {\scriptsize\textcolor{CitationGrey}{\citep{hillman1999corporate, henisz2005legitimacy}}}
+          \item Preempting or influencing government regulation {\scriptsize\textcolor{CitationGrey}{\citep{werner2012public}}}
+          \item Protection from enforcement {\scriptsize\textcolor{CitationGrey}{\citep{steel2024lobbying}}} 
+          \item Government financial support {\scriptsize\textcolor{CitationGrey}{\citep{faccio2006politically, wang2024who}}}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Dominant approach: the ``market for public policy''}
+  \begin{itemize}
+    \item<1-> Corporate political activity literature typically adopts ``market for public policy'' framework {\scriptsize\textcolor{CitationGrey}{\citep{bonardi2005corporate}}}
+    \begin{itemize}
+      \item Firms demand favorable policies from government policymakers
+      \item Government policymakers supply policy
+    \end{itemize}
+    \item<2-> Exchange is based upon resources useful for policymakers, e.g.:
+    \begin{itemize}
+      \item Money (i.e., campaign finance) {\scriptsize\textcolor{CitationGrey}{\citep{stuckatz2025money, teso2025influenceseeking}}}
+      \item Information (i.e., lobbying) {\scriptsize\textcolor{CitationGrey}{\citep{hall2006lobbying, werner2015gaining}}}
+    \end{itemize}
+    \item<3-> Majority of corporate political activity research focuses on campaign finance and lobbying {\scriptsize\textcolor{CitationGrey}{\citep{katic2023corporate}}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Limits of ``market for public policy'' approach}
+  \begin{itemize}
+    \item<1-> Empirical challenge of relying on publicly-disclosed data is widely acknowledged  {\scriptsize\textcolor{CitationGrey}{\citep{alvarez2020hidden, bouton2024small, defigueiredo2014advancing, jia2021theoretical, kagan2025vrscores, minefee2021reexamining}}}
+    
+    % \begin{minipage}[t]{\linewidth}
+    %     \setstretch{0.85}
+       
+    %     \vspace{0.25em}
+    % \end{minipage}
+    
+    \item<2-> Theoretical limitations have been less well-articulated:
+    \begin{itemize}
+      \item Policymakers are not the only point of influence
+      \item Focus on policymakers may lead us to overlook other potentially relevant strategic options
+    \end{itemize}
+    \item<3-> What other stakeholders might be relevant for firm political strategy?
+    \begin{itemize}
+      \item The public {\scriptsize\textcolor{CitationGrey}{\citep{walker2012putting, walker2014grassroots}}}
+      \item Consumers {\scriptsize\textcolor{CitationGrey}{(Wen, Walker, and Yue 2024)}}
+      \item Elite employees (political donors) {\scriptsize\textcolor{CitationGrey}{\citep{kim2025systemic, stuckatz2022political, teso2025influenceseeking}}}
+    \end{itemize}
+    \item<4-> \textbf{Almost no evidence about rank-and-file employees}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pathways for employees to influence politics}
+  \begin{itemize}
+    \item<1-> Different pathways for employees to support firm strategic goals: oral testimony, public advocacy, letter-writing, protest, etc. {\scriptsize\textcolor{CitationGrey}{(Baron 2012)}}
+    \item<2-> Today's focus: voting
+  \end{itemize}
+
+  \vspace{1em}
+  \only<3->{
+  {
+  \setbeamercolor{block title}{bg=ColumbiaNavy,fg=white}
+  \setbeamercolor{block body}{bg=ColumbiaNavy!10,fg=black}
+  \begin{block}{Research Question}
+    \vspace{0.5em}
+    \Large
+    \textbf{Can firms rely on employees to turn out to vote in support of their non-market strategy goals?}
+    \vspace{0.3em}
+  \end{block}
+  }
+  }
+\end{frame}
+
+\begin{frame}{Some research suggests that employees could support firm non-market strategy}
+  \begin{itemize}
+    \item Non-market scholars often assume employees should be a favorable constituency:
+  \end{itemize}
+
+  \bigskip
+
+  \begin{quote}
+    ``The natural constituency of a corporation includes employees\dots''
+
+    \hfill {\scriptsize\textcolor{CitationGrey}{\citep{keim1986corporate}}}
+  \end{quote}
+
+    \bigskip
+    
+  \begin{quote}
+    ``\dots employees may be relatively easy to include in a grassroots program.''
+
+    \hfill {\scriptsize\textcolor{CitationGrey}{\citep[][208]{baron2012business}}}
+  \end{quote}
+\end{frame}
+
+\begin{frame}{There are multiple reasons why we might expect employees to support firm non-market strategy}
+  \begin{itemize}
+    \item Potential theoretical explanations:
+
+        \smallskip 
+        
+    \begin{itemize}
+      \item Economic: self-interest {\scriptsize\textcolor{CitationGrey}{\citep{baron2012business}}}
+
+      \smallskip
+      
+      \item Sociological: shared identity and cultural norms {\scriptsize\textcolor{CitationGrey}{\citep{ashforth1989social, hurst2025organizational, pateman1970participation}}}
+
+      \smallskip
+      
+      \item Behavioral: cognitively limited voters rely upon endorsement heuristic {\scriptsize\textcolor{CitationGrey}{\citep{lupia1994shortcuts, lupia1998democratic}}}
+      
+    \end{itemize}
+
+    \smallskip
+
+    \item Empirical studies of ``employee mobilization'' suggests firms often attempt to influence employee votes {\scriptsize\textcolor{CitationGrey}{\citep{hertel-fernandez2017american, hertel-fernandez2018politics, frye2025workplace}}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{But other research casts doubt on the theoretical foundations of employee support for firm political strategy}
+  \begin{itemize}
+    \item<1-> Unclear support for theoretical mechanisms:
+    \begin{itemize}
+    
+      \item Economic: self-interest does not always translate into political behavior {\scriptsize\textcolor{CitationGrey}{\citep{anzia2022does, dolan2025tariffs, hacker2024bridging, jares2024policy}}}
+      
+      \item Sociological: unclear if workplace contact changes political attitudes {\scriptsize\textcolor{CitationGrey}{\citep{chinoy2024political, yan2024minimal}}}
+      
+      \item Behavioral: unclear if employees trust firms as endorsers {\scriptsize\textcolor{CitationGrey}{\citep{lupia1994shortcuts, lupia1998democratic}}}
+        \end{itemize}
+
+    \item<2-> Political science literature questions corporate influence {\scriptsize\textcolor{CitationGrey}{\citep{culpepper2010quiet, gerber1999populist, smith2000american}}}
+
+    \item<3-> Management research also questions efficacy of political stance-taking
+        \begin{itemize}
+            \item Fails to change stakeholder attitudes {\scriptsize\textcolor{CitationGrey}{\citep{poliquin2025policymaker}}}
+
+            \item Backlash from employees and others {\scriptsize\textcolor{CitationGrey}{\citep{burbano2021demotivating, white2025corporate}}}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% \begin{frame}{\ldots{} and empirical research suggests that corporate political stance-taking is often ineffective}
+%     \begin{itemize}
+%     \item Empirical research suggests corporate political stance-taking is often ineffective
+%     \begin{itemize}
+%       \item Leads to backlash
+%         \begin{itemize}
+%             \item From employees 
+%             \item From other stakeholders {\scriptsize\textcolor{CitationGrey}{\citep{hou2023effects, kagan2025asymmetry, mcdonnell2016blacklisted}}}
+%         \end{itemize}
+%       \item Corporate political stances do not change attitudes  
+%       \item Influence may flow the other way (i.e., employees $\rightarrow$ firms) {\scriptsize\textcolor{CitationGrey}{\citep{li2018how, mckean2024when}}}
+%     \end{itemize}
+%     \end{itemize}
+% \end{frame}
+
+\begin{frame}{Will employees turn out to vote?}
+
+    \vspace{1em}
+  {
+  \setbeamercolor{block title}{bg=ColumbiaNavy,fg=white}
+  \setbeamercolor{block body}{bg=ColumbiaNavy!10,fg=black}
+  \begin{block}{Research Question}
+    \vspace{0.5em}
+    \Large
+    \textbf{Can firms rely on employees to turn out to vote in support of their non-market strategy goals?}
+    \vspace{0.3em}
+  \end{block}
+  }
+  
+  \begin{itemize}
+    \item Plausible arguments that employees will (will not) support firm corporate political activity
+    \item But almost no prior investigation into rank-and-file employees' role in corporate political strategy
+  \end{itemize}
+
+
+  
+\end{frame}
+
+%========================
+\section{Research Design}\label{sec:design}
+
+% \begin{frame}{Challenges in studying employees' political engagement}
+%   \begin{itemize}
+%     \item[\textbf{1.}]<1-> \textbf{How to associate firms' corporate political activity with employee responses?}
+%     \begin{itemize}
+%       \item Substantial evidence of partisan sorting and homophily within firms, industries, and occupations {\scriptsize\textcolor{CitationGrey}{\citep{frake2025partisan}}}
+%       \item Overall association between firms and employee politics may be epiphenomenal
+      
+%     \end{itemize}
+%     \item[\textbf{2.}]<2-> \textbf{How do we measure employees' political behavior?}
+%     \begin{itemize}
+%       \item Social desirability bias leads to over-reporting {\scriptsize\textcolor{CitationGrey}{\citep{achen2015intention}}}
+%     \end{itemize}
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{Study context: non-partisan state and local ballot questions}
+  \begin{center}
+    \vspace{-2em}
+        \only<2->{\includegraphics[width=1\linewidth]{images/texas_questions.pdf}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Study context: non-partisan state and local ballot questions}
+  \begin{center}
+        \includegraphics[width=0.6\linewidth]{images/tx_prop1.png}
+        \includegraphics[width=0.6\linewidth]{images/tx_prop5.png}
+        \includegraphics[width=0.6\linewidth]{images/tx_prop6.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why ballot questions?}\label{slide:why_ballot}
+  \begin{itemize}
+     \item<1-> Understudied but significant feature of institutional environment
+    \begin{itemize}
+      \item $\sim$\$1.5bn spend in 2023-2024 cycle (similar to U.S. Senate)
+      \end{itemize}  
+
+        \smallskip
+        
+    \item<2-> Distinct political context
+        \begin{itemize}
+            \item Votes matter: policies directly approved by voters, not policymakers
+            \item Non-partisan
+        \end{itemize}
+   
+      \smallskip
+      
+    
+    \item<3-> Strategic implications for businesses and industries, e.g.:
+    \begin{itemize}
+      \item Rideshare and food app delivery {\scriptsize\textcolor{CitationGrey}{(CA, CO, MA)}}
+      \item Utility regulation {\scriptsize\textcolor{CitationGrey}{(ME, NV, TX)}}
+      \item Project approval (i.e., development) {\scriptsize\textcolor{CitationGrey}{(AZ, ME, MO, OK)}}
+      \item Gambling {\scriptsize\textcolor{CitationGrey}{(AR, CA, CO, FL, KS, MA, 
+      MD, MO, NE, NJ, NY, OR, RI, SC, SD, TN, TX)}}
+      \item Marijuana {\scriptsize\textcolor{CitationGrey}{(AK, AZ, CA, CO, ID, FL, MA, MD, ME, MI, MO, MS, MT, ND, NE, NJ, NV, OH, OK, OR, SD, UT, WA)}}
+    \end{itemize}
+  \end{itemize}
+  \hyperlink{sec:ballot_questions}{\beamerbutton{More details on ballot questions}}
+\end{frame}
+
+\begin{frame}{Using ballot questions to measure employee voting}
+  \begin{itemize}
+    \item<1-> Vote choice is private
+    \item<2-> Voter turnout is public
+    \item<3-> How can turnout be useful?
+    \item<4-> I focus on ``off-cycle" elections with lower turnout
+    \begin{itemize}
+        \item Many states/localities have ballot questions ``off-cycle"
+        \item Outside of presidential ``on-cycle'' elections, turnout varies based upon what is on the ballot {\scriptsize\textcolor{CitationGrey}{\citep{anzia2011election}}}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Vote turnout can be measured using administrative data}
+  \begin{itemize}
+    \item<1-> Turnout history is a public record
+    \begin{itemize}
+        \item Voter file data are used widely in political science {\scriptsize\textcolor{CitationGrey}{(e.g., Barber and Holbein 2022; Hersh and Ghitza 2018)}}  
+    \end{itemize}
+
+        \smallskip
+      
+      \item<2-> But voter file has no information on employment
+        \begin{itemize}
+            \item Has never been possible to study voting turnout of employees      
+        \end{itemize}
+      
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{First-ever large-scale dataset linking the voter file with employment details}
+  \begin{columns}[T]
+    % Left column: Politics at Work image
+    \begin{column}{0.55\textwidth}
+      \fbox{\includegraphics[width=\linewidth]{images/politics_at_work.png}}
+    \end{column}
+
+    % Right column: Authors
+    \begin{column}{0.42\textwidth}
+      \only<2->{
+      \vspace{0.5em}
+
+      % Justin Frake
+      \begin{minipage}[t]{\linewidth}
+        \includegraphics[width=0.28\linewidth]{images/justin.jpg}
+        \hspace{0.5em}
+        \begin{minipage}[b]{0.62\linewidth}
+          \raggedright
+          \textbf{Justin Frake}\\
+          Michigan Ross
+        \end{minipage}
+      \end{minipage}
+
+      \vspace{1.2em}
+
+      % Reuben Hurst
+      \begin{minipage}[t]{\linewidth}
+        \includegraphics[width=0.28\linewidth]{images/reuben.jpg}
+        \hspace{0.5em}
+        \begin{minipage}[b]{0.62\linewidth}
+          \raggedright
+          \textbf{Reuben Hurst}\\
+          Maryland Smith
+        \end{minipage}
+      \end{minipage}
+
+      \vspace{1.2em}
+
+      % Max Kagan
+      \begin{minipage}[t]{\linewidth}
+        \includegraphics[width=0.28\linewidth]{images/max.jpg}
+        \hspace{0.5em}
+        \begin{minipage}[b]{0.62\linewidth}
+          \raggedright
+          \textbf{Max Kagan}\\
+          Columbia Business School
+        \end{minipage}
+      \end{minipage}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Details of the Politics at Work data}
+  \begin{itemize}
+    \item \textbf{Largest-ever dataset covering employees' voting history and political partisanship}
+    \item Data sources:
+    \begin{itemize}
+      \item $\sim$100m unique workers (Revelio Labs)
+      \item $\sim$180m registered U.S. voters (L2 voter file)
+    \end{itemize}
+    \item Machine learning and LLM embeddings used to match $1.8 \times 10^{16}$ potential combinations {\scriptsize\textcolor{CitationGrey}{\citep{enamorado2019using, ornstein2024probabilistic}}}
+    \item Result: coverage of $\sim$45 million unique workers from 2012–24
+    \begin{itemize}
+      \item Political behavior (i.e., voting turnout in all elections)
+      \item Political identity (i.e., partisanship)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{In another set of research projects, we examine partisan sorting in the U.S. labor market}
+    \begin{center}
+    \textbf{VRscores for Colleges and Universities}
+    \vspace{2em}
+        \includegraphics[width=1\linewidth]{images/industry_beeswarm_colleges_universities_and_professional_schools_31_7.pdf}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Today: my design looks at differences in voter turnout}\label{slide:research_design}
+  \begin{itemize}
+    \item<1-> Campaign finance data used to identify politically active firms
+    \begin{itemize}
+      \item Look at all state ballot questions in 2021--23 (also high-profile local elections) 
+      \item Firms can make direct contributions to ballot committee campaigns \hyperlink{slide:finance_example}{\beamerbutton{Examples}}
+      \item Campaign finance data manually matched with companies 
+     \end{itemize}
+    \item<2-> I identify:
+    \begin{itemize}
+    \item 183 firms with $\sim$22k employees
+    \item 30 campaigns in 15 elections across 10 states + two cities
+      \end{itemize}
+    \item<3-> Difference-in-difference design compares voter turnout
+        \begin{itemize}
+            \item Treated group: employees of firms that are politically active in a given election
+            \item Control group: employees of other firms in the same jurisdiction
+        \end{itemize}
+    
+    \end{itemize}
+\end{frame}
+
+
+
+%========================
+\section{Results}\label{sec:results}
+
+\begin{frame}{Preview of results}
+  \begin{itemize}
+        \item[\textbf{1.}] \textbf{Employees can be a political asset for firms}
+             \begin{itemize}
+                \item Employees vote at higher rates in elections where firms are politically active
+            \end{itemize}
+
+    \smallskip
+    
+        \item[\textbf{2.}] \textbf{Heterogeneity: context matters for turnout}
+             \begin{itemize}
+                \item Positive and significant effects on issues of strategic importance for firm
+                \item Largest turnout increases observed when baseline turnout is lowest 
+            \end{itemize}
+
+    \smallskip
+        
+    \item[\textbf{3.}] \textbf{Plausible mechanisms include peer encouragement}
+            \begin{itemize}
+                \item Employees mobilize others outside the firm
+                \item Effects are largest when workers are more politically similar with their co-workers
+            \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Example: El Paso Electric and Proposition K}
+  \begin{itemize}
+    \item Activists propose ``Climate Charter'' amendment to El Paso city charter
+    \item City would municipalize (take over) El Paso Electric
+    \item Ballot question fielded on May 6, 2023 as Proposition K
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{center}
+    \includegraphics[width=0.3\linewidth]{images/el_paso_campaigners.jpg}%
+    \hspace{0.02\linewidth}%
+    \includegraphics[width=0.3\linewidth]{images/epe_logo.png}%
+    \hspace{0.02\linewidth}%
+    \includegraphics[width=0.3\linewidth]{images/epe_yard_sign.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{El Paso Electric donates to committee opposing Prop. K}
+  \begin{center}
+    \includegraphics[width=0.85\linewidth]{images/el_paso_disclosure_zoom.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{El Paso Electric employee turnout vs. other employed El Pasoans}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{outputs/figures/el_paso_epe_current_rawdata_pretrends_wide.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{El Paso Electric employee turnout vs. other employed El Pasoans}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{outputs/figures/el_paso_epe_current_rawdata_wide.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Difference-in-differences}
+    % \begin{equation*}
+    %     Turnout_{it} = \alpha + \sum_{j = 2011, j \neq 2019}^{2023} \beta_j (\mathbf{1} \{t = j\} \times {EPE_i}) + \gamma_i + \delta_t + \varepsilon_{it}
+    % \end{equation*}
+
+    \begin{equation*}
+        Turnout_{it} = \alpha + \beta(Post_t \times EPE~Employee_i) + \gamma_i + \delta_t + \varepsilon_{it}
+    \end{equation*}
+
+    \bigskip
+
+    \begin{itemize}
+        \item Control group is other linked employees in Politics at Work data
+            \begin{itemize}
+                \item Robust to including all voters (i.e., non-employees)
+            \end{itemize}
+        \item Standard errors clustered by individual, year, and employer
+        \item Robustness checks include additional fixed effects:
+            \begin{itemize}
+                \item Industry (NAICS 3-digit)
+                \item Individual geography (census block)
+                \item Individual demographics (age, party, education level)
+            \end{itemize}
+    \end{itemize}
+    
+\end{frame}
+
+
+% \begin{frame}{El Paso Electric turnout vs. other El Pasoans}
+
+%     \begin{center}
+%         \includegraphics[width = 0.8\textwidth]{outputs/figures/el_paso_epe_current_event_study.png}
+%     \end{center}
+% \end{frame}
+
+\begin{frame}{El Paso Electric turnout vs. other El Pasoans}
+    \begin{center}
+        \scalebox{0.75}{%
+            \input{outputs/tables/epe_turnout_beamer}%
+        }
+    \end{center}
+\end{frame}
+
+\begin{frame}{Does this happen more generally?}
+  \begin{itemize}
+    \item Very large effects seen in El Paso: 30+ p.p. increase in turnout
+
+    \smallskip
+    
+    \item But arguably a ``most likely'' case:
+    \begin{itemize}
+      \item Very high stakes for company: would lose its largest market
+      \item Very low baseline turnout in local El Paso elections
+    \end{itemize}
+
+    \smallskip 
+    
+    \item One-off fluke or a broader trend?
+    \begin{itemize}
+      \item Full analysis looks at 183 firms across 30 different election campaigns
+      \item Meta-analysis with random effects (two-stage FGLS)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Meta-analysis: effect sizes across 30 campaigns}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth]{outputs/figures/issue_level_meta_overall.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Navigation}
+
+    \scalebox{2}{\hyperlink{heterogeneity}{\beamergotobutton{Explore heterogeneity in detail}}}
+
+    \vspace{1em}
+
+    \scalebox{2}{\hyperlink{sec:mechanisms}{\beamergotobutton{Skip to mechanisms}}}
+
+    \vspace{1em}
+
+    \scalebox{2}{\hyperlink{discussion}{\beamergotobutton{Skip to discussion}}}
+    
+\end{frame}
+
+%===================================================
+\section{Heterogeneity}\label{sec:heterogeneity}
+
+\begin{frame}{Issue-level heterogeneity}
+\hypertarget{heterogeneity}{}
+  \begin{itemize}
+
+    
+    \item \textbf{Larger turnout increases for issues with greater strategic relevance for firm}
+        \begin{itemize}
+      \item Significant turnout increases for questions related to industry-wide regulation or company-specific project approvals
+      \item Smaller insignificant results for more general economic issues (e.g., taxation) and/or social issues (e.g., abortion)
+    \end{itemize}
+
+          \item \textbf{Larger turnout increases in lower-turnout elections}
+    \begin{itemize}
+      \item ``Ceiling effect'' in higher-turnout elections
+      \item Does not necessarily mean employees do not support firm strategy – just not via turnout mechanism
+    \end{itemize}
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Issue-level heterogeneity: type of issue}
+  \begin{center}
+        \includegraphics[width=0.95\linewidth]{outputs/figures/issue_level_meta_issue_comparison.png}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Issue-level heterogeneity: timing of election}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth]{outputs/figures/issue_level_meta_cycle_comparison.png}
+  \end{center}
+\end{frame}
+
+
+
+
+
+
+%===================================================
+\section{Mechanisms}\label{sec:mechanisms}
+
+\begin{frame}{Considering potential mechanisms}
+\hypertarget{sec:mechanisms}{}
+
+    \begin{enumerate}
+
+      \item[\textbf{1.}] \textbf{Top-down messaging from management}
+        \begin{itemize}
+              \item Employee mobilization via carrots and/or sticks {\scriptsize\textcolor{CitationGrey}{\footnotesize\citep{hertel-fernandez2017american, hertel-fernandez2018politics, frye2025workplace}}} {\beamerbutton{Qualitative Evidence}}
+      \end{itemize}
+
+    \smallskip
+
+    \item[\textbf{2.}] \textbf{Workers act independently}
+            \begin{itemize}
+                \item Results robust to industry fixed effects; suggests this is not the entire explanation
+                \item Strategic implications remain even if firm actions not fully causal
+            \end{itemize}
+
+    \smallskip
+
+      \item[\textbf{3.}] \textbf{Peer encouragement to vote through social networks} {\scriptsize\textcolor{CitationGrey}{(see also Hurst et al. 2025)}}
+      \begin{itemize}
+        \item Research into turnout suggests challenge is not intention to vote, but follow-through {\scriptsize\textcolor{CitationGrey}{\citep{holbein2019making,hillygus2023refocusing}}}
+        \item Employees can encourage and support others to turn out
+      \end{itemize}
+    \end{enumerate}
+    
+\end{frame}
+
+\begin{frame}{Suggestive evidence for peer encouragement mechanism}
+  \begin{itemize}
+
+    \item[\textbf{1.}] \textbf{Turnout increase ``spills over" beyond to current employees}
+    \begin{itemize}
+      \item Groups who are connected socially to current employees also see small turnout increases 
+      \item Suggests employees are engaged in secondary mobilization and firm strategic influence can propagate through employee social networks
+      
+    \end{itemize}
+
+    \item[\textbf{2.}] \textbf{Results are larger when workers are in partisan majority}
+    \begin{itemize}
+      \item Employees may be more to encourage politically like-minded co-workers to vote 
+      \item Significant moderation effect based upon whether workers match firm overall partisanship {\scriptsize\textcolor{CitationGrey}{\citep{kagan2025vrscores}}}
+    \end{itemize}
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Peer encoragement I: Spillovers through employee social networks}
+  \begin{itemize}
+  \item Identify potential ``spillovers" through affected employees' social networks:
+  \begin{itemize}
+    \item \textbf{Household members}
+        \begin{itemize}
+            \item Registered voters at same address (i.e., spouses, adult children, roommates)
+        \end{itemize}
+    \item \textbf{Former employees}
+    \begin{itemize}
+      \item Workers who previously worked at politically active firms before election year
+    \end{itemize}
+    \item \textbf{Neighbors}
+    \begin{itemize}
+      \item Concentric rings of closest geographic neighbors, based upon addresses (haversine distance) ~\hyperlink{slide:elpaso_map}{\beamerbutton{El Paso Map}}
+    \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Peer encouragement I: El Paso spillover effects}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth]{outputs/figures/el_paso_epe_combined_spillover_wide.png}
+  \end{center}
+  \vspace{-1em}
+{\scriptsize \textcolor{CitationGrey}{Neighbor spillovers include census block fixed effects}}
+\end{frame}
+
+\begin{frame}{Peer encouragement II: Does employees' political similarity moderate effects?}
+  \begin{itemize}
+    \item If workplace social networks facilitate political mobilization, employees may be more (less) likely to discuss politics when they are politically (dis)similar to their coworkers
+    \item I use VRscores (company-level partisanship) {\footnotesize \textcolor{CitationGrey}{\citep{kagan2025vrscores}}} to test if political similarity moderates main effects
+        \begin{itemize}
+            \item Moderate companies (baseline): no partisan majority at company
+            \item Partisan majority: employee is same party as $>55\%$ of co-workers
+            \item Employee is partisan minority: $>55\%$ of co-workers belong to opposite party
+        \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Peer encouragement II: Political similarity moderates meta-analytic effects}
+    \begin{center}
+        \scalebox{0.95}{
+            \input{outputs/tables/meta_hte_partisan_moderate_beamer}
+        }
+    \end{center}
+\end{frame}
+
+
+%========================
+\section{Discussion}\label{sec:discussion}
+
+\begin{frame}{Summary of findings}
+\hypertarget{discussion}{}
+  \begin{itemize}
+    \item \textbf{Research question:} Can firms rely on employees to turn out to vote in support of their non-market strategy goals?
+    \item \textbf{Answer:} Yes
+    \begin{itemize}
+      \item Employees turn out at $\sim$6 percentage point higher rate when firm is politically active
+      \item Effects are larger for strategically relevant issues and in low turnout elections 
+      \item Peer encouragement as one key mechanism
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Managerial implications}
+  \begin{itemize}
+    \item[\textbf{1.}] \textbf{Supporting employee voting may have strategic advantages}
+    \begin{itemize}
+      \item Get-out-the-vote policies, e.g., voter education, time-off
+    \end{itemize}
+    \item[\textbf{2.}] \textbf{Firms may prefer to fight political battles at the ballot box (i.e., venue shifting)} {\scriptsize\textcolor{CitationGrey}{\citep{yue2024policy}}}
+    \begin{itemize}
+      \item Especially when issue is of high strategic importance and salience for employees
+      \item Strategy may be most relevant when employee base is relatively large relative to size of voter base
+      \begin{itemize}
+        \item Geographically concentrated firms
+        \item Large employers
+        \item Employee base that is more embedded within community
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Contributions}
+    \begin{itemize}
+            \item Rank-and-file employees can support firms' non-market strategy goals
+
+            \smallskip
+            \item Direct democracy as pathway for political influence outside of traditional ``market for public policy''
+
+            \smallskip
+            
+            \item Role of employees in disseminating firm strategic influence through social networks
+    \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Limitations and future research}
+  \begin{itemize}
+    \item Limitations:
+    \begin{itemize}
+      \item Can observe turnout but not vote choice
+      \item Focus on ballot questions (not candidate elections)
+      \item Cannot fully separate all mechanisms
+
+      \medskip
+      
+    \end{itemize}
+    \item Future research:
+    \begin{itemize}
+        \item What role do different mechanisms play in driving employee turnout?
+        \item What steps can firms take to mobilize employees?
+        \item What are long-term consequences for employee-employer relationships?
+        \item How do employees respond to firm political positions they disagree with?
+        \item When can employee mobilization affect electoral outcomes?
+        \item What other role(s) do employees play in nonmarket strategy and corporate political activity?
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{About me: I study how firms navigate a politically polarized institutional environment}
+
+\setbeamerfont{itemize/enumerate body}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+
+\setlength{\itemsep}{0.3em}
+%\vspace{-0.5em}
+  \begin{enumerate}
+    \item \textbf{How does political segregation impact the composition of firms' employee base?}
+    \begin{itemize}
+      \item ``Political Segregation in the U.S. Workplace'' \textbf{\textcolor{ColumbiaBlue}{(R\&R, \emph{Nature Human Behavior})}}
+      \item ``VRScores: A Voter Registration-Based Approach for Measuring Workforce Politics''\\ \textbf{\textcolor{ColumbiaBlue}{(minor revision, \emph{Organization Science})}}
+    \end{itemize}
+    \vspace{0.2em}
+    \item \textbf{How do stakeholders react when corporations take political stances?}
+    \begin{itemize}
+      \item ``Corporate Political Stances and Employee Turnover'' \textcolor{CitationGrey}{(SMS Strategic Human Capital Group Best Paper Award, 2025)}
+      \item ``Beyond Left and Right: New Evidence on Consumer Responses to Corporate Sociopolitical Stance-Taking''
+    \end{itemize}
+    \vspace{0.2em}
+    \item \textbf{How can organizations affect employees' participation in democracy?}
+    \begin{itemize}
+      \item ``Organizational Civic Culture: Workplaces as Engines of Democratic Participation'' \textcolor{CitationGrey}{(under review, \emph{Administrative Science Quarterly})}
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Wrapping up}\label{slide:final}
+  \begin{center}
+    {\Large \textbf{Business on the Ballot: \\ Employee Voting as Nonmarket Strategy}}
+  \end{center}
+
+  \vspace{0.5em}
+  \begin{itemize}
+    \item Firms can rely on employees to support their non-market strategy goals
+    \item Effects are largest strategically important elections
+    \item Workplace can be an important base for broader political mobilization
+  \end{itemize}
+
+    \bigskip
+
+  \vspace{1em}
+  \begin{center}
+    {\large \textbf{Max Kagan \\ \url{maxkagan.com}}}
+    
+    \vspace{1em}
+    
+    Thank you!
+  \end{center}
+\end{frame}
+
+%========================
+\appendix
+
+\begin{frame}{Backup Slides}\label{sec:backup-toc}
+    \vspace{1em}
+
+    \scalebox{1.5}{\hyperlink{sec:ballot-questions}{\beamergotobutton{Ballot Questions}}}
+
+    \vspace{1em}
+
+    \scalebox{1.5}{\hyperlink{backup-spillovers}{\beamergotobutton{Spillovers}}}
+
+    \vspace{1em}
+
+    \scalebox{1.5}{\hyperlink{backup-mobilization}{\beamergotobutton{Qualitative Evidence}}}
+
+    \vspace{1em}
+
+    \scalebox{1.5}{\hyperlink{slide:final}{\beamerreturnbutton{Conclusion}}}
+    
+\end{frame}
+
+\section{Ballot Questions}\label{sec:ballot_questions}
+\hypertarget{sec:ballot-questions}{}
+
+\begin{frame}{Frequency of ballot questions in the United States}
+    \begin{center}
+        \includegraphics[width = 0.95\textwidth]{outputs/figures/ballot_questions_by_year.jpg}
+    \end{center}
+
+        \hyperlink{slide:why_ballot}{\beamerreturnbutton{Return to main}} \hspace{1em} 
+    \hyperlink{sec:backup-toc}{\beamerreturnbutton{Return to backup TOC}}
+    
+\end{frame}
+
+\begin{frame}{Campaign finance on ballot questions in the United States}
+    \begin{center}
+        \includegraphics[width = 0.95\textwidth]{outputs/figures/ballot_questions_money.jpg}
+    \end{center}
+
+    \hyperlink{slide:why_ballot}{\beamerreturnbutton{Return to main}} \hspace{1em} 
+    \hyperlink{sec:backup-toc}{\beamerreturnbutton{Return to backup TOC}}
+\end{frame}
+
+\begin{frame}{Example: state campaign finance disclosure for ballot question committee (RI)}\label{slide:finance_example}
+    \begin{center}
+        \includegraphics[width=0.6\linewidth]{images/finance_ri.png}
+    \end{center}
+    \vspace{-0.5em}
+    \hyperlink{slide:research_design}{\beamerreturnbutton{Return to research design}}
+\end{frame}
+
+\begin{frame}{Example: state campaign finance disclosure for ballot question committee (CO)}
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{images/finance_co.png}
+    \end{center}
+    \vspace{-0.5em}
+    \hyperlink{slide:research_design}{\beamerreturnbutton{Return to research design}}
+\end{frame}
+
+
+\section{Mechanisms}
+
+
+\begin{frame}{El Paso neighbor spillovers}\label{slide:elpaso_map}
+\hypertarget{backup-spillovers}{}
+    \begin{center}
+        \fbox{\includegraphics[width = 0.6\linewidth]{outputs/figures/el_paso_epe_neighbor_binary.png}}
+    \end{center}
+    \vspace{-1em}
+    \hyperlink{slide:spillovers}{\beamerreturnbutton{Return to Spillovers}}
+    \hyperlink{sec:backup-toc}{\beamerreturnbutton{Return to backup TOC}}
+\end{frame}
+
+\section{Qualitative Evidence}\label{sec:backup}
+
+% \begin{frame}{Backup: Additional Figures / Tables}
+%   \begin{itemize}
+%     \item Insert robustness checks, dynamic DiD plots, covariate balance, and meta-analysis visuals here.
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{Firm mobilization vs. employees acting on their own}
+\hypertarget{backup-mobilization}{}
+\begin{itemize}
+    \item Hard to distinguish what is \emph{caused} by firm mobilization vs. employees acting on their own
+        \begin{itemize}
+            \item Hard to distinguish strategic messaging vs. generic get-out-the-vote
+            \item No required disclosure for internal firm communications
+        \end{itemize}
+        \smallskip
+    \item I gather qualitative evidence from interviews and archival research that firms do take steps to actively mobilize employees
+        \begin{itemize}
+            \item Focus on two electrical utilities: El Paso Electric and Central Maine Power
+            \item Find evidence of targeted employee outreach and employee involvement in public-facing outreach
+            \item Evidence includes interviews and archival research (e.g., company reports, media coverage)
+        \end{itemize}
+\end{itemize}
+
+\hyperlink{sec:mechanisms}{\beamerreturnbutton{Return to mechanisms}}
+
+\end{frame}
+
+\begin{frame}{Example: non-targeted generic ``get-out-the-vote''}
+\vspace{1em}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width = 0.75\linewidth]{images/columbia_gotv.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width = 0.75\linewidth]{images/berkeley_gotv.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{El Paso Electric employees were involved in the public campaign opposing proposition K}
+    \begin{centering}
+        \begin{quote}
+            \large
+            EPE\ldots{}~vehemently opposed Proposition K, rallying workers and retirees to protect jobs, the company and the region's economic vitality. Through door-to-door outreach, yard signs and community engagement, workers and the community mobilized voters to soundly reject the proposal.\\
+            \smallskip
+            \hfill 2023 El Paso Electric Corporate Sustainability Report
+
+        \end{quote}
+    \end{centering}
+\end{frame}
+
+\begin{frame}{Central Maine Power Employees were also involved in public campaigns in 2021 and 2023}
+
+\begin{quote}
+    \large
+    We communicated with [employees]\ldots{} through email and letters and things like that. Word of mouth and talking to members. We worked closely wtih CMP. Workers made videos and commercials, and management were able to say in meetings that they had the workers' support. That was a crucial support.\\
+    \smallskip
+    \hfill Interview with IBEW Union Official
+\end{quote}
+
+
+\end{frame}
+
+\begin{frame}{Example: targeted employee outreach to El Paso Electric Employees}
+\begin{center}
+    \includegraphics[width = 0.8\textwidth]{images/epe_ceo_speech.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Example: employee involvement in public campaigns at El Paso Electric and Central Maine Power}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.78\linewidth]{images/cmp_employee_outreach.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{images/epe_employee_outreach.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Example: employee involvement in public campaigning for Central Maine Power}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{images/cmp_employee_1.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{images/cmp_employee_2.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Additional qualitative evidence}
+    \scalebox{2}{\hyperlink{sec:newspapers}{\beamerbutton{Letters to the editor from Central Maine Power employees}}} \\
+    \bigskip
+    \scalebox{2}{\hyperlink{sec:mechanisms}{\beamerreturnbutton{Return to mechanisms}}}\\
+    \bigskip
+    \scalebox{2}{\hyperlink{sec:backup-toc}{\beamerreturnbutton{Return to backup slides}}}
+\end{frame}
+
+\begin{frame}{Letter to the editor of \emph{Kennebec Journal} I}\label{sec:newspapers}
+\vspace{0.5em}
+    \begin{quote}
+    \scriptsize
+        We are Kevin Therriault, director of Substation Operations, and Kerri Therriault, director of Electric Operations, both at Central Maine Power. Together we have a combined 55 years of experience in the utility business. Both of us began at CMP in entry-level positions, holding a variety of operations positions, and are proud to be part of an organization that successfully provides a critical service and invests in grid and substation modernization.
+        \\
+        \smallskip
+        \textbf{[Pine Tree Power]… looks to dismantle this team and replace it with a new management organization who would not have the experience, institutional knowledge, or financial structure to serve the people of Maine.}
+        \\
+        \smallskip
+        CMP customers have benefited consistently from CMP’s parent company, Avangrid, in storm restoration. CMP can scale up quickly in a storm by calling upon sister companies to assist without the need to go through the traditional mutual aid organization. With this flexibility we can restore over 100,000 customers in a day; a high bar for a nonprofit company to reach. This critical benefit will disappear under any new public power entity\ldots{}
+        \\
+        \smallskip
+        CMP has served the customers of central and southern Maine for more than 120 years. Employees are proud to say that “We are CMP.”
+        \\
+        \smallskip
+        \emph{\hfill Kevin and Kerri Therriault, Sidney\\
+        \hfill June 10, 2021}
+    \end{quote}
+\end{frame}
+
+\begin{frame}{Letter to the editor of \emph{Kennebec Journal}}
+\vspace{0.5em}
+    \begin{quote}
+    \footnotesize
+        Will Mainers ever be satisfied? I doubt it.
+        \\
+        \smallskip
+        \textbf{They don’t want the Corridor project, but they want green power to reduce our carbon footprint. Hydro-Quebec’s project would alleviate New England’s carbon footprint substantially.} The hunters, fishermen, and others who recreate outdoors will be able to access the Great North Woods even better in that 45-mile region.
+        \\
+        \smallskip
+        \textbf{Now they want Pine Tree Power, a Maine government-run power utility. Do you really think you can force two private utilities to sell? Dream on. Think twice, the selling price would be more too high. And who is going to end up paying that? The Maine taxpayer\ldots{}}
+        \\
+        \smallskip
+        Good luck finding the dedication, despite the conditions, of a group of men and women such as CMP employees. Walk in their steel-toe boots all day, wear their protective clothing on sweltering days and in ice-cold temperatures before you throw away the reliability of your electric service, day and night, 24/7. Try wearing a raincoat and bibs for 17 hours during a sweltering, humid thunderstorm.
+        \\
+        \smallskip
+        \emph{\hfill John Rossignol, Oakland\\
+        \hfill June 25, 2021}
+    \end{quote}
+\end{frame}
+
+\begin{frame}{Letter to the editor of \emph{Lewiston Sun Journal}}
+\vspace{0.5em}
+    \begin{quote}
+    \scriptsize
+        \textbf{It’s hunting season in Maine. And, as a Central Maine Power employee, I am proud that CMP land is open for Maine recreation.}
+        \\
+        \smallskip
+        In fact, right now, Versant and CMP both allow access along thousands of miles of their power lines across the state. These corridors are open to all sorts of recreational activities like hunting, fishing, sledding and trail riding.
+        \\
+        \smallskip
+        But what would happen to our access if the government were to take control of all the power lines in Maine? Instead of the longstanding agreements we’ve had with these companies, politicians would get to decide what we could and couldn’t do along power line corridors. This would be one of the potentially disastrous effects of the proposal to seize our electric utilities. Imagine the immense pressure they’d be under to limit or even ban many of these activities.
+        \\
+        \smallskip
+        People come here from all over the world to enjoy our wide-open spaces and trails. It’s a key part of our economy in rural Maine, not to mention our way of life, and this proposed takeover would threaten all of it. People will be hearing more about the proposal to have the state take over Versant and CMP in the coming months. It’s a terrible idea. I hope people don’t support it.
+        \\
+        \smallskip
+        \emph{\hfill Bridgette Spencer, Winthrop\\
+        \hfill October 1, 2022}
+    \end{quote}
+\end{frame}
+
+\begin{frame}{Letter to the editor of \emph{Portland Press Herald} I}
+\vspace{0.5em}
+    \begin{quote}
+    \scriptsize
+        Pine Tree Power will use eminent domain to seize the assets of Central Maine Power and Versant Power, then create a government agency, run by elected politicians.
+        \\
+        \smallskip
+        \textbf{As a longtime CMP employee, I’m proud of the work we do to safely operate the electric grid. We constantly monitor usage, track outages and repair downed lines, all while keeping the lights on. Thinking about these responsibilities in the hands of politicians chills me to the bone.} I’m sure they’ll work to maintain power – but something tells me, for many of them, it’ll be their own power they’re worried about.
+        \\
+        \smallskip
+        Over the next year, people will try to convince you that Pine Tree Power will solve all our energy issues. In reality, it’ll cause even more. Electricity costs will continue to follow the price of natural gas until we get more renewable energy onto the power grid. Meanwhile, if this Pine Tree Power proposal passes, court battles will go on for years and years, jeopardizing the upgrades we need to be making to bring those renewables online. We will all be forced to pay off billions of dollars of Pine Tree Power’s debt, plus interest, and, of course, all the lawyers’ fees.
+        \\
+        \smallskip
+        To those who are as concerned as I am, please join me, and many of my coworkers, in opposing Pine Tree Power.
+        \\
+        \smallskip
+        \emph{\hfill Terri MacDonald, North Yarmouth\\
+        \hfill December 1, 2022}
+    \end{quote}
+\end{frame}
+
+\begin{frame}{Letter to the editor of \emph{Portland Press Herald} II}
+\vspace{0.5em}
+    \begin{quote}
+    \scriptsize
+        My grandfather was a lineman for Central Maine Power. Generations of people just like him---hardworking, proud Mainers who care deeply about their local communities---are the faces of our company. They are the people who best know how to build and maintain our state’s power grid.
+
+        \\
+        \smallskip
+        Take the 650 people on my Electric Operations team who continue this tradition. Many grew up in one Maine town and now live in another not far away. They know the geography of CMP’s grid and how to repair it efficiently when our worst storms hit and, most importantly, they know the other Mainers who depend on them to keep their lights on. Our work is not just meaningful, it’s personal, no matter what type of bizarre picture supporters of Pine Tree Power try to paint of foreign involvement in running our company.
+        \\
+        \smallskip
+        In fact, choosing Pine Tree Power takes all of CMP’s local know-how away. Instead, Maine would hand over control of the power grid to an out-of-state for entity unfamiliar with the people and places we serve. The state will have to hire a private, for-profit company to manage the infrastructure that the government would seize before sending Mainers a bill for \$13.5 billion to make this all happen.
+        \\
+        \smallskip
+        \textbf{Or, you can choose not to pass Question 3 and keep the people who know Maine best in charge of making sure its power system is safe and reliable, while protecting local jobs.}
+        \\
+        \smallskip
+        \emph{\hfill Adam Desrosiers, vice president, Electric Operations Central Maine Power\\
+        \hfill September 9, 2023}
+    \end{quote}
+\end{frame}
+
+\begin{frame}{Navigation}
+    \scalebox{2}{\hyperlink{sec:mechanisms}{\beamerreturnbutton{Return to mechanisms}}}\\
+    \bigskip
+    \scalebox{2}{\hyperlink{sec:backup-toc}{\beamerreturnbutton{Return to backup slides}}}
+\end{frame}
+
+%\section{References}
+
+% Bibliography commands (needed for citations to work, but not displayed)
+
+\bibliographystyle{apsr}
+\renewcommand{\bibfont}{\fontsize{2.8}{1}\selectfont}
+%\setbeamertemplate{frametitle}{}
+
+\begin{frame}{References}
+\hypertarget{sec:references}{}
+\tiny
+\begin{multicols}{3}
+\bibliography{library}
+\end{multicols}
+\end{frame}
+
+\end{document}
