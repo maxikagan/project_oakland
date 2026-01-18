@@ -1,0 +1,569 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ENTITY RESOLUTION METHODOLOGY - EXPANDED APPENDIX
+% Linking Advan POIs to Politics at Work Employers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Methodological Appendix: Entity Resolution for Employee Ideology Linkage}
+\label{sec:appendix_entity_resolution}
+
+\subsection{Overview}
+
+This appendix describes the methodology for linking points of interest (POIs) from the Advan foot traffic data to employer records in the Politics at Work (PAW) dataset. This linkage enables joint analysis of employee partisan composition alongside visitor partisan composition, which is central to our research questions about stakeholder ideological alignment.
+
+The core challenge is \textit{entity resolution}: determining when a business name in Advan (e.g., ``Starbucks'' or ``Joe's Pizza'') corresponds to the same legal entity as an employer record in PAW. Unlike datasets with common identifiers (GVKEY, EIN, DUNS), Advan and PAW share no standard company identifiers, necessitating name-based matching.
+
+We employ a \textit{tiered matching strategy} that combines exact identifier matching (where available), neural embedding-based fuzzy matching for national brands, and geographically-blocked fuzzy matching for local businesses. This approach balances match coverage against precision by applying increasingly sophisticated (and error-prone) methods only where simpler methods fail.
+
+\subsection{Data Sources}
+
+\subsubsection{Advan POI Data}
+
+The Advan Places of Interest (POI) dataset provides location-level data for commercial establishments. For entity resolution, the relevant fields are:
+
+\begin{table}[htbp]
+\centering
+\caption{Advan POI Fields for Entity Resolution}
+\label{tab:advan_fields}
+\begin{tabular}{lll}
+\toprule
+Field & Type & Description \\
+\midrule
+\texttt{PLACEKEY} & string & Unique POI identifier \\
+\texttt{SAFEGRAPH\_BRAND\_IDS} & string & Brand identifier (chain locations only) \\
+\texttt{BRANDS} & string & Brand name (e.g., ``Starbucks'') \\
+\texttt{LOCATION\_NAME} & string & Business name (all POIs) \\
+\texttt{NAICS\_CODE} & string & 6-digit NAICS industry code \\
+\texttt{CITY} & string & City name \\
+\texttt{REGION} & string & State abbreviation \\
+\texttt{POSTAL\_CODE} & string & ZIP code \\
+\texttt{POI\_CBG} & string & 12-digit Census Block Group code \\
+\texttt{LATITUDE} & float & Geographic coordinate \\
+\texttt{LONGITUDE} & float & Geographic coordinate \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Note that Advan does \textit{not} provide CBSA (Core-Based Statistical Area) or MSA identifiers directly. We derive MSA assignment from the \texttt{POI\_CBG} field by extracting the county FIPS code (first 5 digits of the 12-digit CBG code) and joining to the NBER CBSA-to-FIPS crosswalk, as detailed in Section~\ref{sec:poi_msa_assignment}.
+
+After filtering to the 50 U.S. states plus the District of Columbia, the POI population comprises approximately 19.8 million locations:
+
+\begin{itemize}
+    \item \textbf{Branded POIs}: 2.35 million locations ($\sim$12\%) with \texttt{SAFEGRAPH\_BRAND\_IDS} populated, mapping to approximately 14,800 unique brands
+    \item \textbf{Unbranded (``singleton'') POIs}: 17.5 million locations ($\sim$88\%) without brand identifiers, representing independent businesses, franchises without brand coding, or establishments not recognized as chains
+\end{itemize}
+
+This distinction is critical for our matching strategy: branded POIs can be matched at the brand level (one match propagates to thousands of locations), while singleton POIs must be matched individually.
+
+\subsubsection{Advan Brand Information}
+
+The Advan Brand Info file provides brand-level metadata:
+
+\begin{table}[htbp]
+\centering
+\caption{Advan Brand Info Fields}
+\begin{tabular}{lll}
+\toprule
+Field & Type & Description \\
+\midrule
+\texttt{SAFEGRAPH\_BRAND\_ID} & string & Unique brand identifier \\
+\texttt{BRAND\_NAME} & string & Brand name \\
+\texttt{STOCK\_SYMBOL} & string & Stock ticker (public companies) \\
+\texttt{NAICS\_CODE} & string & Primary NAICS code \\
+\texttt{PARENT\_SAFEGRAPH\_BRAND\_IDS} & string & Parent brand identifiers \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The brand file contains approximately 14,800 unique brands. Of these, approximately 500--800 have stock symbols populated, enabling direct ticker-based matching to public companies.
+
+\subsubsection{Politics at Work (PAW) Employment Data}
+
+The Politics at Work dataset provides employer-level partisan composition measures derived from voter registration records matched to employment histories. The employer-year panel contains 6.26 million employer-year observations across 534,000+ unique employers from 2012--2024.
+
+For entity resolution, the relevant fields are:
+
+\begin{table}[htbp]
+\centering
+\caption{PAW Employer Fields for Entity Resolution}
+\label{tab:paw_fields}
+\begin{tabular}{lll}
+\toprule
+Field & Type & Description \\
+\midrule
+\texttt{rcid} & string & Revelio company identifier (stable across years) \\
+\texttt{company\_name} & string & Employer name \\
+\texttt{ticker} & string & Stock ticker (available for $\sim$0.2\% of records) \\
+\texttt{gvkey} & string & Compustat identifier (public companies) \\
+\texttt{naics\_code} & string & NAICS industry code ($\sim$96\% populated) \\
+\texttt{modal\_msa} & string & Company's primary MSA \\
+\texttt{ultimate\_parent\_rcid} & string & Ultimate parent company identifier \\
+\texttt{employee\_count} & integer & Total employee count \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+PAW partisan composition variables (not used for matching, but linked post-resolution):
+
+\begin{itemize}
+    \item \texttt{pct\_dem\_imp}, \texttt{pct\_rep\_imp}: Imputed Democratic/Republican employee percentages
+    \item \texttt{two\_party\_margin\_imp}: Democratic minus Republican margin
+    \item \texttt{political\_diversity\_imp}: Herfindahl-based diversity measure
+    \item \texttt{effective\_parties\_imp}: Inverse Herfindahl index
+\end{itemize}
+
+After deduplication on company name, PAW contains approximately 26.3 million unique company name strings. However, the effective matching universe is much smaller when filtered to companies with sufficient employee counts for reliable ideology estimates.
+
+\subsubsection{Geographic Crosswalks}
+
+We use two geographic crosswalks for MSA-based blocking:
+
+\begin{enumerate}
+    \item \textbf{NBER CBSA-to-FIPS Crosswalk}: Maps county FIPS codes to Core-Based Statistical Areas (CBSAs), using 2023 Census Bureau delineations. This enables mapping Advan POIs to MSAs via the county portion of their Census Block Group code.
+
+    \item \textbf{PAW MSA Position Files}: Pre-computed files containing all PAW employers with at least one employee in each MSA. These files naturally encode which companies operate in which metropolitan areas, enabling efficient geographic blocking without explicit company-MSA crosswalk construction.
+\end{enumerate}
+
+\subsubsection{Data Access and Retrieval Dates}
+
+Table~\ref{tab:data_access} documents the access dates for all data sources used in this analysis. These dates are provided for replication purposes and to establish the temporal snapshot of each dataset.
+
+\begin{table}[htbp]
+\centering
+\caption{Data Access Dates}
+\label{tab:data_access}
+\begin{tabular}{llll}
+\toprule
+Data Source & Access Date & Provider & Notes \\
+\midrule
+Advan Monthly Patterns & January 12, 2026 & Dewey Data & Coverage: Jan 2019--Jul 2025 \\
+Advan Brand Info & January 15, 2026 & Dewey Data & Derived from POI data \\
+Politics at Work (PAW) & April 16, 2025 & Harvard Dataverse & Revelio employment records \\
+CBG Election Results & December 29, 2025 & Enamorado et al. & 2016 and 2020 presidential \\
+NBER CBSA Crosswalk & January 13, 2026 & NBER & 2023 Census delineations \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All data were accessed under appropriate data use agreements. Advan data were obtained through a commercial license via Dewey Data. Politics at Work data are available through Harvard Dataverse with restricted access for research purposes. CBG-level election results are from the geocoded election returns dataset. The NBER CBSA crosswalk is publicly available.
+
+\subsection{Tiered Matching Strategy}
+
+We employ a five-tier matching strategy, applying increasingly sophisticated methods to progressively smaller subsets of unmatched records. Each tier is designed to maximize precision for its target population while acknowledging that later tiers necessarily trade precision for coverage.
+
+\begin{table}[htbp]
+\centering
+\caption{Entity Resolution Tiers}
+\label{tab:matching_tiers}
+\begin{tabular}{llrrr}
+\toprule
+Tier & Method & Scope & Expected Precision & Expected Coverage \\
+\midrule
+0a & Exact ticker match & Public brands & 100\% & 500--800 brands \\
+0b & GVKey via ticker & Public brands & 100\% & Same as 0a \\
+1 & Brand embedding match & All brands & 90--95\% & 80\%+ of brands \\
+2 & Singleton MSA-blocked & Unbranded POIs & 70--80\% & 20--40\% of singletons \\
+3 & String distance fallback & Remaining & 50--70\% & Marginal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Tier 0a: Exact Ticker Matching}
+
+For Advan brands with stock symbols and PAW companies with tickers, we perform exact string matching:
+
+\begin{equation}
+\text{match}(i, j) = \mathbbm{1}\left[\text{Advan.STOCK\_SYMBOL}_i = \text{PAW.ticker}_j\right]
+\end{equation}
+
+This produces high-confidence matches for major public companies. Approximately 500--800 Advan brands have stock symbols, representing the largest national chains (Walmart, McDonald's, Starbucks, Target, etc.). These brands account for a disproportionate share of POIs---the top 100 brands by location count cover approximately 15\% of all branded POIs.
+
+\textbf{Match quality}: 100\% precision by construction (exact string match on standardized identifiers).
+
+\textbf{Cost}: Zero (no API calls required).
+
+\subsubsection{Tier 0b: GVKey Extraction via Ticker}
+
+For brands matched in Tier 0a, we extract the Compustat \texttt{gvkey} identifier from PAW records. This enables downstream linkage to financial performance data (Compustat) for public company analysis.
+
+Note that Advan does not provide GVKey directly; the ticker serves as a bridge identifier. PAW records with tickers generally have GVKeys populated, making this a one-step lookup.
+
+\subsubsection{Tier 1: Brand Name Matching via Neural Embeddings}
+
+For unmatched brands (those without stock symbols or without ticker matches), we employ fuzzy name matching using neural text embeddings. This approach handles the substantial variation in company name representations:
+
+\begin{itemize}
+    \item Corporate suffixes: ``Starbucks'' vs. ``Starbucks Corporation'' vs. ``Starbucks Inc.''
+    \item Abbreviations: ``McDonald's'' vs. ``McDonalds'' vs. ``MCD''
+    \item Parent vs. brand: ``Yum! Brands'' vs. ``Taco Bell'' vs. ``KFC''
+    \item Punctuation and spacing: ``Dunkin' Donuts'' vs. ``Dunkin Donuts''
+\end{itemize}
+
+\paragraph{Embedding Generation}
+
+We generate vector embeddings for each unique company name using OpenAI's \texttt{text-embedding-3-small} model, which produces 1,536-dimensional vectors optimized for semantic similarity tasks. We choose this model over larger alternatives because:
+
+\begin{enumerate}
+    \item Company names are short strings (typically 2--5 words) where larger models provide marginal benefit
+    \item Cost is significantly lower (\$0.02 per million tokens vs. \$0.13 for \texttt{text-embedding-3-large})
+    \item Latency is lower, enabling faster processing of large batches
+\end{enumerate}
+
+\paragraph{Similarity Computation}
+
+For each Advan brand $i$ and PAW company $j$, we compute cosine similarity between their embedding vectors:
+
+\begin{equation}
+\text{sim}(i, j) = \frac{\mathbf{e}_i \cdot \mathbf{e}_j}{\|\mathbf{e}_i\| \|\mathbf{e}_j\|}
+\end{equation}
+
+where $\mathbf{e}_i$ and $\mathbf{e}_j$ are the embedding vectors for Advan brand $i$ and PAW company $j$ respectively.
+
+\paragraph{Candidate Selection and Thresholding}
+
+For each Advan brand, we identify the PAW company with highest cosine similarity and apply acceptance thresholds:
+
+\begin{itemize}
+    \item \textbf{Accept}: $\text{sim} > 0.85$ --- Sufficient similarity for match
+    \item \textbf{Reject}: $\text{sim} \leq 0.85$ --- Insufficient similarity
+\end{itemize}
+
+When multiple PAW companies have similar scores (within 0.05 of the maximum), we use Jaro-Winkler string distance as a secondary signal to break ties. Jaro-Winkler gives additional weight to prefix matches, which is appropriate for company names where the distinctive information often appears first.
+
+\paragraph{NAICS Code Validation}
+
+For candidate matches, we compare NAICS codes at the 4-digit level when available in both datasets. NAICS agreement provides a sanity check: a restaurant brand should not match to a manufacturing company. Candidates with NAICS disagreement at the 2-digit level are excluded from matching.
+
+\paragraph{Computational Cost}
+
+\begin{table}[htbp]
+\centering
+\caption{Tier 1 Embedding Costs (Estimated)}
+\begin{tabular}{lrrr}
+\toprule
+Component & Records & Tokens (est.) & Cost \\
+\midrule
+Advan brand names & 14,800 & 45,000 & \$0.001 \\
+PAW company names (filtered) & 50,000 & 150,000 & \$0.003 \\
+\textbf{Total} & & & \textbf{\$0.004} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We filter PAW companies to those with $\geq$50 employees to focus matching efforts on companies with reliable ideology estimates. This reduces the PAW candidate set from 26.3 million to approximately 50,000 companies while retaining the most analytically relevant employers.
+
+\subsubsection{Tier 2: Singleton POI Matching with MSA Blocking}
+
+For the 17.5 million unbranded POIs, we employ fuzzy matching with geographic blocking by Metropolitan Statistical Area (MSA). Geographic blocking is essential because:
+
+\begin{enumerate}
+    \item Singleton POIs represent local businesses, not national chains
+    \item A ``Joe's Pizza'' in New York is almost certainly different from ``Joe's Pizza'' in Los Angeles
+    \item Without blocking, the comparison space would be intractable: $17.5\text{M} \times 26.3\text{M} = 4.6 \times 10^{14}$ pairs
+\end{enumerate}
+
+\paragraph{POI-to-MSA Assignment}
+\label{sec:poi_msa_assignment}
+
+We assign each Advan POI to an MSA using the \texttt{POI\_CBG} field, which contains the 12-digit Census Block Group code. The first 5 digits encode the county FIPS code:
+
+\begin{equation}
+\text{county\_fips} = \text{POI\_CBG}[0:5]
+\end{equation}
+
+We join this to the NBER CBSA-to-FIPS crosswalk to obtain the CBSA (MSA/micropolitan area) code:
+
+\begin{verbatim}
+POI_CBG: "060371234001"
+          ↓
+County FIPS: "06037" (Los Angeles County, CA)
+          ↓
+CBSA Code: "31080" (Los Angeles-Long Beach-Anaheim, CA)
+\end{verbatim}
+
+Approximately 15--20\% of POIs are located in counties not part of any CBSA (rural areas). These POIs cannot be MSA-blocked and are handled separately (see Section~\ref{sec:rural_pois}).
+
+\paragraph{PAW Company-MSA Extraction}
+
+The PAW MSA position files (one per MSA) contain all employers with at least one employee in that MSA. This naturally encodes multi-MSA company presence: a regional company operating in three MSAs appears in all three position files.
+
+For each MSA, we extract the unique set of company identifiers and names:
+
+\begin{verbatim}
+For MSA X:
+  Load {msa_x}_positions.parquet
+  Extract unique (rcid, company_name) pairs
+  Result: all companies operating in MSA X
+\end{verbatim}
+
+\paragraph{Within-MSA Matching}
+
+For each MSA, we perform embedding-based matching between:
+\begin{itemize}
+    \item \textbf{Query set}: Unbranded POI \texttt{LOCATION\_NAME} values in that MSA
+    \item \textbf{Candidate set}: PAW \texttt{company\_name} values from that MSA's position file
+\end{itemize}
+
+We apply stricter thresholds than Tier 1, reflecting higher noise in singleton matching:
+
+\begin{itemize}
+    \item \textbf{Auto-accept}: $\text{sim} > 0.92$
+    \item \textbf{Accept with NAICS match}: $0.88 < \text{sim} \leq 0.92$ and NAICS 4-digit agreement
+    \item \textbf{Reject}: $\text{sim} \leq 0.88$ or NAICS disagreement at 2-digit level
+\end{itemize}
+
+\paragraph{Parallelization Strategy}
+
+Tier 2 is implemented as a SLURM array job with one task per MSA. The 384 MSAs are processed independently, with outputs written to MSA-specific Parquet files. This enables:
+
+\begin{enumerate}
+    \item Embarrassingly parallel execution (no cross-MSA dependencies)
+    \item Memory efficiency (each task loads only one MSA's data)
+    \item Incremental progress (partial failures don't require full restart)
+\end{enumerate}
+
+\paragraph{Computational Cost}
+
+\begin{table}[htbp]
+\centering
+\caption{Tier 2 Embedding Costs (Estimated, Full Scale)}
+\begin{tabular}{lrrr}
+\toprule
+Component & Records & Tokens (est.) & Cost \\
+\midrule
+Singleton POI names & 17,500,000 & 52,500,000 & \$1.05 \\
+PAW company names (all MSAs) & 2,000,000 & 6,000,000 & \$0.12 \\
+\textbf{Total} & & & \textbf{\$1.17} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The actual cost is lower because many POI names are duplicates across locations (e.g., ``Hair Salon'' appears thousands of times), and we embed unique strings only.
+
+\subsubsection{Tier 3: String Distance Fallback}
+
+For POIs unmatched after Tiers 0--2, we apply traditional string distance methods as a fallback:
+
+\begin{itemize}
+    \item \textbf{Jaro-Winkler distance}: Emphasizes prefix matches, handles transpositions
+    \item \textbf{Jaccard similarity on tokens}: Computes overlap of word tokens
+    \item \textbf{Levenshtein distance}: Edit distance for character-level matching
+\end{itemize}
+
+These methods serve primarily as robustness checks and to capture matches that embeddings miss (e.g., substantial abbreviations like ``Intl'' for ``International'').
+
+\textbf{Expected yield}: Marginal additional matches beyond Tiers 0--2.
+
+\textbf{Cost}: Zero (local computation only).
+
+\subsection{Handling Special Cases}
+
+\subsubsection{Multi-MSA Companies}
+\label{sec:multi_msa}
+
+Companies operating across multiple MSAs naturally appear in multiple MSA position files. When processing MSA $X$, we match POIs in $X$ against all companies with employees in $X$---including regional and national companies.
+
+This design ensures that:
+\begin{enumerate}
+    \item A ``Joe's Pizza'' POI in Columbus matches against ``Joe's Pizza'' in the Columbus position file (if it has employees there)
+    \item The same company may be matched in multiple MSAs, producing consistent \texttt{rcid} linkages
+    \item No explicit company-MSA footprint computation is required
+\end{enumerate}
+
+\subsubsection{Franchise vs. Corporate Matching}
+\label{sec:franchises}
+
+Many branded POIs are franchises with independent ownership. In PAW, these may appear as:
+\begin{itemize}
+    \item The parent brand (``McDonald's Corporation'')
+    \item Individual franchise entities (``Golden Arches LLC'')
+\end{itemize}
+
+For Tier 1 (brand matching), we match to the parent brand, providing corporate-level employee ideology. For Tier 2 (singleton matching), we may match to individual franchise entities, providing location-specific employee ideology.
+
+We retain both linkages where available, enabling sensitivity analysis: does brand-level or franchise-level employee composition better predict visitor composition?
+
+\subsubsection{Branded POIs Without Brand IDs}
+
+Some POIs that are clearly chain locations lack \texttt{SAFEGRAPH\_BRAND\_IDS} due to data quality issues. These are coded as singletons and matched via Tier 2.
+
+After completing Tier 1, we propagate brand$\rightarrow$rcid mappings to Tier 2: if a singleton POI matches to the same \texttt{rcid} as a known brand, we flag it as a likely uncoded brand location.
+
+\subsubsection{Rural POIs (Non-MSA Locations)}
+\label{sec:rural_pois}
+
+Approximately 15--20\% of POIs are located in counties not part of any CBSA. For these POIs:
+
+\begin{enumerate}
+    \item \textbf{Primary approach}: Match against statewide company list (all companies with employees in that state)
+    \item \textbf{Alternative}: Use micropolitan area definitions where available
+    \item \textbf{Fallback}: Exclude from MSA-blocked matching; include only Tier 0--1 matches
+\end{enumerate}
+
+Rural POIs are flagged with a data quality indicator. Researchers may choose to restrict analysis to MSA-located POIs for cleaner matching.
+
+\subsubsection{Temporal Name Changes}
+
+Company names change over time due to mergers, acquisitions, and rebranding. PAW records span 2012--2024; Advan data spans 2019--2025. We address temporal misalignment by:
+
+\begin{enumerate}
+    \item Matching against the most recent PAW company name
+    \item Using \texttt{ultimate\_parent\_rcid} to link subsidiaries that may have changed names
+    \item Flagging matches where Advan and PAW names differ substantially (Jaro-Winkler $< 0.8$) as lower confidence
+\end{enumerate}
+
+\subsection{Output Schema}
+
+\subsubsection{Brand Crosswalk}
+
+For Tier 0--1 matches (brand-level), we output \texttt{brand\_crosswalk.parquet}:
+
+\begin{table}[htbp]
+\centering
+\caption{Brand Crosswalk Schema}
+\begin{tabular}{lll}
+\toprule
+Column & Type & Description \\
+\midrule
+\texttt{safegraph\_brand\_id} & string & Advan brand identifier \\
+\texttt{brand\_name} & string & Advan brand name \\
+\texttt{stock\_symbol} & string & Stock ticker (if available) \\
+\texttt{rcid} & string & PAW company identifier \\
+\texttt{company\_name} & string & PAW company name \\
+\texttt{gvkey} & string & Compustat identifier (if available) \\
+\texttt{ultimate\_parent\_rcid} & string & Parent company identifier \\
+\texttt{match\_tier} & string & ``ticker\_exact'' or ``brand\_embedding'' \\
+\texttt{cosine\_similarity} & float & Embedding similarity (Tier 1 only) \\
+\texttt{naics\_match} & boolean & NAICS codes agree at 4-digit level \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Singleton Crosswalk}
+
+For Tier 2 matches (location-level), we output \texttt{singleton\_crosswalk/\{msa\_code\}.parquet}:
+
+\begin{table}[htbp]
+\centering
+\caption{Singleton Crosswalk Schema}
+\begin{tabular}{lll}
+\toprule
+Column & Type & Description \\
+\midrule
+\texttt{placekey} & string & Advan POI identifier \\
+\texttt{location\_name} & string & Advan location name \\
+\texttt{poi\_cbg} & string & Census Block Group \\
+\texttt{msa\_code} & string & CBSA code \\
+\texttt{msa\_name} & string & CBSA name \\
+\texttt{rcid} & string & PAW company identifier \\
+\texttt{company\_name} & string & PAW company name \\
+\texttt{cosine\_similarity} & float & Embedding similarity score \\
+\texttt{naics\_match} & boolean & NAICS codes agree at 4-digit level \\
+\texttt{is\_likely\_uncoded\_brand} & boolean & Matches known brand rcid \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Master POI-to-Employer Crosswalk}
+
+The final output combines all tiers into \texttt{poi\_employer\_crosswalk.parquet}:
+
+\begin{table}[htbp]
+\centering
+\caption{Master Crosswalk Schema}
+\begin{tabular}{lll}
+\toprule
+Column & Type & Description \\
+\midrule
+\texttt{placekey} & string & Advan POI identifier \\
+\texttt{safegraph\_brand\_id} & string & Brand ID (branded POIs only) \\
+\texttt{rcid} & string & PAW company identifier \\
+\texttt{ultimate\_parent\_rcid} & string & Parent company identifier \\
+\texttt{gvkey} & string & Compustat identifier (public companies) \\
+\texttt{match\_tier} & string & Which tier produced the match \\
+\texttt{match\_confidence} & float & Composite confidence score \\
+\texttt{match\_source} & string & ``brand'' or ``singleton'' \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Pipeline Implementation}
+
+The following computational resources and costs are \textit{estimates} based on data sizes and API pricing as of January 2026. Actual values may vary based on final data volumes and API pricing changes.
+
+\subsubsection{Computational Resources}
+
+\begin{table}[htbp]
+\centering
+\caption{SLURM Resource Allocation by Step}
+\begin{tabular}{llll}
+\toprule
+Step & Partition & Rationale & Wall Time (est.) \\
+\midrule
+Extract unique entities & savio3 & Moderate memory for scans & 30 min \\
+Tier 0: Ticker match & savio2 & Trivial join & 5 min \\
+Tier 1: Brand embeddings & savio2 & API calls, not compute-intensive & 1 hour \\
+Tier 2: Singleton (per MSA) & savio3 array & Parallel by MSA, 384 tasks & 2--4 hours \\
+Combine crosswalks & savio3\_bigmem & Large join operations & 1 hour \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{API Cost Summary}
+
+\begin{table}[htbp]
+\centering
+\caption{Total Embedding API Costs (Estimated)}
+\begin{tabular}{lrr}
+\toprule
+Tier & Method & Estimated Cost \\
+\midrule
+Tier 0 & Exact match & \$0 \\
+Tier 1 & Brand embeddings ($\sim$65K strings) & \$0.01 \\
+Tier 2 & Singleton embeddings ($\sim$20M strings) & \$2--5 \\
+Tier 3 & String distance & \$0 \\
+\textbf{Total} & & \textbf{\$2--5} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Note: Earlier project estimates of \$500--2,000 were based on larger embedding models and outdated pricing. Current \texttt{text-embedding-3-small} pricing (\$0.02/1M tokens) makes full-scale matching highly affordable.
+
+\subsection{Limitations}
+
+\begin{enumerate}
+    \item \textbf{Name variation}: Despite embedding-based matching, some legitimate matches may be missed due to substantial name differences (e.g., ``Alphabet Inc.'' vs. ``Google''; parent-subsidiary relationships)
+
+    \item \textbf{Subsidiary relationships}: Our matching does not automatically capture corporate hierarchies. A brand owned by a conglomerate matches to the brand-level PAW record, not necessarily the parent. We provide \texttt{ultimate\_parent\_rcid} for researchers who wish to aggregate to parent level.
+
+    \item \textbf{Private company precision}: Companies without ticker symbols rely entirely on name matching, which may have lower precision than ticker-based matching.
+
+    \item \textbf{Geographic blocking errors}: The MSA blocking strategy assumes local businesses operate within MSA boundaries. Companies headquartered in one MSA with employees recorded in another may cause false negatives.
+
+    \item \textbf{Temporal misalignment}: PAW employment records and Advan POI data may reflect different time periods. Company names change; locations open and close.
+
+    \item \textbf{Singleton match noise}: Tier 2 matching for unbranded POIs is inherently noisier than brand matching. Researchers should consider restricting analysis to branded POIs or applying match quality filters.
+
+    \item \textbf{Non-employer POIs}: Some Advan POIs are not employers (parks, landmarks, residential buildings miscoded as commercial). These will not match to PAW and should not be interpreted as match failures.
+\end{enumerate}
+
+\subsection{Replication}
+
+To replicate this entity resolution procedure:
+
+\begin{enumerate}
+    \item Obtain access to Advan POI data (commercial license via Dewey Data or direct from Advan)
+    \item Obtain access to Politics at Work employment data (restricted access via Harvard Dataverse)
+    \item Download NBER CBSA-to-FIPS crosswalk (publicly available)
+    \item Configure OpenAI API access for embedding generation
+    \item Execute pipeline scripts in order:
+    \begin{enumerate}
+        \item \texttt{00\_filter\_us\_pois.py}: Filter to US POIs
+        \item \texttt{01\_extract\_unique\_entities.py}: Extract unique brands/companies
+        \item \texttt{02\_tier0\_ticker\_match.py}: Exact ticker matching
+        \item \texttt{03\_tier1\_brand\_embeddings.py}: Brand embedding matching
+        \item \texttt{04\_tier2\_singleton\_msa.py}: Singleton MSA-blocked matching (array job)
+        \item \texttt{05\_combine\_crosswalks.py}: Combine all tiers
+    \end{enumerate}
+\end{enumerate}
+
+Scripts are available at: \url{https://github.com/maxikagan/measuring-stakeholder-ideology}
