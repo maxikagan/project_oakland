@@ -6,26 +6,36 @@ import pydeck as pdk
 import numpy as np
 
 
-def get_color_for_lean(lean_value, scale=0.5):
+def get_color_for_lean(lean_value, scale=0.5, neutral_zone=0.03):
     """
     Convert partisan lean to RGB color.
 
     Values > 0.5 (Republican) = Red
     Values < 0.5 (Democratic) = Blue
-    Values = 0.5 (neutral) = White/Gray
+    Values near 0.5 (neutral) = Gray
 
     Args:
         lean_value: Partisan lean (0 = full Dem, 1 = full Rep, 0.5 = neutral)
         scale: How much deviation from 0.5 gives full color saturation
+        neutral_zone: Deviation from 0.5 that still counts as neutral (grey)
 
     Returns:
         [R, G, B, A] color array
     """
     if np.isnan(lean_value):
-        return [128, 128, 128, 100]
+        return [160, 160, 160, 150]
 
     deviation = lean_value - 0.5
-    normalized = np.clip(deviation / scale, -1, 1)
+
+    if abs(deviation) <= neutral_zone:
+        return [160, 160, 160, 180]
+
+    if deviation > 0:
+        effective_dev = deviation - neutral_zone
+    else:
+        effective_dev = deviation + neutral_zone
+
+    normalized = np.clip(effective_dev / scale, -1, 1)
 
     if normalized > 0:
         r = 255

@@ -37,12 +37,52 @@ blue indicates more Democratic customers. Filter by category or NAICS to compare
 """)
 
 
+STATE_CENTERS = {
+    "AL": (32.8, -86.8, 7), "AK": (64.0, -153.0, 4), "AZ": (34.3, -111.7, 6),
+    "AR": (34.9, -92.4, 7), "CA": (37.2, -119.4, 6), "CO": (39.0, -105.5, 7),
+    "CT": (41.6, -72.7, 8), "DE": (39.0, -75.5, 8), "FL": (28.6, -82.4, 6),
+    "GA": (32.6, -83.4, 7), "HI": (20.8, -156.3, 7), "ID": (44.4, -114.6, 6),
+    "IL": (40.0, -89.2, 7), "IN": (39.9, -86.3, 7), "IA": (42.0, -93.5, 7),
+    "KS": (38.5, -98.4, 7), "KY": (37.8, -85.7, 7), "LA": (31.0, -91.9, 7),
+    "ME": (45.3, -69.0, 7), "MD": (39.0, -76.8, 8), "MA": (42.2, -71.5, 8),
+    "MI": (44.3, -85.4, 6), "MN": (46.3, -94.3, 6), "MS": (32.7, -89.7, 7),
+    "MO": (38.4, -92.5, 7), "MT": (47.0, -109.6, 6), "NE": (41.5, -99.8, 7),
+    "NV": (39.3, -116.6, 6), "NH": (43.6, -71.5, 8), "NJ": (40.2, -74.7, 8),
+    "NM": (34.4, -106.1, 6), "NY": (42.9, -75.5, 7), "NC": (35.5, -79.8, 7),
+    "ND": (47.4, -100.3, 7), "OH": (40.4, -82.8, 7), "OK": (35.6, -97.5, 7),
+    "OR": (43.9, -120.6, 6), "PA": (40.9, -77.8, 7), "RI": (41.7, -71.5, 9),
+    "SC": (33.9, -80.9, 7), "SD": (44.4, -100.2, 7), "TN": (35.8, -86.3, 7),
+    "TX": (31.5, -99.4, 6), "UT": (39.3, -111.7, 6), "VT": (44.0, -72.7, 8),
+    "VA": (37.5, -78.8, 7), "WA": (47.4, -120.5, 7), "WV": (38.9, -80.5, 7),
+    "WI": (44.6, -89.7, 7), "WY": (43.0, -107.5, 6), "DC": (38.9, -77.0, 11)
+}
+
+STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
+    "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware",
+    "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho",
+    "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas",
+    "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+    "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi",
+    "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
+    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma",
+    "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
+    "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah",
+    "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia",
+    "WI": "Wisconsin", "WY": "Wyoming", "DC": "Washington DC"
+}
+
+
 @st.cache_data(ttl=3600)
-def get_sampled_data(category, naics_2, sample_size=50000):
-    """Load and sample POI data for performance."""
+def get_sampled_data(state, category, naics_2, sample_size=50000):
+    """Load and sample POI data for a specific state."""
     df = load_poi_data()
     if df is None:
         return None
+
+    if state != "All States":
+        df = df[df['region'] == state]
 
     df = filter_poi_by_category(df, category)
     df = filter_poi_by_naics(df, naics_2, level=2)
@@ -54,6 +94,14 @@ def get_sampled_data(category, naics_2, sample_size=50000):
 
 
 with st.sidebar:
+    st.header("Location")
+
+    state_options = ["All States"] + sorted(STATE_NAMES.keys())
+    state_display = ["All States"] + [f"{k} - {v}" for k, v in sorted(STATE_NAMES.items())]
+    selected_idx = st.selectbox("State", range(len(state_options)),
+                                format_func=lambda i: state_display[i], index=0)
+    selected_state = state_options[selected_idx]
+
     st.header("Filters")
 
     filter_opts = load_filter_options()
@@ -76,19 +124,8 @@ with st.sidebar:
     sample_size = st.slider("Max points", 10000, 100000, 50000, 5000,
                            help="Sample size for performance")
 
-    st.header("View Presets")
-    preset = st.radio("Quick zoom", ["US Overview", "California", "New York", "Texas", "Florida"])
 
-    preset_views = {
-        "US Overview": (39.8, -98.5, 4),
-        "California": (36.7, -119.4, 6),
-        "New York": (40.7, -74.0, 10),
-        "Texas": (31.0, -100.0, 6),
-        "Florida": (27.8, -81.7, 6),
-    }
-
-
-df = get_sampled_data(selected_category, selected_naics, sample_size)
+df = get_sampled_data(selected_state, selected_category, selected_naics, sample_size)
 
 if df is None:
     st.error("Data not available. Please wait for data preparation to complete.")
@@ -98,7 +135,10 @@ if len(df) == 0:
     st.warning("No POIs match the current filters.")
     st.stop()
 
-st.info(f"Showing {len(df):,} POIs (sampled from full dataset)")
+if selected_state == "All States":
+    st.info(f"Showing {len(df):,} POIs (sampled from national dataset)")
+else:
+    st.info(f"Showing {len(df):,} POIs in {STATE_NAMES.get(selected_state, selected_state)}")
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
@@ -112,7 +152,10 @@ with col4:
     std_lean = df['mean_rep_lean_2020'].std()
     st.metric("Std Dev", f"{std_lean:.3f}" if pd.notna(std_lean) else "N/A")
 
-center_lat, center_lon, zoom = preset_views[preset]
+if selected_state != "All States" and selected_state in STATE_CENTERS:
+    center_lat, center_lon, zoom = STATE_CENTERS[selected_state]
+else:
+    center_lat, center_lon, zoom = 39.8, -98.5, 4
 view_state = create_map_view(center_lat, center_lon, zoom)
 
 try:
