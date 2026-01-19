@@ -1,0 +1,231 @@
+top_category,sample_naics,n_subcategories,n_pois,n_brands
+Restaurants and Other Eating Places,"722511, 722513, 722514, 722515",4,789319,2068
+Offices of Physicians,"621111, 621112",2,520606,183
+Personal Care Services,"81211, 812111, 812112, 812113, 812191...",6,499142,163
+Legal Services,"541110, 541120",2,466220,0
+Offices of Other Health Practitioners,"621310, 621320, 621330, 621340, 621399",5,318748,79
+Automotive Repair and Maintenance,"8111, 811111, 811113, 811118, 811121...",8,272729,150
+Religious Organizations,813110,1,268151,1
+Offices of Dentists,621210,1,198496,46
+"Agencies, Brokerages, and Other Insurance Related Activities",524210,1,190289,28
+Offices of Real Estate Agents and Brokers,531210,1,178873,16
+Other Amusement and Recreation Industries,"713910, 713920, 713930, 713940, 713950...",6,176917,264
+Health and Personal Care Stores,"446110, 446120, 446130, 446191, 446199",5,158397,238
+Grocery Stores,"445110, 445120",2,148504,686
+Other Miscellaneous Manufacturing,"3399, 339910, 339920, 339930, 339950...",5,146119,22
+"Museums, Historical Sites, and Similar Institutions","712110, 712120, 712130, 712190",4,141508,0
+Services to Buildings and Dwellings,"5617, 561710, 561720, 561730, 561740...",5,133061,12
+Gasoline Stations,"447110, 447190",2,131612,224
+"Accounting, Tax Preparation, Bookkeeping, and Payroll Services","5412, 541211, 541213, 541219",3,129803,4
+Clothing Stores,"4481, 448110, 448120, 448130, 448140...",6,112372,433
+Elementary and Secondary Schools,611110,1,110850,9
+Depository Credit Intermediation,"522110, 522120, 522130",3,102694,340
+Traveler Accommodation,"721110, 721120, 721191, 721199",4,87671,212
+Building Equipment Contractors,"2382, 238220, 238290",2,84834,2
+Other Miscellaneous Store Retailers,"453910, 453920, 453991, 453998",4,83296,81
+Printing and Related Support Activities,"3231, 323111, 323113, 323117",3,82575,9
+"Other Professional, Scientific, and Technical Services","54192, 541921, 541940",3,81452,11
+Lessors of Real Estate,"531120, 531130, 531190",3,81442,58
+Other Personal Services,"8129, 812910, 812921, 812930, 812990",4,80987,22
+Other Financial Investment Activities,"523920, 523930, 523999",3,77398,16
+Electronics and Appliance Stores,"4431, 443141, 443142",2,77372,55
+Activities Related to Credit Intermediation,"522310, 522320, 522390",3,75977,28
+"Sporting Goods, Hobby, and Musical Instrument Stores","451110, 451120, 451130, 451140",4,74158,118
+Child Day Care Services,624410,1,72452,51
+Building Finishing Contractors,"2383, 238310, 238330, 238390",3,72334,3
+Automobile Dealers,"441110, 441120",2,66498,957
+Building Material and Supplies Dealers,"4441, 444110, 444120, 444130, 444190",4,65425,90
+Activities Related to Real Estate,"531311, 531390",2,64516,0
+Residential Building Construction,"2361, 236115, 236116, 236118",3,63480,5
+Other Schools and Instruction,"611610, 611620, 611630, 611691, 611692...",6,63278,28
+Drinking Places (Alcoholic Beverages),722410,1,62777,25
+Death Care Services,"8122, 812210, 812220",2,61176,1
+Other Specialty Trade Contractors,2389,0,60581,0
+"Justice, Public Order, and Safety Activities","9221, 922110, 922120, 922140, 922150...",6,57163,0
+"Automotive Parts, Accessories, and Tire Stores","441310, 441320",2,55799,108
+Wired and Wireless Telecommunications Carriers,"517311, 517312",2,54442,59
+"General Merchandise Stores, including Warehouse Clubs and Supercenters","452311, 452319",2,52958,52
+"Jewelry, Luggage, and Leather Goods Stores","448310, 448320",2,52585,90
+Specialty Food Stores,"445210, 445220, 445230, 445291, 445292...",6,50624,70
+Personal and Household Goods Repair and Maintenance,"811411, 811412, 811420, 811430, 811490",5,50327,6
+Drycleaning and Laundry Services,"812310, 812320",2,49009,11
+Home Furnishings Stores,"4422, 442210, 442291, 442299",3,47882,60
+Employment Services,"561311, 561320",2,46657,18
+Furniture Stores,442110,1,45334,191
+Outpatient Care Centers,"6214, 621410, 621420, 621492, 621493...",5,43329,54
+"Beer, Wine, and Liquor Stores",445310,1,41352,49
+"Advertising, Public Relations, and Related Services","5418, 541810, 541860",2,40221,4
+Investigation and Security Services,"5616, 561612, 561621, 561622",3,39491,1
+Specialty (except Psychiatric and Substance Abuse) Hospitals,622310,1,37959,2
+Electronic and Precision Equipment Repair and Maintenance,"811211, 811212, 811219",3,36987,6
+Used Merchandise Stores,453310,1,34182,21
+"Architectural, Engineering, and Related Services","5413, 541310, 541330, 541340, 541380",4,32821,0
+Florists,453110,1,32126,1
+"Office Supplies, Stationery, and Gift Stores","453210, 453220",2,30952,24
+General Medical and Surgical Hospitals,622110,1,29602,34
+Medical and Diagnostic Laboratories,"6215, 621511, 621512",2,29354,13
+"Management, Scientific, and Technical Consulting Services","5416, 541611, 541613, 541614, 541618...",5,28350,2
+Other Motor Vehicle Dealers,"441210, 441222, 441228",3,27825,14
+Lawn and Garden Equipment and Supplies Stores,"4442, 444210, 444220",2,26332,12
+Automotive Equipment Rental and Leasing,"532111, 532120",2,25561,19
+"Hardware, and Plumbing and Heating Equipment and Supplies Merchant Wholesalers","423710, 423720, 423730, 423740",4,25227,12
+Couriers and Express Delivery Services,492110,1,24913,11
+Nursing and Residential Care Facilities,623,0,24525,0
+Specialized Freight Trucking,"484210, 484230",2,23945,2
+Consumer Goods Rental,"532210, 532282, 532284, 532289",4,23487,21
+Postal Service,491110,1,23457,3
+Continuing Care Retirement Communities and Assisted Living Facilities for the Elderly,"6233, 623311, 623312",2,23282,17
+"Machinery, Equipment, and Supplies Merchant Wholesalers","4238, 423810, 423820, 423830, 423840...",6,22944,35
+Bakeries and Tortilla Manufacturing,311811,1,22439,31
+Home Health Care Services,621610,1,22135,39
+Support Activities for Road Transportation,"488410, 488490",2,21573,0
+Nondepository Credit Intermediation,"522291, 522298",2,21570,57
+Shoe Stores,448210,1,20699,112
+Waste Management and Remediation Services,562,0,19659,0
+Amusement Parks and Arcades,"713110, 713120",2,18901,17
+Nursing Care Facilities (Skilled Nursing Facilities),623110,1,17989,11
+"Promoters of Performing Arts, Sports, and Similar Events",711310,1,17716,0
+Beverage Manufacturing,"3121, 312113, 312120, 312130, 312140",4,17356,4
+Travel Arrangement and Reservation Services,"5615, 561510, 561520, 561591, 561599",4,17018,2
+"Colleges, Universities, and Professional Schools",611310,1,15742,4
+Radio and Television Broadcasting,"5151, 515120",1,15699,0
+Taxi and Limousine Service,"485310, 485320",2,15559,0
+Book Stores and News Dealers,"451211, 451212",2,15283,11
+Other Information Services,"519120, 519130, 519190",3,15236,0
+Special Food Services,722320,1,14930,2
+"Newspaper, Periodical, Book, and Directory Publishers","5111, 511130",1,14799,0
+Department Stores,452210,1,13293,39
+Motion Picture and Video Industries,"512110, 512131, 512132, 512191, 512199",5,13156,69
+Administration of Economic Programs,"9261, 926120",1,13149,1
+Technical and Trade Schools,"6115, 611511, 611512, 611519",3,12308,2
+Management of Companies and Enterprises,"551112, 551114",2,12001,5
+RV (Recreational Vehicle) Parks and Recreational Camps,"7212, 721211, 721214",2,11549,1
+Gambling Industries,"713210, 713290",2,9388,6
+Transit and Ground Passenger Transportation,485,0,9336,0
+Individual and Family Services,"6241, 624110, 624120, 624190",3,9267,6
+Specialized Design Services,"5414, 541410",1,9235,0
+"Foundation, Structure, and Building Exterior Contractors","238110, 238140, 238150, 238160",4,8985,5
+"Executive, Legislative, and Other General Government Support","9211, 921110, 921130, 921190",3,8196,0
+Drugs and Druggists' Sundries Merchant Wholesalers,424210,1,8164,32
+Warehousing and Storage,"493110, 493120, 493130, 493190",4,7143,142
+Social Advocacy Organizations,"813311, 813312, 813319",3,7020,1
+Scenic and Sightseeing Transportation,487,0,6873,0
+Other Support Services,"5619, 561920, 561990",2,5333,2
+Sound Recording Industries,"512240, 512250",2,5253,1
+Other Ambulatory Health Care Services,"621910, 621991, 621999",3,5106,24
+Commercial and Industrial Machinery and Equipment Rental and Leasing,"532412, 532490",2,4944,15
+Support Activities for Air Transportation,"488119, 488190",2,4744,0
+"Electric Power Generation, Transmission and Distribution","221111, 221112, 221114, 221115, 221122",5,4216,0
+Other Wood Product Manufacturing,"321992, 321999",2,4053,2
+Rail Transportation,"4821, 482111",1,3408,2
+Insurance Carriers,"524113, 524114, 524126, 524127, 524128",5,3169,8
+Miscellaneous Durable Goods Merchant Wholesalers,"423910, 423920, 423930, 423940, 423990",5,3096,20
+"Community Food and Housing, and Emergency and Other Relief Services","624210, 624221",2,2911,0
+Spectator Sports,"711211, 711212, 711219",3,2722,2
+Other Transit and Ground Passenger Transportation,"485991, 485999",2,2596,0
+Junior Colleges,611210,1,2514,0
+Utility System Construction,237110,1,2362,0
+Performing Arts Companies,"7111, 711110, 711130, 711190",3,2329,2
+"Coating, Engraving, Heat Treating, and Allied Activities",332812,1,2201,1
+Lumber and Other Construction Materials Merchant Wholesalers,"423310, 423320, 423330, 423390",4,2035,13
+Remediation and Other Waste Management Services,"562910, 562920, 562991",3,1963,2
+Psychiatric and Substance Abuse Hospitals,622210,1,1840,0
+Waste Treatment and Disposal,"562211, 562212",2,1829,2
+General Rental Centers,532310,1,1825,1
+Administration of Human Resource Programs,"9231, 923120, 923140",2,1776,0
+Household Appliances and Electrical and Electronic Goods Merchant Wholesalers,"423610, 423690",2,1711,9
+Grantmaking and Giving Services,"813212, 813219",2,1703,3
+Household Appliance Manufacturing,335220,1,1699,0
+Cable and Other Subscription Programming,515210,1,1489,5
+Securities and Commodity Contracts Intermediation and Brokerage,"523110, 523120",2,1484,4
+Civic and Social Organizations,813410,1,1428,0
+Interurban and Rural Bus Transportation,485210,1,1396,1
+"Data Processing, Hosting, and Related Services",518210,1,1361,3
+Social Assistance,624,0,1332,0
+National Security and International Affairs,"928110, 928120",2,1275,0
+Miscellaneous Nondurable Goods Merchant Wholesalers,"424910, 424950",2,1222,12
+Glass and Glass Product Manufacturing,327212,1,1144,0
+Chemical and Allied Products Merchant Wholesalers,424690,1,1084,2
+Other Food Manufacturing,"3119, 311920, 311991",2,819,21
+Professional and Commercial Equipment and Supplies Merchant Wholesalers,423450,1,814,5
+Business Support Services,"561431, 561499",2,806,3
+Direct Selling Establishments,"454310, 454390",2,802,6
+Motor Vehicle and Motor Vehicle Parts and Supplies Merchant Wholesalers,"423110, 423120, 423130, 423140",4,764,6
+Petroleum and Petroleum Products Merchant Wholesalers,"424710, 424720",2,758,13
+Support Activities for Water Transportation,488310,1,602,0
+Apparel Accessories and Other Apparel Manufacturing,315990,1,563,4
+Grocery and Related Product Merchant Wholesalers,"424410, 424420, 424430, 424490",4,538,14
+Freight Transportation Arrangement,488510,1,508,5
+"Greenhouse, Nursery, and Floriculture Production",111421,1,468,0
+Waste Collection,562119,1,401,1
+Water Transportation,483,0,359,0
+Motor Vehicle Manufacturing,"336111, 336120",2,351,4
+Natural Gas Distribution,221210,1,330,2
+Business Schools and Computer and Management Training,"611410, 611420",2,318,1
+Clay Product and Refractory Manufacturing,"327110, 327120",2,295,3
+"Scenic and Sightseeing Transportation, Land",487110,1,264,0
+General Freight Trucking,"4841, 484110, 484121",2,249,3
+Scheduled Air Transportation,481111,1,246,0
+Support Activities for Crop Production,115112,1,211,1
+Educational Support Services,611710,1,190,1
+Other Support Activities for Transportation,488991,1,188,2
+Other Investment Pools and Funds,525990,1,149,1
+"Agriculture, Construction, and Mining Machinery Manufacturing","3331, 333120",1,107,4
+Hardware Manufacturing,332510,1,77,1
+Other Leather and Allied Product Manufacturing,316998,1,74,3
+Architectural and Structural Metals Manufacturing,"332311, 332313",2,74,2
+Steel Product Manufacturing from Purchased Steel,"33121, 331221",2,70,2
+Metal and Mineral (except Petroleum) Merchant Wholesalers,423510,1,66,1
+Scientific Research and Development Services,"541714, 541715",2,55,1
+Other Transportation Equipment Manufacturing,336991,1,51,2
+Other Telecommunications,"517911, 517919",2,49,3
+"Business, Professional, Labor, Political, and Similar Organizations","813910, 813920, 813930, 813940, 813990",5,46,1
+Converted Paper Product Manufacturing,"322211, 322220, 322230",3,44,1
+Farm Product Raw Material Merchant Wholesalers,424510,1,33,1
+Footwear Manufacturing,316210,1,32,3
+Food Manufacturing,311,0,30,0
+Support Activities for Mining,"213111, 213112, 213114",3,25,2
+Other General Purpose Machinery Manufacturing,3339,0,24,1
+"Engine, Turbine, and Power Transmission Equipment Manufacturing",333612,1,23,1
+Medical Equipment and Supplies Manufacturing,"339112, 339113",2,21,1
+"Pulp, Paper, and Paperboard Mills",322121,1,20,0
+Oil and Gas Extraction,211120,1,18,1
+Aerospace Product and Parts Manufacturing,336411,1,16,0
+Rubber Product Manufacturing,32621,1,14,1
+Sawmills and Wood Preservation,321113,1,12,0
+Sugar and Confectionery Product Manufacturing,31135,1,11,1
+"Ventilation, Heating, Air-Conditioning, and Commercial Refrigeration Equipment Manufacturing",333414,1,11,1
+"Veneer, Plywood, and Engineered Wood Product Manufacturing","321211, 321219",2,10,0
+Alumina and Aluminum Production and Processing,"3313, 331313",1,9,3
+"Deep Sea, Coastal, and Great Lakes Water Transportation",483112,1,9,0
+Urban Transit Systems,"485111, 485112, 485113, 485119",4,8,1
+Electrical Equipment Manufacturing,335312,1,8,1
+"Paint, Coating, and Adhesive Manufacturing",325510,1,7,0
+Semiconductor and Other Electronic Component Manufacturing,"3344, 334413",1,7,3
+Commercial and Service Industry Machinery Manufacturing,3333,0,6,1
+"Machine Shops; Turned Product; and Screw, Nut, and Bolt Manufacturing",3327,0,6,1
+"Agents and Managers for Artists, Athletes, Entertainers, and Other Public Figures",711410,1,6,0
+"Navigational, Measuring, Electromedical, and Control Instruments Manufacturing",334519,1,6,1
+Iron and Steel Mills and Ferroalloy Manufacturing,3311,0,5,1
+Insurance and Employee Benefit Funds,525110,1,4,0
+"Independent Artists, Writers, and Performers",711510,1,4,0
+Petroleum and Coal Products Manufacturing,324110,1,3,0
+Nonscheduled Air Transportation,481211,1,3,0
+"Administration of Housing Programs, Urban Planning, and Community Development",925110,1,2,0
+Charter Bus Industry,485510,1,2,0
+Apparel Knitting Mills,315190,1,2,1
+"Residential Intellectual and Developmental Disability, Mental Health, and Substance Abuse Facilities",623220,1,1,0
+Railroad Rolling Stock Manufacturing,336510,1,1,0
+"Rooming and Boarding Houses, Dormitories, and Workers' Camps",721310,1,1,0
+Plastics Product Manufacturing,3261,0,1,1
+Electronic Shopping and Mail-Order Houses,454110,1,1,0
+"Scenic and Sightseeing Transportation, Other",487990,1,1,0
+Animal Slaughtering and Processing,3116,0,1,1
+Vegetable and Melon Farming,111211,1,1,0
+Commercial and Industrial Machinery and Equipment (except Automotive and Electronic) Repair and Maintenance,811310,1,1,0
+School and Employee Bus Transportation,485410,1,1,0
+Software Publishers,511210,1,1,0
+Other Residential Care Facilities,623990,1,1,0
+"Highway, Street, and Bridge Construction",237310,1,1,0
+Support Activities for Forestry,115310,1,1,0
+Computer Systems Design and Related Services,541519,1,1,0

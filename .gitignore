@@ -10,6 +10,12 @@
 *.xlsx
 *.xls
 
+# Exception: Small reference data files
+!reference/partisan_conflict_index.csv
+!reference/partisan_conflict_index.xlsx
+!reference/advan_category_naics_mapping.csv
+!reference/advan_top_category_summary.csv
+
 # Compressed files
 *.zip
 *.gz
