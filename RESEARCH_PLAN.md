@@ -44,7 +44,8 @@ Validate our measure against external benchmarks.
 | 2.2 Match brands to Schoenmueller | 🔄 In Progress | Semantic similarity approach |
 | 2.3 Correlation analysis | ⬚ Pending | Scatter plot, R² |
 | 2.4 Divergence analysis | ⬚ Pending | Where/why do measures differ? |
-| 2.5 Update LaTeX appendix | ⬚ Pending | Scatter plot, sample brand table, correlation stats |
+| 2.5 Generate validation outputs | ⬚ Pending | Scatter plot PNG/PDF, correlation stats |
+| 2.6 Generate LaTeX table rows | ⬚ Pending | Full brand comparison table for appendix |
 
 *Blocked by: 1.5 (brand-level aggregation)*
 
