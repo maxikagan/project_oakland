@@ -26,6 +26,9 @@ cd /global/home/users/maxkagan/measuring_stakeholder_ideology
 module load gcc/11.4.0
 module load python/3.10.12-gcc-11.4.0
 
+# Set library path for gcc 11.4.0 runtime libraries
+export LD_LIBRARY_PATH=/global/software/rocky-8.x86_64/gcc/linux-rocky8-x86_64/gcc-8.5.0/gcc-11.4.0-nfcdl6bpyabpnhhasfzu6y4ge4kfskvl/lib64:$LD_LIBRARY_PATH
+
 if [ -z "$OPENAI_API_KEY" ]; then
     echo "ERROR: OPENAI_API_KEY not set"
     exit 1

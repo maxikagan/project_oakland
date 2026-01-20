@@ -73,7 +73,9 @@ Validate our measure against external benchmarks.
 ### Epic 3: Descriptive Analysis 🟡 PARTIALLY READY
 Document patterns in consumer partisan lean.
 **Scripts**: `scripts/05_descriptive/`
+**Website plan**: `docs/plans/brand_explorer_website_plan.md`
 
+#### Phase 1: Static Analysis
 | Task | Status | Notes |
 |------|--------|-------|
 | 3.1 Brand distributions | ⬚ Pending | Histogram, KDE plots |
@@ -84,6 +86,27 @@ Document patterns in consumer partisan lean.
 | 3.6 Document descriptive methods | ⬚ Pending | LaTeX appendix: summary stats, decomposition approach |
 
 *Can start with national brands (3,543). Full analysis needs singletons (Task 1.7).*
+
+#### Phase 2: Interactive Website (Brand Partisan Lean Explorer)
+Public Vercel website for data exploration. Pattern: politicsatwork.org / whatisstrategy.org
+**Repo**: Separate repo (to be created)
+**Replaces**: `dashboard/` (Streamlit prototype requiring SSH tunnel)
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 3.7 Data export for website | ⬚ Pending | JSON exports: brand summaries, time series, MSA summaries, POI data (partitioned) |
+| 3.8 Website Phase 1 (MVP) | ⬚ Pending | Next.js setup, brand search, brand profiles with time series, methodology page |
+| 3.9 Website Phase 2 (Map) | ⬚ Pending | Interactive POI map with Mapbox. Filter by brand, MSA, or both. Color by partisan lean. |
+| 3.10 Website Phase 3 (Geographic) | ⬚ Pending | MSA choropleth, MSA profiles, drill-down from MSA to brands |
+| 3.11 Website Phase 4 (Polish) | ⬚ Pending | Category explorer, rankings, dark mode, downloads (coming soon) |
+
+**Key features**:
+- **Brand search & profiles**: Search ~3,500 brands, view partisan lean over 79 months vs category benchmarks
+- **Interactive POI map**: Store locations colored by lean, filter by brand + MSA, see within-MSA variation
+- **MSA analysis**: Choropleth map, compare brands within same MSA
+- **Rankings**: Most Republican / Democratic brands
+
+*Depends on: Task 1.5a (brand-month data) ✅, POI coordinates (need to extract)*
 
 ### Epic 4: Store Performance (SafeGraph Spend) 🟡 PARTIALLY READY
 Link partisan lean to business outcomes using SafeGraph Spend.
@@ -161,12 +184,15 @@ Establish causal relationships.
 - 🔄 Task 1.7: Singleton entity resolution (pilot job for Columbus OH)
 
 **Next up**:
-1. Epic 3: Descriptive analysis (now unblocked)
+1. Epic 3 Phase 2: Interactive website (Brand Partisan Lean Explorer)
+   - Task 3.7: Data export for website (JSON files)
+   - Task 3.8: Website MVP (Next.js, brand search, profiles)
+   - Task 3.9: Interactive POI map
+2. Epic 3 Phase 1: Static descriptive analysis
    - Task 3.1: Brand distributions (histogram, KDE)
-   - Task 3.2: Variance decomposition (brand vs. location effects)
    - Task 3.5: Top/bottom brand rankings
-2. Task 1.9: Document aggregation methodology in appendix
-3. Epic 4: Store performance (SafeGraph Spend linkage)
+3. Task 1.9: Document aggregation methodology in appendix
+4. Epic 4: Store performance (SafeGraph Spend linkage)
 
 ---
 
