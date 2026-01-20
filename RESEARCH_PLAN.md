@@ -147,14 +147,22 @@ Establish causal relationships.
 
 ## Current Sprint
 
-**Focus**: Epic 1 Phase 3 (singletons) + Epic 2 (validation) in parallel
+**Focus**: Epic 2 (validation) + Epic 1 Phase 3 (singletons) in parallel
 
-**Immediate next steps**:
-1. ✅ **Task 1.5a: Aggregate brand-level lean (national)** — DONE (273K brand-months)
-2. **Task 1.7: Aggregate singletons to name × MSA × month** — write script, preserving weights
-3. Task 2.2: Complete Schoenmueller brand matching (semantic similarity in progress)
-4. Task 2.3-2.5: Correlation analysis, divergence, validation outputs
-5. Task 1.9: Document aggregation methodology in LaTeX appendix
+**Completed this session**:
+- ✅ Task 1.5a: Brand-month aggregation (273K rows, 3,543 brands)
+- ✅ Task 2.1: Load Schoenmueller data (1,289 brands)
+
+**In progress**:
+- 🔄 Task 2.2: Schoenmueller brand matching (semantic similarity + manual Claude review)
+  - 257 exact matches, 411 contains matches, 368 under manual review
+- 🔄 Task 1.7: Singleton entity resolution (pilot job submitted for Columbus OH)
+
+**Next up**:
+1. Task 2.3-2.6: Correlation analysis, divergence, validation outputs, LaTeX tables
+2. Task 2.7: Document matching methodology in appendix
+3. Task 3.1-3.2: Descriptive analysis (now unblocked)
+4. Task 1.8: Document aggregation methodology in appendix
 
 ---
 
