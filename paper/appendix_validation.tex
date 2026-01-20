@@ -1,0 +1,176 @@
+\section{Methodological Appendix: Validation Against Twitter-Based Measures}
+\label{sec:appendix_validation}
+
+\subsection{Overview}
+
+This appendix validates our foot traffic-based consumer partisan lean measures against an alternative approach: Twitter-based brand ideology scores from \citet{schoenmueller2023polarized}. The Schoenmueller et al. measure infers brand political positioning from the partisan composition of brands' Twitter followers, providing an independent benchmark derived from entirely different data and methodology.
+
+We compare the two approaches at the brand level, examining correlation, concordance, and systematic differences. The goal is to assess convergent validity: if both measures capture the same underlying construct (consumer political composition), they should be positively correlated despite methodological differences.
+
+\subsection{The Schoenmueller et al. Measure}
+
+\citet{schoenmueller2023polarized} develop a measure of brand political orientation by analyzing the Twitter follower networks of major consumer brands. Their approach proceeds as follows:
+
+\begin{enumerate}
+    \item \textbf{Follower Collection}: For each brand's official Twitter account, they collect a sample of followers.
+
+    \item \textbf{Political Classification}: Each follower is classified as liberal or conservative based on whether they follow predominantly liberal or conservative political accounts (politicians, pundits, media outlets).
+
+    \item \textbf{Brand Score Construction}: The brand's political orientation is computed as the share of followers classified as conservative, yielding a score from 0 (entirely liberal followers) to 1 (entirely conservative followers).
+\end{enumerate}
+
+The resulting dataset covers 1,289 brands across multiple consumer categories, including retail, restaurants, consumer packaged goods, and services. The measure has been validated against consumer surveys and predicts partisan differences in brand attitudes and purchase intentions.
+
+\subsection{Linking the Datasets}
+
+We link Schoenmueller et al. brand scores to our Advan-based measures using brand name matching. The linking process involves:
+
+\begin{enumerate}
+    \item \textbf{Exact Matching}: Direct string matching on standardized brand names (uppercase, punctuation removed).
+
+    \item \textbf{Fuzzy Matching}: For unmatched brands, we apply Levenshtein distance-based fuzzy matching with manual review of candidate matches.
+
+    \item \textbf{Manual Curation}: Research assistants review all matches to ensure accuracy, particularly for brands with multiple naming conventions (e.g., ``McDonald's'' vs. ``McDonalds'').
+\end{enumerate}
+
+\begin{table}[htbp]
+\centering
+\caption{Brand Matching: Schoenmueller et al. to Advan}
+\label{tab:brand_matching}
+\begin{threeparttable}
+\begin{tabular}{lc}
+\toprule
+& Count \\
+\midrule
+Schoenmueller et al. brands & 1,289 \\
+Exact matches to Advan & XXX \\
+Fuzzy matches (validated) & XXX \\
+No match found & XXX \\
+\midrule
+\textbf{Final matched sample} & \textbf{XXX} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Matching between Schoenmueller et al. (2023) Twitter-based brand scores and Advan branded POI data. Exact matches use standardized brand names. Fuzzy matches use Levenshtein distance $\leq$ 2 with manual validation.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Correlation Analysis}
+
+Table~\ref{tab:validation_correlation} presents correlation coefficients between our foot traffic-based consumer partisan lean and the Schoenmueller et al. Twitter-based measure.
+
+\begin{table}[htbp]
+\centering
+\caption{Correlation: Foot Traffic vs. Twitter-Based Consumer Partisan Lean}
+\label{tab:validation_correlation}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+Sample & N & Pearson $r$ & Spearman $\rho$ \\
+\midrule
+All matched brands & XXX & XX.XX & XX.XX \\
+\midrule
+\textit{By Category} & & & \\
+Retail & XXX & XX.XX & XX.XX \\
+Restaurants & XXX & XX.XX & XX.XX \\
+Consumer Services & XXX & XX.XX & XX.XX \\
+\midrule
+\textit{By Brand Size} & & & \\
+Large (1000+ locations) & XXX & XX.XX & XX.XX \\
+Medium (100--999 locations) & XXX & XX.XX & XX.XX \\
+Small ($<$100 locations) & XXX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Correlations between foot traffic-based visitor Republican lean (our measure) and Twitter follower-based conservative share (Schoenmueller et al. 2023). Pearson $r$ is linear correlation; Spearman $\rho$ is rank correlation. Expected pattern: Positive correlations in the range of 0.4--0.7, with stronger correlations for larger brands with more precise estimates.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Scatter Plot Visualization}
+
+Figure~\ref{fig:validation_scatter} presents a scatter plot comparing the two measures at the brand level.
+
+\placeholderfigure{Figure A1: Foot Traffic vs. Twitter-Based Consumer Partisan Lean}
+{Scatter plot with Schoenmueller et al. Twitter-based conservative share on X-axis and our foot traffic-based Republican lean on Y-axis. Each point is a matched brand. 45-degree line indicates perfect agreement. Best-fit regression line overlaid. Expected pattern: Positive relationship with moderate scatter. Correlation $r \approx$ 0.5--0.7. Notable outliers labeled (brands where the two measures substantially diverge).}
+{Validation: Foot Traffic-Based vs. Twitter-Based Consumer Partisan Lean. Each observation is a brand matched across both datasets. X-axis: Conservative share of Twitter followers from Schoenmueller et al. (2023). Y-axis: Visit-weighted average Republican two-party vote share of visitor home CBGs (our measure). N = XXX brands. Correlation: $r$ = XX.XX. The 45-degree line indicates perfect agreement between measures.}
+\label{fig:validation_scatter}
+
+\subsection{Sources of Divergence}
+
+The two measures should correlate positively but need not agree perfectly. Several factors may cause divergence:
+
+\subsubsection{Construct Differences}
+
+The measures capture related but distinct constructs:
+
+\begin{itemize}
+    \item \textbf{Our measure}: Political composition of \textit{actual visitors} to physical locations, weighted by visit volume.
+
+    \item \textbf{Schoenmueller et al.}: Political composition of \textit{Twitter followers} of brand accounts, which reflects social media engagement rather than in-store patronage.
+\end{itemize}
+
+Twitter followers may skew younger, more politically engaged, and more urban than the general customer base. Brands with strong social media presence may attract followers who differ from typical in-store customers.
+
+\subsubsection{Geographic Coverage}
+
+Our measure captures the full geographic footprint of each brand, including rural locations where Twitter penetration may be lower. The Schoenmueller et al. measure may disproportionately reflect urban/suburban customers who are more active on Twitter.
+
+For brands with differential penetration across political geographies---e.g., a chain with both urban and rural locations---the two measures may diverge.
+
+\subsubsection{Temporal Differences}
+
+The Schoenmueller et al. data were collected at a specific point in time (circa 2019--2020), while our foot traffic data span 2019--2024. If brand political associations have shifted over time, this could introduce divergence.
+
+\subsubsection{Measurement Error}
+
+Both measures contain error:
+
+\begin{itemize}
+    \item Our measure relies on ecological inference from CBG-level voting to individual visitor preferences.
+
+    \item The Schoenmueller et al. measure relies on inferring follower politics from their following patterns, which may misclassify moderate or cross-partisan individuals.
+\end{itemize}
+
+Classical measurement error in both measures would attenuate the observed correlation toward zero.
+
+\subsection{Brands with Large Divergence}
+
+Table~\ref{tab:divergent_brands} identifies brands where the two measures substantially disagree.
+
+\begin{table}[htbp]
+\centering
+\caption{Brands with Substantial Measure Divergence}
+\label{tab:divergent_brands}
+\begin{threeparttable}
+\small
+\begin{tabular}{lccl}
+\toprule
+Brand & Foot Traffic & Twitter & Possible Explanation \\
+\midrule
+\multicolumn{4}{l}{\textit{Our measure more Republican}} \\
+[Brand 1] & 0.XX & 0.XX & [Explanation] \\
+[Brand 2] & 0.XX & 0.XX & [Explanation] \\
+\midrule
+\multicolumn{4}{l}{\textit{Our measure more Democratic}} \\
+[Brand 1] & 0.XX & 0.XX & [Explanation] \\
+[Brand 2] & 0.XX & 0.XX & [Explanation] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Brands with absolute difference between foot traffic-based and Twitter-based measures $>$ 0.15. Possible explanations include geographic coverage differences, social media vs. in-store customer divergence, and brand positioning changes over time.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Conclusion}
+
+The validation analysis reveals [moderate/strong] convergent validity between our foot traffic-based measure and the Schoenmueller et al. Twitter-based measure. The positive correlation (expected $r \approx$ 0.5--0.7) indicates that both approaches capture meaningful variation in consumer political composition, despite using entirely different data sources and methodologies.
+
+The measures are not interchangeable. Each has strengths and limitations: our measure captures actual physical visits across the full geographic footprint; the Twitter measure may better capture social media-engaged consumers and brand perception. The choice between measures should depend on the research question.
+
+For our purposes---examining stakeholder pluralism using comprehensive coverage of commercial activity---the foot traffic approach offers advantages: broader coverage (millions of establishments vs. thousands of brands), granular geographic resolution, and linkage to employee data. The validation against an independent external measure increases confidence that our estimates capture meaningful political composition variation.

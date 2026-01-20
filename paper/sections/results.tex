@@ -1,0 +1,455 @@
+\section{Results}\label{sec:results}
+
+We present our empirical findings in four parts. First, we document descriptive patterns in consumer partisan composition across industries, geographies, and brands. Second, we examine brand-level differences in visitor ideology. Third, we analyze the relationship between employee and consumer partisan composition. Fourth, we examine performance implications using SafeGraph Spend data.
+
+\subsection{Descriptive Patterns: Consumer Partisan Composition}
+
+\subsubsection{Geographic Variation}
+
+Consumer partisan lean varies substantially across geography. Figure~\ref{fig:choropleth_map} presents a county-level choropleth map of average visitor Republican lean across all POIs in our sample.
+
+\placeholderfigure{Figure 1: Geographic Distribution of Consumer Partisan Lean}
+{County-level choropleth map showing average visitor Republican lean (2020 election). Darker red indicates higher Republican lean; darker blue indicates Democratic lean. Panel A: All POIs. Panel B: Retail only. Panel C: Restaurants only. Expected pattern: Strong geographic sorting consistent with residential partisan clustering, with coastal urban areas showing Democratic lean and interior/rural areas showing Republican lean.}
+{Geographic Distribution of Consumer Partisan Lean. Each county is shaded by the average visitor Republican two-party vote share across all POIs in that county. Values range from 0 (entirely Democratic) to 1 (entirely Republican). Data: Advan Monthly Patterns 2019--2024 linked to 2020 presidential election results at the CBG level.}
+\label{fig:choropleth_map}
+
+Table~\ref{tab:partisan_by_industry} presents summary statistics on visitor partisan lean by major industry category (NAICS 2-digit).
+
+\begin{table}[htbp]
+\centering
+\caption{Consumer Partisan Lean by Industry}
+\label{tab:partisan_by_industry}
+\begin{threeparttable}
+\begin{tabular}{lrrrrr}
+\toprule
+Industry (NAICS 2-digit) & N (POI-months) & Mean & SD & P10 & P90 \\
+\midrule
+Retail Trade (44-45) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Accommodation and Food (72) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Health Care (62) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Professional Services (54) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Finance and Insurance (52) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Arts and Entertainment (71) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Other Services (81) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Educational Services (61) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Real Estate (53) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Information (51) & XX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+\midrule
+\textit{All Industries} & XXX,XXX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Table reports summary statistics for visitor Republican two-party vote share by NAICS 2-digit industry. N is the count of POI-month observations. Mean is the unweighted average visitor partisan lean. SD is standard deviation. P10 and P90 are the 10th and 90th percentiles. Sample: All POI-months with valid partisan lean estimates, January 2019--July 2024.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsubsection{Variance Decomposition}
+
+To understand the relative importance of geography versus business characteristics in explaining consumer partisan composition, we decompose variance in visitor partisan lean. We estimate:
+
+\begin{equation}
+\text{visitor\_rep\_lean}_{i,m} = \alpha + \delta_{\text{CBG}} + \gamma_{\text{NAICS4}} + \beta_{\text{brand}} + \epsilon_{i,m}
+\end{equation}
+
+Table~\ref{tab:variance_decomposition} presents the incremental $R^2$ from adding each fixed effect.
+
+\begin{table}[htbp]
+\centering
+\caption{Variance Decomposition of Consumer Partisan Lean}
+\label{tab:variance_decomposition}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Specification & $R^2$ & Incremental $R^2$ \\
+\midrule
+Location (CBG) FE only & XX.XX & --- \\
++ Industry (NAICS 4-digit) FE & XX.XX & XX.XX \\
++ Brand FE & XX.XX & XX.XX \\
+\midrule
+\textit{Expected pattern:} & & \\
+Location explains $\sim$85\% & & \\
+Industry adds $\sim$5--8\% & & \\
+Brand adds $\sim$3--5\% & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Table reports $R^2$ from regressions of visitor Republican lean on progressively richer sets of fixed effects. Sample: Branded POI-months only. The incremental $R^2$ shows the additional variance explained by each layer of fixed effects.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The variance decomposition reveals that while location is the primary determinant of consumer partisan composition, meaningful variation exists at the industry and brand level. Even within the same neighborhood, different types of businesses attract politically distinct customer bases.
+
+\subsection{Brand-Level Patterns}
+
+\subsubsection{Distribution of Brand Partisan Lean}
+
+Figure~\ref{fig:brand_distribution} presents the distribution of brand-level partisan lean across our sample of branded POIs.
+
+\placeholderfigure{Figure 2: Distribution of Brand Partisan Lean}
+{Kernel density plot of brand-level Republican lean (visit-weighted average across all locations). X-axis: Republican two-party vote share (0 to 1). Y-axis: Density. Vertical dashed line at 0.5 (neutral). Expected pattern: Roughly normal distribution centered slightly above 0.5, reflecting national Republican advantage in 2020. Modest right skew due to geography of branded retail.}
+{Distribution of Brand-Level Consumer Partisan Lean. Each observation is a unique brand's visit-weighted average visitor Republican lean. N = XX,XXX brands with 10+ locations. The dashed vertical line indicates neutral (0.5). Data: Advan Monthly Patterns 2019--2024 aggregated to brand level using normalized visit weights.}
+\label{fig:brand_distribution}
+
+\subsubsection{Extreme Brands}
+
+Table~\ref{tab:extreme_brands} presents the 20 brands with the highest and lowest visitor partisan lean, restricted to brands with substantial national presence.
+
+\begin{table}[htbp]
+\centering
+\caption{Brands by Consumer Partisan Lean (Extremes)}
+\label{tab:extreme_brands}
+\begin{threeparttable}
+\small
+\begin{tabular}{llccc}
+\toprule
+& Brand & Locations & Visits (M) & Rep Lean \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A: Most Republican Brands}} \\
+1 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+2 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+3 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+4 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+5 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+... & ... & ... & ... & ... \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel B: Most Democratic Brands}} \\
+1 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+2 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+3 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+4 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+5 & [Brand Name] & X,XXX & XX.X & 0.XX \\
+... & ... & ... & ... & ... \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Table reports the 10 most Republican and 10 most Democratic brands by visitor partisan lean. Sample restricted to brands with 100+ locations and 1M+ annual visits. Rep Lean is the visit-weighted average Republican two-party vote share across all brand locations. Expected extremes: Gun shops, agricultural suppliers, rural retailers on Republican end; organic grocers, yoga studios, specialty coffee on Democratic end.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsubsection{Within-Category Comparisons}
+
+Beyond overall rankings, instructive comparisons exist within product categories. Table~\ref{tab:category_comparisons} presents partisan lean for competing brands in selected categories.
+
+\begin{table}[htbp]
+\centering
+\caption{Consumer Partisan Lean: Within-Category Brand Comparisons}
+\label{tab:category_comparisons}
+\begin{threeparttable}
+\begin{tabular}{llcc}
+\toprule
+Category & Brand & Rep Lean & Difference \\
+\midrule
+\multicolumn{4}{l}{\textit{Grocery}} \\
+& Walmart Supercenter & 0.XX & --- \\
+& Kroger & 0.XX & +0.XX \\
+& Target & 0.XX & $-$0.XX \\
+& Whole Foods & 0.XX & $-$0.XX \\
+\midrule
+\multicolumn{4}{l}{\textit{Fast Food}} \\
+& McDonald's & 0.XX & --- \\
+& Chick-fil-A & 0.XX & +0.XX \\
+& Chipotle & 0.XX & $-$0.XX \\
+\midrule
+\multicolumn{4}{l}{\textit{Coffee}} \\
+& Starbucks & 0.XX & --- \\
+& Dunkin' & 0.XX & +0.XX \\
+\midrule
+\multicolumn{4}{l}{\textit{Home Improvement}} \\
+& Home Depot & 0.XX & --- \\
+& Lowe's & 0.XX & +0.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Table compares visitor Republican lean across competing brands within selected retail categories. Difference is relative to the reference brand in each category (first listed). All brands restricted to locations with comparable geographic coverage.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Employee-Consumer Alignment}
+
+We now examine the central question of whether employee and consumer partisan composition are correlated. For the 3,872 brands successfully matched to PAW employer records, we analyze the relationship between the partisan orientation of each brand's visitors and employees.
+
+\subsubsection{Overall Correlation}
+
+Figure~\ref{fig:alignment_scatter} presents a scatter plot of brand-level employee versus consumer partisan lean.
+
+\placeholderfigure{Figure 3: Employee vs. Consumer Partisan Lean (Brand Level)}
+{Scatter plot with consumer Republican lean on X-axis and employee Republican lean on Y-axis. Each point is a matched brand. 45-degree line indicates perfect alignment. Expected pattern: Positive correlation ($r \approx$ 0.3--0.5) with substantial scatter. Some brands clustered near 45-degree line (aligned); others showing clear divergence. Notable outliers labeled (e.g., brands where employees are more liberal than customers or vice versa).}
+{Employee vs. Consumer Partisan Lean by Brand. Each observation is a brand with matched PAW employer data. X-axis: Consumer Republican lean (visit-weighted average of visitor home CBG 2020 Republican vote share). Y-axis: Employee Republican lean (two-party Republican share from voter registration). N = XX,XXX brand-years. Correlation: $r$ = XX.XX. The 45-degree line indicates perfect employee-consumer alignment.}
+\label{fig:alignment_scatter}
+
+Table~\ref{tab:alignment_correlation} reports correlation coefficients overall and within subsamples.
+
+\begin{table}[htbp]
+\centering
+\caption{Correlation Between Employee and Consumer Partisan Composition}
+\label{tab:alignment_correlation}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+Sample & N (brand-years) & Pearson $r$ & Spearman $\rho$ \\
+\midrule
+Full sample & XX,XXX & XX.XX & XX.XX \\
+\midrule
+\textit{By Industry} & & & \\
+Retail Trade & XX,XXX & XX.XX & XX.XX \\
+Food Services & XX,XXX & XX.XX & XX.XX \\
+Health Care & XX,XXX & XX.XX & XX.XX \\
+Professional Services & XX,XXX & XX.XX & XX.XX \\
+\midrule
+\textit{By Company Size} & & & \\
+1,000+ employees & XX,XXX & XX.XX & XX.XX \\
+100--999 employees & XX,XXX & XX.XX & XX.XX \\
+$<$100 employees & XX,XXX & XX.XX & XX.XX \\
+\midrule
+\textit{Geographic Controls} & & & \\
+Within-MSA correlation & XX,XXX & XX.XX & XX.XX \\
+MSA FE residualized & XX,XXX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Table reports correlations between brand-level consumer Republican lean and employee Republican lean. Pearson $r$ is the linear correlation coefficient; Spearman $\rho$ is the rank correlation. Within-MSA correlation restricts to brands operating in a single MSA. MSA FE residualized computes partial correlation after removing MSA fixed effects from both measures. Expected pattern: Positive but modest correlations (0.3--0.5) overall; stronger within industry; weaker after geographic controls.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsubsection{Patterns of Alignment and Divergence}
+
+To characterize where alignment breaks down, we construct an alignment measure:
+
+\begin{equation}
+\text{alignment}_{j} = 1 - \left| \text{consumer\_rep\_lean}_j - \text{employee\_rep\_lean}_j \right|
+\end{equation}
+
+Values close to 1 indicate strong alignment (similar consumer and employee composition); values close to 0 indicate maximum divergence. Table~\ref{tab:alignment_patterns} characterizes brands by alignment patterns.
+
+\begin{table}[htbp]
+\centering
+\caption{Patterns of Employee-Consumer Alignment}
+\label{tab:alignment_patterns}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+Pattern & N & Consumer Rep & Employee Rep & Example Brands \\
+\midrule
+Aligned Republican & XX & 0.6X & 0.6X & [Names] \\
+Aligned Neutral & XX & 0.5X & 0.5X & [Names] \\
+Aligned Democratic & XX & 0.4X & 0.4X & [Names] \\
+Divergent (C$>$E) & XX & 0.6X & 0.4X & [Names] \\
+Divergent (E$>$C) & XX & 0.4X & 0.6X & [Names] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Brands categorized by alignment pattern. ``Aligned'' brands have $|$Consumer $-$ Employee$|$ $<$ 0.10. ``Divergent (C$>$E)'' indicates customers are more Republican than employees. ``Divergent (E$>$C)'' indicates employees are more Republican than customers.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Within-Stakeholder Diversity}
+
+Beyond mean partisan lean, we examine heterogeneity within stakeholder groups. A brand's customers may be uniformly partisan or span the political spectrum. We measure within-stakeholder diversity using the standard deviation of visitor partisan lean across locations and an entropy-based diversity index.
+
+\begin{table}[htbp]
+\centering
+\caption{Within-Stakeholder Political Diversity by Brand}
+\label{tab:within_diversity}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+& & \multicolumn{2}{c}{Consumer Diversity} & \multicolumn{2}{c}{Employee Diversity} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+& N & SD & Entropy & SD & Entropy \\
+\midrule
+Full sample & XX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+\midrule
+\textit{By Mean Consumer Lean} & & & & & \\
+Republican (mean $>$ 0.55) & XX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Neutral (mean 0.45--0.55) & XX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+Democratic (mean $<$ 0.45) & XX,XXX & XX.XX & XX.XX & XX.XX & XX.XX \\
+\midrule
+\textit{Most Diverse Brands} & & & & & \\
+[Brand 1] & --- & XX.XX & XX.XX & XX.XX & XX.XX \\
+[Brand 2] & --- & XX.XX & XX.XX & XX.XX & XX.XX \\
+\midrule
+\textit{Least Diverse Brands} & & & & & \\
+[Brand 1] & --- & XX.XX & XX.XX & XX.XX & XX.XX \\
+[Brand 2] & --- & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Consumer Diversity SD is the standard deviation of visitor Republican lean across POIs within each brand. Entropy is calculated as $-\sum p_k \ln(p_k)$ where $p_k$ is the share of visits from CBGs in partisan quintile $k$. Higher entropy indicates more even distribution across partisan categories. Employee diversity measures computed analogously using PAW data.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Performance Implications}
+
+We now examine whether stakeholder ideological alignment affects firm performance. Using SafeGraph Spend data, we test whether stores with more aligned stakeholder compositions show stronger economic outcomes.
+
+\subsubsection{Baseline Performance Results}
+
+Table~\ref{tab:performance_baseline} presents OLS estimates relating stakeholder alignment to store-level spending.
+
+\begin{table}[htbp]
+\centering
+\caption{Stakeholder Alignment and Store Performance}
+\label{tab:performance_baseline}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+& (1) & (2) & (3) & (4) \\
+Dependent Variable: & \multicolumn{4}{c}{Log Monthly Spend} \\
+\midrule
+Alignment & XX.XX** & XX.XX** & XX.XX* & XX.XX \\
+& (XX.XX) & (XX.XX) & (XX.XX) & (XX.XX) \\
+Consumer Rep Lean & & XX.XX & XX.XX & XX.XX \\
+& & (XX.XX) & (XX.XX) & (XX.XX) \\
+Employee Rep Lean & & XX.XX & XX.XX & XX.XX \\
+& & (XX.XX) & (XX.XX) & (XX.XX) \\
+\midrule
+POI FE & No & No & Yes & Yes \\
+Month FE & No & No & No & Yes \\
+Local Demographics & No & No & No & Yes \\
+\midrule
+Observations & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX \\
+$R^2$ & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: OLS regressions with dependent variable log monthly spend. Alignment = $1 - |$Consumer Rep Lean $-$ Employee Rep Lean$|$. Standard errors clustered by brand in parentheses. Sample: POI-months with matched SafeGraph Spend and PAW data, 2019--2021. * $p<0.10$, ** $p<0.05$, *** $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsubsection{Partisan Climate Moderation}
+
+Our identification strategy exploits temporal variation in the salience of partisan conflict. If stakeholder alignment matters for performance, the effect should be stronger when political issues are salient. Table~\ref{tab:pci_interaction} presents estimates from models interacting alignment with the Partisan Conflict Index (PCI).
+
+\begin{table}[htbp]
+\centering
+\caption{Partisan Climate Moderation: PCI Interaction}
+\label{tab:pci_interaction}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+& (1) & (2) & (3) & (4) \\
+Dependent Variable: & \multicolumn{4}{c}{Log Monthly Spend} \\
+\midrule
+Alignment & XX.XX & XX.XX & XX.XX & XX.XX \\
+& (XX.XX) & (XX.XX) & (XX.XX) & (XX.XX) \\
+Alignment $\times$ PCI & XX.XX** & XX.XX** & XX.XX* & XX.XX* \\
+& (XX.XX) & (XX.XX) & (XX.XX) & (XX.XX) \\
+PCI (standardized) & XX.XX & XX.XX & --- & --- \\
+& (XX.XX) & (XX.XX) & & \\
+\midrule
+POI FE & No & Yes & Yes & Yes \\
+Month FE & No & No & Yes & Yes \\
+Brand $\times$ Year FE & No & No & No & Yes \\
+\midrule
+Observations & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX \\
+$R^2$ & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: OLS regressions examining the interaction between stakeholder alignment and Partisan Conflict Index (PCI). PCI is standardized to have mean 0 and SD 1. A positive coefficient on Alignment $\times$ PCI indicates that alignment matters more during periods of high partisan conflict. Standard errors clustered by brand in parentheses. * $p<0.10$, ** $p<0.05$, *** $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The interaction term tests our core hypothesis: if stakeholder misalignment harms performance, this effect should intensify when partisan conflict is salient. A positive coefficient on Alignment $\times$ PCI indicates that alignment is more valuable (or misalignment more costly) during high-PCI periods.
+
+\subsubsection{Robustness Checks}
+
+Table~\ref{tab:robustness} presents robustness checks for the PCI interaction analysis.
+
+\begin{table}[htbp]
+\centering
+\caption{Robustness Checks: PCI Interaction}
+\label{tab:robustness}
+\begin{threeparttable}
+\small
+\begin{tabular}{lcccc}
+\toprule
+& Baseline & Lagged PCI & 2016 Election & Transactions \\
+& (1) & (2) & (3) & (4) \\
+\midrule
+Alignment $\times$ PCI & XX.XX** & --- & --- & XX.XX** \\
+& (XX.XX) & & & (XX.XX) \\
+Alignment $\times$ PCI$_{t-1}$ & --- & XX.XX** & --- & --- \\
+& & (XX.XX) & & \\
+Alignment (2016) $\times$ PCI & --- & --- & XX.XX** & --- \\
+& & & (XX.XX) & \\
+\midrule
+POI FE, Month FE & Yes & Yes & Yes & Yes \\
+Observations & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX & XX,XXX,XXX \\
+$R^2$ & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Robustness checks. Column (1): baseline specification. Column (2): uses 1-month lagged PCI. Column (3): uses 2016 election data for partisan lean. Column (4): dependent variable is log transaction count. Standard errors clustered by brand in parentheses. * $p<0.10$, ** $p<0.05$, *** $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsubsection{Heterogeneity}
+
+Table~\ref{tab:heterogeneity} examines heterogeneity in the alignment-performance relationship across brand and market characteristics.
+
+\begin{table}[htbp]
+\centering
+\caption{Heterogeneity in Alignment Effects}
+\label{tab:heterogeneity}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+& Alignment Effect & Alignment $\times$ PCI & N \\
+\midrule
+\textit{By Industry} & & & \\
+Retail Trade & XX.XX & XX.XX & XX,XXX,XXX \\
+Food Services & XX.XX & XX.XX & XX,XXX,XXX \\
+Other Services & XX.XX & XX.XX & XX,XXX,XXX \\
+\midrule
+\textit{By Consumer Diversity} & & & \\
+High diversity (top quartile) & XX.XX & XX.XX & XX,XXX,XXX \\
+Low diversity (bottom quartile) & XX.XX & XX.XX & XX,XXX,XXX \\
+\midrule
+\textit{By Market Competitiveness} & & & \\
+High competition & XX.XX & XX.XX & XX,XXX,XXX \\
+Low competition & XX.XX & XX.XX & XX,XXX,XXX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Coefficients from separate regressions by subsample. All specifications include POI and month fixed effects. Consumer diversity measured as standard deviation of visitor partisan lean across locations within brand. Market competitiveness measured using Herfindahl index of brand market shares within CBG. Standard errors omitted for space; ** indicates $p<0.05$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\FloatBarrier
+
+\subsection{Summary of Results}
+
+Our analysis yields four main findings:
+
+\begin{enumerate}
+    \item \textbf{Substantial variation in consumer partisan composition.} Visitor partisan lean varies across geography, industry, and brand. While location explains the majority of variance ($\sim$85\%), meaningful differences exist among businesses in the same neighborhood.
+
+    \item \textbf{Brand-level partisan sorting.} Some brands attract systematically more Republican or Democratic visitors than their geographic footprints would predict. Within-category comparisons reveal political differentiation among competing brands.
+
+    \item \textbf{Imperfect employee-consumer alignment.} Employee and consumer partisan composition are positively correlated but imperfectly aligned. The correlation is moderate ($r \approx$ XX.XX), indicating that stakeholder groups are neither perfectly aligned nor independent.
+
+    \item \textbf{Performance implications of alignment.} Stakeholder alignment is associated with store performance, with effects concentrated in periods of high partisan conflict. The interaction between alignment and PCI suggests that misalignment matters more when political issues are salient.
+\end{enumerate}

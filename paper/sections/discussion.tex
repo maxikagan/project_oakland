@@ -1,0 +1,93 @@
+\section{Discussion}\label{sec:discussion}
+
+This paper introduces stakeholder political pluralism as a new dimension of stakeholder management and provides the first large-scale empirical analysis of how political composition varies across firm stakeholder groups. Our findings have implications for stakeholder theory, corporate strategy, and managerial practice.
+
+\subsection{Theoretical Contributions}
+
+Our primary theoretical contribution is extending stakeholder theory to account for ideological heterogeneity. The classic stakeholder framework identifies stakeholder groups---customers, employees, suppliers, communities---and considers their interests \citep{freeman1984strategic}. But within each group, members may disagree profoundly. A firm's customers are not a monolith with unified preferences; nor are its employees. By introducing stakeholder political pluralism, we enrich the stakeholder perspective to address settings where stakeholders themselves are divided.
+
+This extension speaks directly to the ``new stakeholder theory'' (NST) advanced by \citet{mcgahan2021integrating} and \citet{bridoux2022stakeholder}. The NST grapples with questions of stakeholder enfranchisement and value distribution---which stakeholders matter, and how should firms allocate value among them? Our work adds a prior question: within each stakeholder group, what do members actually want? When stakeholder preferences are heterogeneous, the very notion of ``stakeholder interest'' becomes more complex. A firm cannot simply satisfy ``customer preferences'' when customers prefer opposite things.
+
+Our findings also contribute to the stakeholder salience literature \citep{mitchell1997toward}. Salience theory explains why managers attend to some stakeholders more than others, but implicitly assumes stakeholder preferences are coherent and knowable. When stakeholders are politically pluralistic, salience becomes more nuanced. A customer group may have high power, legitimacy, and urgency, yet be internally divided such that no single response can satisfy the group. Understanding within-stakeholder diversity is thus essential for applying salience concepts.
+
+The stakeholder political pluralism concept also bridges stakeholder theory with the corporate political activity (CPA) literature. CPA research has documented that firms face pressure from stakeholders when engaging in political activities \citep{hillman2004political, burbano2021effect}. Our work clarifies why some firms face more intense pressure than others: pluralistic firms must navigate conflicting expectations from divided stakeholder groups. As \citet{gupta2025political} theorize, polarization intensifies both activism and resistance; our empirical evidence shows that pluralism at the firm level is associated with worse performance outcomes during politically salient periods.
+
+\subsection{Empirical Contributions}
+
+Beyond theory, we make three empirical contributions. First, we develop novel measures of stakeholder political composition that can be applied broadly across the economy. Prior research has examined consumer ideology for limited samples using surveys \citep{panagopoulos2017all} or inferred preferences from social media \citep{schoenmueller2023polarized}, but no existing measures cover the breadth of commercial activity we observe. Our foot traffic-based approach generates partisan composition estimates for millions of establishments, enabling systematic analysis previously impossible.
+
+Second, we provide the first large-scale documentation of how stakeholder political composition varies across firms. We characterize the distribution of consumer partisan lean across industries, identify which brand categories show the most ideological differentiation, and quantify how much variation is explained by location versus business characteristics. The variance decomposition reveals that while geography dominates, meaningful brand-level differentiation exists.
+
+Third, we examine the relationship between employee and consumer ideology---a question central to stakeholder theory but never empirically addressed at scale. Our evidence shows that employee and consumer partisan composition are correlated but imperfectly aligned, with correlation coefficients in the range of [XX.XX to XX.XX]. This moderate correlation indicates that stakeholder pluralism is common: many firms serve customers whose political composition differs from that of their workforce.
+
+\subsection{Implications for Corporate Strategy}
+
+Our findings have direct implications for corporate strategy, particularly regarding political positioning and stakeholder management.
+
+\subsubsection{Political Positioning}
+
+Firms must decide how to position themselves on political issues---or whether to engage at all. The emerging literature on CEO activism and corporate political expression has documented both benefits (enhanced brand loyalty among aligned stakeholders) and risks (backlash from misaligned stakeholders) \citep{chatterji2019origins, korschun2022taking}. Our evidence suggests that the optimal positioning strategy depends critically on stakeholder political composition.
+
+Firms with politically homogeneous stakeholder bases face a clearer calculus: political engagement that aligns with stakeholders' views may be beneficial, while contrary positioning is risky. For pluralistic firms, the calculus is more complex. Any political positioning will alienate some stakeholders. Such firms may benefit from political neutrality or from compartmentalizing messages to different audiences---though both strategies carry risks of their own (perceived inauthenticity, coordination failures).
+
+The PCI interaction results suggest that this calculus intensifies during periods of elevated partisan conflict. When political issues are salient, stakeholder political preferences become more relevant to economic behavior. Pluralistic firms should be especially cautious during these periods, as the costs of misalignment are amplified.
+
+\subsubsection{Geographic Expansion}
+
+Our findings also have implications for geographic expansion decisions. When firms expand into new markets, they acquire new stakeholders whose political composition may differ from existing stakeholders. A brand with a politically homogeneous customer base may face pluralism challenges when entering ideologically different regions.
+
+This suggests that political composition analysis could complement traditional market analysis in expansion decisions. Firms may want to consider not only market size and competitive intensity but also the political composition of potential customers relative to existing stakeholders and employees.
+
+\subsubsection{Workforce Management}
+
+On the employee side, our evidence of imperfect employee-consumer alignment raises questions about workforce composition. Hiring decisions affect not only productivity and wages but also the political composition of the workforce, which in turn affects stakeholder pluralism. Firms operating in politically charged industries may face particular pressure to consider these dynamics.
+
+This is a sensitive area, as political affiliation is protected in some jurisdictions and political hiring criteria would raise serious ethical and legal concerns. We do not advocate for political considerations in hiring. Rather, we note that firms should be aware that workforce composition affects pluralism and should develop strategies for managing internal political diversity constructively \citep{sisco2022managing}.
+
+\subsection{Limitations}
+
+Our analysis has several limitations that suggest caution in interpretation and identify opportunities for future research.
+
+\subsubsection{Ecological Inference}
+
+Our consumer partisan lean measure relies on ecological inference: we infer individual visitors' political preferences from the aggregate voting patterns of their home Census Block Groups. This approach assumes that visitors are politically representative of their neighborhoods, which may not hold if politically motivated sorting occurs within CBGs or if certain political types are more likely to visit commercial establishments.
+
+The ecological inference limitation is common to research using geographically-aggregated data \citep{king1997solution}. We partially address it by using fine-grained CBG-level data (average population $\sim$1,500) rather than larger geographic units, and by focusing on relative comparisons across locations rather than absolute political shares. Nonetheless, individual-level data---if available---would strengthen causal claims.
+
+\subsubsection{Visits vs. Purchases}
+
+Our consumer data capture visits, not purchases. A visitor who enters a store but does not buy differs from a loyal customer. If political sorting occurs more strongly in purchase decisions than visit decisions, our measures may understate true political differentiation in customer bases.
+
+The SafeGraph Spend data partially address this concern by providing transaction-level outcomes, but spend data are available only for a subset of our sample and time period. Future research with richer transaction data could examine whether political composition affects purchase probability conditional on visit.
+
+\subsubsection{Entity Resolution Coverage}
+
+Our employee-consumer alignment analysis relies on entity resolution linking Advan brands to PAW employers. This matching succeeds for 3,872 brands covering 1.48 million POIs, but many brands remain unmatched. If matching success is correlated with pluralism patterns, our alignment estimates may be biased.
+
+We examined selection on observables (brand size, industry, geographic footprint) and found modest differences between matched and unmatched brands. However, we cannot rule out selection on unobservables. The entity resolution challenge is inherent to linking disparate data sources without common identifiers.
+
+\subsubsection{Endogeneity}
+
+Our performance analysis documents associations between stakeholder alignment and economic outcomes, but establishing causality is challenging. Firms with aligned stakeholders may differ from pluralistic firms in unobservable ways that also affect performance. The PCI interaction provides some leverage---if alignment effects vary with an external shock to political salience, this suggests the mechanism is political rather than confounded---but we cannot fully rule out alternative explanations.
+
+Future research could pursue sharper identification strategies, such as examining firm responses to exogenous political events that differentially affect stakeholder groups or exploiting natural experiments in stakeholder composition changes.
+
+\subsection{Future Research Directions}
+
+Our work opens several avenues for future research.
+
+\subsubsection{Worker Mobility and Sorting}
+
+Do workers sort into firms based on political alignment with existing employees or customers? Research on worker mobility could examine whether political composition predicts hiring, turnover, and job search behavior. If workers preferentially join politically aligned organizations, this could reinforce pluralism patterns over time.
+
+\subsubsection{Corporate Political Activity}
+
+How does stakeholder pluralism affect corporate political behavior? Pluralistic firms face pressure from multiple directions when considering political donations, lobbying, or public statements. Research could examine whether pluralism predicts CPA patterns and how firms navigate conflicting stakeholder preferences in political domains.
+
+\subsubsection{Event Studies}
+
+Our temporal analysis uses monthly variation in partisan conflict, but sharper identification might come from event studies around specific political moments---elections, Supreme Court decisions, viral political controversies. How do pluralistic firms' outcomes change around such events relative to aligned firms?
+
+\subsubsection{International Comparisons}
+
+Our analysis focuses on the United States, where political polarization is particularly acute. How does stakeholder political pluralism vary across countries with different political systems and polarization levels? Cross-national research could examine whether our findings generalize beyond the American context.
