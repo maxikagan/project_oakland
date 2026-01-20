@@ -48,7 +48,7 @@ Validate our measure against external benchmarks.
 
 *Blocked by: 1.5 (brand-level aggregation)*
 
-### Epic 3: Descriptive Analysis ⬚ READY TO START
+### Epic 3: Descriptive Analysis ⬚ BLOCKED
 Document patterns in consumer partisan lean.
 **Scripts**: `scripts/05_descriptive/`
 
@@ -60,7 +60,9 @@ Document patterns in consumer partisan lean.
 | 3.4 Category comparisons | ⬚ Pending | By NAICS, top_category |
 | 3.5 Top/bottom brand rankings | ⬚ Pending | Most R vs. most D brands |
 
-### Epic 4: Store Performance (SafeGraph Spend) ⬚ READY TO START
+*Blocked by: 1.5 (brand-level aggregation)*
+
+### Epic 4: Store Performance (SafeGraph Spend) ⬚ BLOCKED
 Link partisan lean to business outcomes using SafeGraph Spend.
 **Scripts**: `scripts/06_performance/`
 
@@ -70,6 +72,8 @@ Link partisan lean to business outcomes using SafeGraph Spend.
 | 4.2 Match to partisan lean | ⬚ Pending | Join on PLACEKEY |
 | 4.3 Within-store TWFE | ⬚ Pending | Spending ~ lean × salience |
 | 4.4 Event studies | ⬚ Pending | Elections, Dobbs, etc. |
+
+*Blocked by: 1.5 (brand-level aggregation)*
 
 ### Epic 5: Excess Partisan Lean (Gravity Model) ⬚ BLOCKED
 Control for geography using gravity model.
@@ -112,12 +116,12 @@ Establish causal relationships.
 
 ## Current Sprint
 
-**Focus**: Epic 1.5 → Epic 2 → Epics 3-4
+**Focus**: Epic 1.5 (critical blocker) → Epics 2, 3, 4
 
 **Immediate next steps**:
-1. Task 1.5: Aggregate brand-level lean (unblocks Epic 2)
-2. Task 2.2: Complete brand matching (semantic similarity)
-3. Task 2.3-2.4: Correlation analysis and divergence
+1. **Task 1.5: Aggregate brand-level lean** (unblocks Epics 2, 3, 4)
+2. Task 2.2: Complete brand matching (semantic similarity - in progress)
+3. Task 2.3-2.5: Correlation analysis, divergence, LaTeX appendix
 4. Tasks 3.1-3.2: Brand distributions and variance decomposition
 
 ---
