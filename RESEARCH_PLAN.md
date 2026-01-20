@@ -46,6 +46,7 @@ Validate our measure against external benchmarks.
 | 2.4 Divergence analysis | ⬚ Pending | Where/why do measures differ? |
 | 2.5 Generate validation outputs | ⬚ Pending | Scatter plot PNG/PDF, correlation stats |
 | 2.6 Generate LaTeX table rows | ⬚ Pending | Full brand comparison table for appendix |
+| 2.7 Document matching methodology | ⬚ Pending | LaTeX appendix: semantic similarity + Claude review |
 
 *Blocked by: 1.5 (brand-level aggregation)*
 
