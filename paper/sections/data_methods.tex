@@ -1,0 +1,157 @@
+\section{Data and Methods}\label{sec:data}
+
+We combine four primary data sources to construct measures of stakeholder political composition and firm performance: (1) Advan foot traffic data to measure visitor flows, (2) CBG-level presidential election results to characterize visitor political composition, (3) Politics at Work employment data to measure employee political composition, and (4) SafeGraph Spend data to measure store-level performance. We describe each data source and our measure construction procedures below. Detailed methodology, including data processing pipelines and robustness checks, appears in the appendices.
+
+\subsection{Measuring Consumer Political Composition}
+
+\subsubsection{Foot Traffic Data: Advan Monthly Patterns}
+
+We use Advan (formerly SafeGraph) Monthly Patterns data covering January 2019 through July 2024 (67 months) for all 50 U.S. states plus the District of Columbia. The data comprise approximately 596 million POI-month observations across 9.2 million unique points of interest including retail establishments, restaurants, service providers, and other commercial locations.
+
+For each POI-month observation, the data include a unique identifier (PLACEKEY), business attributes (brand, category, NAICS code), location information (address, Census Block Group), and critically, a JSON-encoded field containing the distribution of visitor home CBGs. This field maps each visitor home CBG to a visitor count, enabling us to characterize where a location's visitors reside.
+
+Advan applies differential privacy protections: CBGs with fewer than 4 visitors are suppressed, and visitor counts are subject to noise injection. These protections may introduce measurement error but do not systematically bias partisan lean estimates. In practice, suppressed CBGs account for a small fraction of total visitors.
+
+\subsubsection{Election Data: CBG-Level Presidential Vote Estimates}
+
+We use Census Block Group-level presidential election results derived from the ``Main Method'' approach with RLCR (Registered Voter List with Candidate Records) methodology. These data provide estimated vote counts at the CBG level for both the 2016 and 2020 presidential elections, covering all 283,900 CBGs in the contiguous United States.
+
+The RLCR method combines precinct-level official election returns with geocoded voter file data to produce block group-level vote share estimates. While these estimates are subject to modeling uncertainty, they provide substantially more granular geographic resolution than precinct-level data alone, which is essential for matching to foot traffic visitor distributions.
+
+We compute Republican two-party vote share for each CBG:
+
+\begin{equation}
+\text{two\_party\_rep\_share}_{c,t} = \frac{\text{Republican votes}_{c,t}}{\text{Republican votes}_{c,t} + \text{Democratic votes}_{c,t}}
+\end{equation}
+
+where $c$ indexes CBGs and $t \in \{2016, 2020\}$ indexes election years. Using two-party vote share excludes third-party votes and creates a bounded measure in $[0, 1]$.
+
+\subsubsection{Constructing Visitor Partisan Lean}
+
+For each POI-month observation, we compute visitor-weighted average Republican vote share:
+
+\begin{equation}
+\text{visitor\_rep\_lean}_{i,m,t} = \frac{\sum_{c \in C_{i,m}} \left( \text{rep\_share}_{c,t} \times \text{visitors}_{c,i,m} \right)}{\sum_{c \in C_{i,m}} \text{visitors}_{c,i,m}}
+\end{equation}
+
+where $i$ indexes POIs, $m$ indexes months, $t$ indexes election years, and $C_{i,m}$ is the set of visitor home CBGs for POI $i$ in month $m$ that match the election data lookup.
+
+This measure captures the political composition of a location's visitors based on where those visitors live. A store whose visitors primarily come from Republican-leaning neighborhoods will have high visitor partisan lean; one drawing from Democratic-leaning areas will have low lean. The measure reflects realized visitor composition, not underlying preferences, though under reasonable assumptions about residential sorting the two are strongly related.
+
+We compute partisan lean using both 2016 and 2020 election data for all observations, enabling robustness checks across election years. Our primary analyses use 2020 results as the more recent benchmark.
+
+\textit{Full methodology details, including the data processing pipeline and validation procedures, appear in Appendix~\ref{sec:appendix_methodology}.}
+
+\subsection{Measuring Employee Political Composition}
+
+\subsubsection{Employment Data: Politics at Work}
+
+The Politics at Work (PAW) dataset provides employer-level partisan composition measures derived from matching voter registration records to employment histories. The underlying microdata contain approximately 45 million individual employment records with associated voter registration-based partisan identification.
+
+For each employer-year, PAW provides the distribution of employee partisan composition: the share registered as Democrats, Republicans, or unaffiliated/other. We construct employer-level Republican share as:
+
+\begin{equation}
+\text{employee\_rep\_share}_{j,y} = \frac{\text{Republican employees}_{j,y}}{\text{Republican employees}_{j,y} + \text{Democratic employees}_{j,y}}
+\end{equation}
+
+where $j$ indexes employers and $y$ indexes years. This two-party measure parallels our consumer partisan lean construction.
+
+The PAW data cover approximately 534,000 unique employers from 2012--2024, with extensive coverage of large employers and good representation across industries. Coverage is stronger for firms with substantial formal employment (enabling voter file matching) than for small businesses or those with high workforce turnover.
+
+\subsubsection{Entity Resolution: Linking Advan to PAW}
+
+Linking Advan POI data to PAW employment records requires entity resolution---determining when a business name in one dataset corresponds to the same legal entity in the other. This is challenging because the datasets share no common identifiers: Advan uses PLACEKEYs and brand identifiers; PAW uses company identifiers derived from employer names in voter files.
+
+We develop a tiered matching strategy:
+
+\begin{enumerate}
+    \item \textbf{Tier 1: Identifier Matching.} For branded POIs where Advan provides stock tickers, we match directly to PAW records with the same ticker. This approach is precise but covers only publicly traded companies ($\sim$500--800 brands).
+
+    \item \textbf{Tier 2: National Brand Fuzzy Matching.} For remaining branded POIs, we use embedding-based fuzzy matching between Advan brand names and PAW employer names. We generate embeddings using a sentence transformer model and identify high-similarity matches, then manually validate matches above a similarity threshold.
+
+    \item \textbf{Tier 3: Local Business Matching.} For unbranded (``singleton'') POIs, we implement geographically-blocked fuzzy matching, comparing POI names to PAW employers only within the same metropolitan area or county. This approach is more error-prone and is not used in our primary analyses.
+\end{enumerate}
+
+Our final matched sample includes 3,872 validated brand-employer linkages covering approximately 1.48 million branded POIs. For these POIs, we can analyze both consumer and employee partisan composition.
+
+\textit{Full entity resolution methodology appears in Appendix~\ref{sec:appendix_entity_resolution}.}
+
+\subsection{Brand-Level Aggregation}
+
+For analyses requiring brand-level measures, we aggregate POI-level visitor partisan lean to the brand level using visit-weighted averages:
+
+\begin{equation}
+\text{brand\_rep\_lean}_{b,m,t} = \frac{\sum_{i \in B_b} \left( \text{visitor\_rep\_lean}_{i,m,t} \times \text{visits}_{i,m} \right)}{\sum_{i \in B_b} \text{visits}_{i,m}}
+\end{equation}
+
+where $b$ indexes brands, $B_b$ is the set of POIs belonging to brand $b$, and $\text{visits}_{i,m}$ is the normalized visit count (using the \texttt{normalized\_visits\_by\_state\_scaling} field to correct for device sampling variation).
+
+This weighting ensures that high-traffic locations contribute proportionally more to brand-level averages, reflecting their greater importance to brand-level consumer composition.
+
+\subsection{Performance Data: SafeGraph Spend}
+
+To examine performance implications, we use SafeGraph Spend data providing POI-month level transaction information. SafeGraph Spend aggregates anonymized credit and debit card transactions to estimate spending volume at specific locations.
+
+The data include:
+
+\begin{itemize}
+    \item \textbf{Spend Amount}: Estimated total spending at the POI in the month
+    \item \textbf{Transaction Count}: Number of distinct transactions
+    \item \textbf{Customer Count}: Number of unique customers transacting
+\end{itemize}
+
+Coverage spans 2019--2021, with strongest coverage for retail and restaurant categories. The data enable us to examine how stakeholder composition relates to store-level economic outcomes.
+
+Limitations include: (1) coverage is incomplete, as not all transactions are captured in the card panel; (2) the data end in 2021, limiting analysis of more recent periods; (3) spend data may be noisy for locations with low transaction volume.
+
+\subsection{Time-Varying Moderator: Partisan Conflict Index}
+
+We use the Partisan Conflict Index (PCI) developed by \citet{azzimonti2018partisan} as a measure of time-varying political salience. The PCI tracks the degree of political disagreement in the United States based on newspaper coverage of political conflict.
+
+The index is constructed by searching major newspaper archives for articles containing terms related to partisan conflict, policy disagreements, or political gridlock. Higher values indicate periods of elevated partisan tension; lower values indicate relative political calm. The index has been validated as a predictor of economic policy uncertainty and investment behavior.
+
+The PCI provides monthly observations from January 1981 through June 2025. We match each POI-month observation to the contemporaneous PCI value, enabling analysis of whether stakeholder alignment effects vary with political climate.
+
+\subsection{Sample Construction and Summary Statistics}
+
+Table~\ref{tab:summary_stats} presents summary statistics for our analysis samples.
+
+\begin{table}[htbp]
+\centering
+\caption{Summary Statistics}
+\label{tab:summary_stats}
+\begin{threeparttable}
+\begin{tabular}{lrrrr}
+\toprule
+& Mean & SD & Min & Max \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A: POI-Month Level (N = XX million)}} \\
+Visitor Republican Lean (2020) & XX.XX & XX.XX & 0.00 & 1.00 \\
+Visitor Republican Lean (2016) & XX.XX & XX.XX & 0.00 & 1.00 \\
+Monthly Normalized Visits & XX.XX & XX.XX & XX & XX \\
+CBG Match Rate (\%) & XX.XX & XX.XX & XX.XX & 100.00 \\
+\\
+\multicolumn{5}{l}{\textit{Panel B: Brand-Month Level (N = XX thousand)}} \\
+Brand Republican Lean (2020) & XX.XX & XX.XX & XX.XX & XX.XX \\
+Number of Locations & XX.XX & XX.XX & 1 & XX \\
+Total Monthly Visits & XX.XX & XX.XX & XX & XX \\
+\\
+\multicolumn{5}{l}{\textit{Panel C: Matched Brand-Year Level (N = XX thousand)}} \\
+Consumer Republican Lean & XX.XX & XX.XX & XX.XX & XX.XX \\
+Employee Republican Lean & XX.XX & XX.XX & XX.XX & XX.XX \\
+Employee-Consumer Alignment & XX.XX & XX.XX & XX.XX & XX.XX \\
+\\
+\multicolumn{5}{l}{\textit{Panel D: Performance Sample (N = XX million)}} \\
+Monthly Spend (\$) & XX.XX & XX.XX & XX & XX \\
+Transaction Count & XX.XX & XX.XX & XX & XX \\
+Partisan Conflict Index & XX.XX & XX.XX & XX.XX & XX.XX \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Notes}: Panel A reports statistics for all POI-month observations with valid visitor CBG data. Panel B aggregates to the brand-month level for branded POIs. Panel C restricts to brands successfully matched to PAW employer records. Panel D restricts to POIs with available SafeGraph Spend data. Visitor Republican Lean is the visitor-weighted average Republican two-party vote share of visitor home CBGs. Employee Republican Lean is the two-party Republican share among registered voters employed at the matched employer.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\FloatBarrier

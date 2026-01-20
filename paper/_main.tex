@@ -37,6 +37,7 @@
 \usepackage{lscape}
 \usepackage{pdflscape}
 \usepackage{rotating}
+\usepackage{xcolor}
 
 % ===================== HYPERLINKS ========================
 \usepackage[hidelinks]{hyperref}
@@ -101,11 +102,37 @@
 \newcommand{\removeperiod}{\@ifnextchar.{\@gobble}\relax}
 \newcommand\cites[1]{\citeauthor{#1}'s\ (\citeyear{#1})}
 
+% Placeholder command for figures
+\newcommand{\placeholderfigure}[3]{%
+    \begin{figure}[htbp]
+        \centering
+        \fcolorbox{black}{gray!20}{%
+            \parbox{0.85\textwidth}{%
+                \vspace{3cm}
+                \centering
+                \textbf{#1}\\[0.5em]
+                \textit{#2}
+                \vspace{3cm}
+            }%
+        }
+        \caption{#3}
+    \end{figure}
+}
+
+% Placeholder command for tables
+\newcommand{\placeholdertable}[2]{%
+    \begin{table}[htbp]
+        \centering
+        \caption{#1}
+        #2
+    \end{table}
+}
+
 % ---------------------------------------------------------------------------------
 
 \begin{document}
 
-\title{Stakeholder Political Pluralism: Political Divergence Within the Firm and its Effects on Organizational Outcomes}
+\title{Measuring Stakeholder Ideology: Political Alignment Across Employees and Consumers}
 
 \author{Max Kagan}
 \affil{Columbia Business School}
@@ -117,10 +144,11 @@
 \maketitle
 
 \begin{abstract}
-\noindent Stakeholder theory urges firms to consider the interests of all firm stakeholders but offers limited guidance when stakeholder groups hold divergent preferences. I introduce the concept of "stakeholder pluralism" to describe the extent to which a firm's stakeholder groups differ in their preferences over social, political, and economic questions. Using novel large-scale data including mobile location data and voter registration files, I develop entropy-based measures of divergence in the political partisan composition between two important stakeholder groups (customers and employees) for millions of U.S. business locations. Even accounting for differences in geography, I document substantial variation: many businesses have a consistent partisan skew, while others serve politically diverse coalitions. I then examine the consequences of pluralism, by testing whether firms with greater cross-stakeholder divergence suffer from lower organizational performance and are more susceptible to backlash when navigating politically salient events. 
+\noindent
+Firms increasingly navigate a polarized political landscape in which their stakeholders---employees, consumers, investors---may hold conflicting political preferences. Yet we lack systematic measurement of how stakeholder political composition varies across firms and whether alignment between stakeholder groups affects firm outcomes. This paper develops novel measures of stakeholder political ideology by linking granular foot traffic data to election results and employment records to voter registration. Using 596 million point-of-interest-month observations from Advan and 45 million individual employment records from Politics at Work, we construct the first comprehensive panel of both consumer and employee partisan composition at the firm level. Our analysis reveals substantial variation in stakeholder ideology across industries, geographies, and brands. We document the correlation between employee and consumer political composition, identifying where stakeholder groups align and where they diverge. Using SafeGraph Spend data and exploiting temporal variation in partisan conflict salience as an identification strategy, we examine whether stakeholder ideological alignment affects firm performance. Our findings extend stakeholder theory by introducing ideological heterogeneity as a critical dimension of stakeholder management and provide practical implications for firms operating in divided societies.
 
 \bigskip
-\noindent\textbf{Keywords:} % TODO: Add keywords
+\noindent\textbf{Keywords:} Stakeholder theory, political ideology, consumer behavior, employee ideology, corporate political activity
 \end{abstract}
 
 \end{singlespacing}
@@ -132,39 +160,27 @@
 
 
 % INTRODUCTION --------------------------------------------------------------------------
-\section{Introduction}\label{sec:introduction}
-
-% TODO: Write introduction
+\input{sections/introduction}
 
 
 % THEORY --------------------------------------------------------------------------
-\section{Theory}\label{sec:theory}
-
-% TODO: Write theory section
+\input{sections/theory}
 
 
 % DATA AND METHODS --------------------------------------------------------------------------
-\section{Data and Methods}\label{sec:data}
-
-% TODO: Write data and methods section
+\input{sections/data_methods}
 
 
 % RESULTS --------------------------------------------------------------------------
-\section{Results}\label{sec:results}
-
-% TODO: Write results section
+\input{sections/results}
 
 
 % DISCUSSION --------------------------------------------------------------------------
-\section{Discussion}\label{sec:discussion}
-
-% TODO: Write discussion section
+\input{sections/discussion}
 
 
 % CONCLUSION --------------------------------------------------------------------------
-\section{Conclusion}\label{sec:conclusion}
-
-% TODO: Write conclusion
+\input{sections/conclusion}
 
 
 % REFERENCES --------------------------------------------------------------------------
@@ -180,6 +196,10 @@
 \appendix
 
 \input{appendix_methodology}
+
+\input{appendix_entity_resolution}
+
+\input{appendix_validation}
 
 
 \end{document}
