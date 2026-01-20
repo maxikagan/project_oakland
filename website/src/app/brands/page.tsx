@@ -159,7 +159,7 @@ export default function BrandsPage() {
                     <Link href={`/brands/${brand.slug}`} className="text-blue-600 hover:text-blue-800 font-medium block truncate">
                       {brand.name}
                     </Link>
-                    {brand.company && brand.company !== brand.name && (
+                    {brand.ticker && brand.company && brand.company !== brand.name && (
                       <p className="text-xs text-gray-400 truncate">{brand.company}</p>
                     )}
                   </td>
