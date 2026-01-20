@@ -1,29 +1,27 @@
 import { Brand, BrandSummary, FeaturedBrand, Category, TimeSeriesPoint } from '@/types'
+import { promises as fs } from 'fs'
+import path from 'path'
 
-const DATA_BASE_URL = process.env.NEXT_PUBLIC_DATA_URL || '/data'
+async function readJsonFile<T>(filename: string): Promise<T> {
+  const filePath = path.join(process.cwd(), 'public', 'data', filename)
+  const data = await fs.readFile(filePath, 'utf-8')
+  return JSON.parse(data)
+}
 
 export async function getBrands(): Promise<BrandSummary> {
-  const res = await fetch(`${DATA_BASE_URL}/brands.json`, { next: { revalidate: 3600 } })
-  if (!res.ok) throw new Error('Failed to fetch brands')
-  return res.json()
+  return readJsonFile<BrandSummary>('brands.json')
 }
 
 export async function getFeaturedBrands(): Promise<FeaturedBrand[]> {
-  const res = await fetch(`${DATA_BASE_URL}/featured_brands.json`, { next: { revalidate: 3600 } })
-  if (!res.ok) throw new Error('Failed to fetch featured brands')
-  return res.json()
+  return readJsonFile<FeaturedBrand[]>('featured_brands.json')
 }
 
 export async function getCategories(): Promise<Record<string, Category>> {
-  const res = await fetch(`${DATA_BASE_URL}/categories.json`, { next: { revalidate: 3600 } })
-  if (!res.ok) throw new Error('Failed to fetch categories')
-  return res.json()
+  return readJsonFile<Record<string, Category>>('categories.json')
 }
 
 export async function getBrandTimeSeries(slug: string): Promise<TimeSeriesPoint[] | null> {
-  const res = await fetch(`${DATA_BASE_URL}/brand_timeseries.json`, { next: { revalidate: 3600 } })
-  if (!res.ok) throw new Error('Failed to fetch time series')
-  const data = await res.json()
+  const data = await readJsonFile<Record<string, TimeSeriesPoint[]>>('brand_timeseries.json')
   return data[slug] || null
 }
 
