@@ -1,9 +1,42 @@
 # Brand Partisan Lean Explorer - Website Plan
 
 **Goal**: Interactive Vercel-hosted website to explore national brand partisan lean data
-**Pattern**: politicsatwork.org / whatisstrategy.org (Next.js, clean academic interface)
-**Status**: Planning
+**Pattern**: politicsatwork.org / whatisstrategy.org (Next.js, polished modern design)
+**Status**: Planning → Ready to build
 **Last updated**: 2026-01-20
+
+---
+
+## Interview Summary (2026-01-20)
+
+### Audience & Purpose
+- **Primary audience**: Academic researchers
+- **Primary goal**: Explore & discover (not lookup or extraction)
+- **Timeline**: Launch before paper as a teaser to generate interest
+- **Access**: Password-protected (single shared password) for 2-5 trusted colleagues initially
+
+### Key Decisions
+| Question | Decision |
+|----------|----------|
+| Data transparency | Show all brands with caveats for low-confidence data |
+| Downloads | Request-based ("Contact for data access") |
+| Methodology depth | High-level summary, link to paper for details |
+| Validation results | Save for paper - don't show on site yet |
+| Mobile support | Basic (usable but optimized for desktop) |
+| Visual style | Polished & modern (like politicsatwork.org) |
+| Categories | NAICS hierarchy (2-digit → 4-digit → 6-digit) |
+| Map technology | Best technical choice (no preference) |
+| Site name | Tied to paper title (working title for now) |
+| Domain | Vercel subdomain initially (e.g., brand-lean.vercel.app) |
+| MVP scope | Full featured from start |
+
+### Feature Specifications
+| Feature | Specification |
+|---------|---------------|
+| Landing page | Featured household name brands (McDonald's, Walmart, Starbucks, etc.) |
+| Map views | Toggle between: absolute lean, relative to local area, relative to brand average |
+| Time series | User-selectable: quarterly default, option for monthly granularity |
+| Brand comparison | All modes: side-by-side, overlay on same chart, category benchmarking |
 
 ---
 
@@ -17,15 +50,15 @@ An earlier Streamlit prototype exists at `dashboard/`:
 **Limitations of Streamlit approach**:
 - Requires SSH tunnel to Savio - not publicly accessible
 - Python/Streamlit less performant than React for large datasets
-- Not suitable for external dissemination
+- Not suitable for sharing with colleagues
 
-**This Next.js site will supplant the Streamlit dashboard** with a publicly accessible, production-quality explorer following the politicsatwork.org pattern.
+**This Next.js site will supplant the Streamlit dashboard** with a password-protected, production-quality explorer.
 
 ---
 
 ## Overview
 
-An interactive data exploration platform allowing researchers and the public to explore partisan lean of ~3,500 national brands across 79 months (2019-2025). Built with Next.js, deployed on Vercel.
+An interactive data exploration platform for academic researchers to explore partisan lean of ~3,500 national brands across 79 months (2019-2025). Built with Next.js, deployed on Vercel with password protection.
 
 ### Data Sources
 
@@ -33,13 +66,25 @@ An interactive data exploration platform allowing researchers and the public to 
 |---------|------|-------------|
 | Brand × Month | 273K | Aggregated partisan lean by brand and month |
 | POI × Month (national brands only) | ~120M | Individual store locations with partisan lean |
-| POI Metadata | ~1.5M | Lat/long, MSA, NAICS, category for branded POIs |
+| POI Coordinates | ~10M | Lat/long lookup table (being extracted - Job 31706171) |
 
 ---
 
 ## Core Features
 
-### 1. Brand Search & Profile
+### 1. Landing Page with Featured Brands
+
+**Description**: Showcase household name brands to immediately demonstrate value.
+
+**Components**:
+- Key statistics (# brands, # POIs, date range)
+- Grid of ~12 featured household names with their partisan lean
+- Quick links to search, map, rankings
+- Password gate on first visit
+
+**Featured brands** (examples): McDonald's, Walmart, Starbucks, Target, Chick-fil-A, Whole Foods, Home Depot, Costco, etc.
+
+### 2. Brand Search & Profile
 
 **Description**: Search for any national brand, view its partisan lean profile.
 
@@ -47,79 +92,91 @@ An interactive data exploration platform allowing researchers and the public to 
 - Autocomplete search bar (fuzzy matching on brand name)
 - Brand profile page showing:
   - Overall partisan lean (weighted average across all months)
-  - Partisan lean vs. category benchmark (e.g., "10% more Republican than Fast Food average")
-  - Time series chart (monthly lean 2019-2025)
+  - Partisan lean vs. category benchmark
+  - Time series chart with **user-selectable granularity** (quarterly default, monthly option)
   - Company metadata (parent company, ticker, NAICS, # of locations)
   - Distribution histogram (lean across all POIs)
+  - **Data quality caveat** if limited locations or time coverage
 
-**Example**: Search "Chick-fil-A" → See it's more Republican than QSR average, stable over time, with map of locations.
+### 3. Interactive POI Map
 
-### 2. Interactive POI Map
+**Description**: Map showing individual store locations with multiple view modes.
 
-**Description**: Mapbox/Leaflet map showing individual store locations colored by partisan lean.
+**View Modes** (toggle between):
+1. **Absolute lean**: Raw partisan lean score (0-1 scale), red↔blue gradient
+2. **Relative to local area**: Excess lean compared to surrounding geography
+3. **Relative to brand average**: How each store compares to brand's national average
 
-**Features**:
-- **Filter by Brand**: Select one or more brands to display
-- **Filter by MSA**: Zoom to or filter by metropolitan area
-- **Filter by Both**: E.g., "Show all Starbucks in San Francisco MSA"
-- **Color scale**: Red (Republican) ↔ Blue (Democratic) gradient
-- **Click on POI**: Popup with store details, exact lean score, visitor count
-- **Aggregation at zoom levels**: Cluster markers when zoomed out, individual POIs when zoomed in
+**Filters**:
+- Filter by brand (single or multiple)
+- Filter by MSA
+- Combined filters (e.g., "Starbucks in San Francisco MSA")
 
-**Use Cases**:
-1. "How does Walmart's partisan lean vary across Texas?"
-2. "Within the Columbus MSA, which coffee shops have the most Republican customers?"
-3. "Compare Target vs Walmart locations in the same neighborhood"
+**Interactions**:
+- Click POI for popup with details
+- Cluster markers when zoomed out
+- Smooth pan/zoom
 
-### 3. MSA Geographic Analysis
+### 4. MSA Geographic Analysis
 
-**Description**: Choropleth map of MSAs colored by aggregate partisan lean, with drill-down.
-
-**Components**:
-- US map with MSA boundaries
-- Color by: overall lean, lean for specific category, or lean for specific brand
-- Click MSA → See top brands in that MSA, ranked by lean
-- Compare MSAs side-by-side
-
-### 4. Category Explorer
-
-**Description**: Browse brands by NAICS code or top_category.
+**Description**: Choropleth map of MSAs with drill-down capability.
 
 **Components**:
-- Hierarchical browser (NAICS 2-digit → 4-digit → brands)
+- US map with MSA boundaries colored by aggregate lean
+- Color by: overall lean, category lean, or specific brand
+- Click MSA → See top brands in that MSA
+- MSA comparison (side-by-side)
+
+### 5. Category Explorer
+
+**Description**: Browse brands by NAICS hierarchy.
+
+**Structure**: NAICS 2-digit → 4-digit → 6-digit → brands
+
+**Components**:
+- Hierarchical navigation
 - Category summary stats (mean lean, std dev, # brands)
 - Ranked list of brands within category
-- Optional: Sunburst visualization (like politicsatwork.org)
 
-### 5. Rankings & Leaderboards
+### 6. Rankings & Leaderboards
 
-**Description**: Quick access to most Republican / most Democratic brands.
+**Description**: Quick access to extreme brands.
 
-**Components**:
-- Top 50 most Republican brands (with filters: category, min locations)
+**Views**:
+- Top 50 most Republican brands
 - Top 50 most Democratic brands
-- Biggest movers (brands whose lean changed most over time)
-- Most polarized (highest variance across locations)
+- Biggest movers (most temporal change)
+- Most polarized (highest within-brand variance)
 
-### 6. Methodology
+**Filters**: Category, minimum locations
 
-**Description**: Documentation of data sources, methodology, limitations.
+### 7. Brand Comparison Tool
 
-**Sections**:
-- Data sources (Advan foot traffic, CBG election results)
-- Aggregation methodology (weighted average formula)
-- Filters applied (95% pct_visitors_matched threshold)
-- Limitations (selection into who visits, geography confounding)
-- Link to academic paper (when available)
+**Description**: Compare multiple brands directly.
 
-### 7. Downloads (Coming Soon)
+**Modes**:
+- Side-by-side profiles (2-3 brands)
+- Overlay on same time series chart
+- Category benchmarking (brand vs. category average)
 
-**Description**: Placeholder page for future data downloads.
+### 8. Methodology
+
+**Description**: High-level explanation with link to paper.
 
 **Content**:
-- "Dataset downloads coming soon"
-- Email signup for notification
-- Preview of what will be available
+- 1-2 paragraph overview of data sources and approach
+- Conceptual explanation (not formulas)
+- Link to paper for technical details (when available)
+- Known limitations
+
+### 9. Data Access
+
+**Description**: Request-based data access.
+
+**Content**:
+- "Contact for data access" with email link
+- Brief description of what's available
+- Note about forthcoming paper
 
 ---
 
@@ -130,161 +187,137 @@ An interactive data exploration platform allowing researchers and the public to 
 | Layer | Technology | Rationale |
 |-------|------------|-----------|
 | Framework | Next.js 14 (App Router) | SSR, React Server Components, same as reference sites |
-| Hosting | Vercel | Free tier, automatic deploys, edge functions |
+| Hosting | Vercel (free tier) | Automatic deploys, edge functions, subdomain |
 | Styling | Tailwind CSS | Rapid prototyping, responsive design |
-| Maps | Mapbox GL JS or Deck.gl | WebGL-accelerated, handles millions of points |
+| Maps | Mapbox GL JS or Deck.gl | WebGL-accelerated, handles many points |
 | Charts | Recharts or D3.js | Time series, histograms, bar charts |
 | Data | Static JSON + API routes | Pre-aggregated data files, on-demand filtering |
 | Search | Fuse.js (client-side) | Fuzzy search for brand names |
+| Auth | Simple password gate | Single shared password, stored in env var |
+
+### Password Protection
+
+Simple client-side password gate:
+- Password stored in Vercel environment variable
+- Cookie/localStorage to remember authenticated sessions
+- No user accounts needed for 2-5 person access
 
 ### Data Strategy
 
-**Challenge**: 120M POI-month rows is too large for client-side.
-
-**Solution**: Multi-tier data architecture
+**Multi-tier architecture**:
 
 1. **Static JSON (build-time)**:
-   - Brand metadata (3,500 brands, ~500KB)
-   - Brand monthly time series (273K rows, ~5MB)
-   - MSA summaries (366 MSAs × 79 months, ~2MB)
-   - Category summaries (~100 categories, ~100KB)
+   - Brand metadata + overall lean (~500KB)
+   - Brand monthly time series (~5MB)
+   - MSA summaries (~2MB)
+   - Category summaries (~100KB)
+   - Featured brands list (~10KB)
 
-2. **Vercel Edge Functions (on-demand)**:
+2. **API Routes (on-demand)**:
    - POI data for specific brand + MSA combinations
    - Paginated results, max 10K POIs per request
 
-3. **External Data Store (if needed)**:
-   - Vercel KV or Upstash Redis for caching
-   - Or: Pre-computed tiles for map (like vector tiles)
-
-### Map Data Strategy
-
-**Option A: Dynamic Loading**
-- User selects brand + MSA → API returns POIs → render on map
-- Pros: Always fresh, flexible filtering
-- Cons: Latency, API limits
-
-**Option B: Pre-computed Vector Tiles**
-- Generate Mapbox vector tiles at build time
-- Pros: Fast, smooth panning/zooming
-- Cons: Build complexity, storage costs, less flexible filtering
-
-**Recommendation**: Start with Option A for MVP, migrate to Option B if performance is an issue.
+3. **Map Data**:
+   - Start with dynamic loading (API returns POIs → render)
+   - Migrate to vector tiles if performance is an issue
 
 ---
 
 ## Page Structure
 
 ```
-/                           # Landing page with key stats, featured brands
-/search                     # Brand search with autocomplete
+/                           # Landing page (password gate) + featured brands
 /brand/[slug]               # Brand profile page
 /map                        # Interactive POI map
 /map?brand=starbucks        # Map filtered to brand
 /map?msa=san-francisco      # Map filtered to MSA
-/map?brand=starbucks&msa=sf # Combined filter
 /msa                        # MSA explorer (choropleth)
 /msa/[slug]                 # Individual MSA profile
-/categories                 # Category browser
+/categories                 # NAICS hierarchy browser
 /categories/[naics]         # Category detail
 /rankings                   # Top Republican/Democratic brands
-/methodology                # Documentation
-/downloads                  # Coming soon page
+/compare                    # Brand comparison tool
+/methodology                # High-level methods
+/data                       # "Contact for access" page
 ```
 
 ---
 
 ## Data Preparation Tasks
 
-Before website development, need to prepare data exports:
+### Task A: POI Coordinates (IN PROGRESS)
+- **Job**: 31706171 (running)
+- **Source**: Raw Advan CSV.gz files
+- **Output**: `outputs/poi_coordinates.parquet` (placekey → lat, lon)
 
-### Task A: Brand Summary JSON
-- Source: `brand_month_partisan_lean.parquet`
-- Output: `brands.json` with metadata + overall lean for each brand
-- Size: ~500KB
+### Task B: Join Coordinates to Partisan Lean
+- **Source**: `outputs/national_with_normalized/*.parquet` + coordinates
+- **Output**: Updated parquet files with latitude, longitude columns
 
-### Task B: Brand Time Series JSON
-- Source: `brand_month_partisan_lean.parquet`
-- Output: `brand_timeseries/[brand_slug].json` for each brand
-- Size: ~5MB total (or single file with all brands)
+### Task C: Brand Summary JSON
+- **Source**: `brand_month_partisan_lean.parquet`
+- **Output**: `brands.json` with metadata + overall lean
 
-### Task C: MSA Summary JSON
-- Source: Aggregate brand_month by MSA
-- Output: `msa_summaries.json`
-- Size: ~2MB
+### Task D: Brand Time Series JSON
+- **Source**: `brand_month_partisan_lean.parquet`
+- **Output**: Single JSON or per-brand files for time series
 
-### Task D: POI Lookup Tables
-- Source: POI-level data filtered to national brands
-- Output: Partitioned by MSA or by brand for API access
-- Storage: Vercel Blob or external (too large for git)
+### Task E: MSA Summary JSON
+- **Source**: Aggregate from POI data by MSA
+- **Output**: `msa_summaries.json`
 
-### Task E: Category Summaries
-- Source: Aggregate brand data by NAICS/top_category
-- Output: `categories.json`
-- Size: ~100KB
+### Task F: Category Summaries
+- **Source**: Aggregate brand data by NAICS
+- **Output**: `categories.json` with NAICS hierarchy
 
----
+### Task G: Featured Brands List
+- **Source**: Manual curation of household names
+- **Output**: `featured_brands.json`
 
-## Development Phases
-
-### Phase 1: Foundation (MVP)
-1. Set up Next.js project with Tailwind
-2. Create landing page with key statistics
-3. Implement brand search with autocomplete
-4. Build brand profile page (metadata + time series chart)
-5. Add methodology page
-6. Deploy to Vercel
-
-**Deliverable**: Working site where users can search brands and see lean over time.
-
-### Phase 2: Interactive Map
-1. Integrate Mapbox GL JS
-2. Build POI API endpoint (brand + MSA filter)
-3. Implement map with POI markers
-4. Add filter controls (brand dropdown, MSA dropdown)
-5. Implement marker clustering for zoom levels
-6. Add POI click popups
-
-**Deliverable**: Interactive map showing store locations colored by partisan lean.
-
-### Phase 3: Geographic Analysis
-1. Build MSA choropleth map
-2. Create MSA profile pages
-3. Implement MSA comparison feature
-4. Add drill-down from MSA to brands
-
-**Deliverable**: MSA-level exploration with drill-down.
-
-### Phase 4: Polish & Additional Features
-1. Category explorer with hierarchical navigation
-2. Rankings/leaderboards page
-3. Dark mode support
-4. Mobile responsive refinements
-5. Performance optimization (lazy loading, caching)
-6. Downloads page (coming soon placeholder)
-
-**Deliverable**: Feature-complete explorer matching reference sites.
+### Task H: POI Data for API
+- **Source**: POI-level data with coordinates
+- **Output**: Partitioned files for API access (by brand or MSA)
 
 ---
 
-## Open Questions
+## Development Approach
 
-1. **Domain name**: What URL for the site? (e.g., brandpolitics.org, consumerlean.org)
-2. **Branding**: Logo, color scheme, site name?
-3. **Access control**: Public or password-protected during development?
-4. **POI data size**: Need to determine exact size of national brand POIs to plan storage
-5. **Map provider**: Mapbox (paid after threshold) vs open-source alternatives?
+Since **full featured from start** is the goal, build all features in one phase rather than staged MVP:
 
----
+### Implementation Order
 
-## Effort Estimate
+1. **Infrastructure**
+   - Next.js project setup with Tailwind
+   - Password gate component
+   - Data loading utilities
+   - Deploy to Vercel subdomain
 
-| Phase | Components | Notes |
-|-------|------------|-------|
-| Phase 1 | Foundation/MVP | Next.js setup, search, brand profiles, methodology |
-| Phase 2 | Interactive Map | Mapbox integration, API endpoints, filtering |
-| Phase 3 | Geographic | MSA choropleth, profiles, comparisons |
-| Phase 4 | Polish | Categories, rankings, dark mode, mobile |
+2. **Core Pages**
+   - Landing page with featured brands
+   - Brand profile with time series chart
+   - Rankings page
+
+3. **Search & Navigation**
+   - Brand search with autocomplete
+   - Category browser (NAICS hierarchy)
+
+4. **Maps**
+   - POI map with three view modes
+   - Brand/MSA filter controls
+   - MSA choropleth
+
+5. **Comparison & Analysis**
+   - Brand comparison tool
+   - MSA profiles and comparison
+
+6. **Content Pages**
+   - Methodology
+   - Data access request
+
+7. **Polish**
+   - Mobile responsiveness (basic)
+   - Loading states
+   - Error handling
 
 ---
 
@@ -292,41 +325,54 @@ Before website development, need to prepare data exports:
 
 ```
 brand-explorer/
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx           # Landing page
-│   ├── search/page.tsx    # Search page
-│   ├── brand/[slug]/      # Brand profile
-│   ├── map/page.tsx       # Interactive map
-│   ├── msa/               # MSA pages
-│   ├── categories/        # Category browser
-│   ├── rankings/page.tsx  # Leaderboards
-│   ├── methodology/       # Documentation
-│   └── downloads/         # Coming soon
-├── components/            # Reusable React components
+├── app/
+│   ├── page.tsx              # Landing + password gate
+│   ├── brand/[slug]/page.tsx # Brand profile
+│   ├── map/page.tsx          # Interactive map
+│   ├── msa/page.tsx          # MSA explorer
+│   ├── msa/[slug]/page.tsx   # MSA profile
+│   ├── categories/page.tsx   # NAICS browser
+│   ├── rankings/page.tsx     # Leaderboards
+│   ├── compare/page.tsx      # Comparison tool
+│   ├── methodology/page.tsx  # Methods
+│   └── data/page.tsx         # Data access
+├── components/
+│   ├── PasswordGate.tsx
 │   ├── BrandSearch.tsx
 │   ├── TimeSeriesChart.tsx
 │   ├── POIMap.tsx
 │   ├── MSAChoropleth.tsx
+│   ├── BrandCard.tsx
 │   └── ...
-├── lib/                   # Utilities, data loading
-├── data/                  # Static JSON files (small)
-├── public/                # Static assets
-└── api/                   # API routes for dynamic data
+├── lib/
+│   ├── data.ts               # Data loading
+│   ├── brands.ts             # Brand utilities
+│   └── maps.ts               # Map utilities
+├── data/                     # Static JSON (git-tracked)
+├── public/                   # Static assets
+└── api/                      # API routes for POI data
 ```
 
 ---
 
 ## Dependencies on Research Pipeline
 
-| Website Feature | Depends On |
-|-----------------|------------|
-| Brand search & profiles | Task 1.5a (brand_month_partisan_lean.parquet) ✅ |
-| POI map | POI-level data with lat/long (need to extract) |
-| MSA analysis | Task 1.6 (POI → MSA mapping) ✅ |
-| Category explorer | NAICS codes in brand data ✅ |
-
-**Blocking issue**: Need to extract lat/long for branded POIs. Current data has CBG but not exact coordinates. May need to join back to raw Advan POI data.
+| Website Feature | Depends On | Status |
+|-----------------|------------|--------|
+| Brand profiles | brand_month_partisan_lean.parquet | ✅ Ready |
+| POI map | POI coordinates | 🔄 Job 31706171 running |
+| MSA analysis | POI → MSA mapping | ✅ Ready |
+| Category explorer | NAICS codes in brand data | ✅ Ready |
 
 ---
 
-*See also: RESEARCH_PLAN.md Epic 3*
+## Open Items
+
+1. **Site name**: Defer until paper title is finalized (use working title)
+2. **Password**: Choose a memorable shared password
+3. **Featured brands**: Curate list of ~12 household names
+4. **Coordinate extraction**: Wait for Job 31706171 to complete
+
+---
+
+*See also: RESEARCH_PLAN.md Epic 3 Phase 2*

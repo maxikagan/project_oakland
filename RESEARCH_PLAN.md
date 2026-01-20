@@ -68,6 +68,8 @@ Validate our measure against external benchmarks.
 | 2.6 Generate LaTeX table rows | ✅ Done | Full 283-brand comparison table for appendix |
 | 2.7 Document matching methodology | ✅ Done | LaTeX appendix updated with methodology, stats, conclusion |
 
+*Note: Sample Attrition subsection added to appendix explaining the matching funnel (694→179→133 losses from Schoenmueller sample to final matched sample).*
+
 **Key finding**: Moderate convergent validity. Twitter captures performative political consumption (self-selection); foot traffic captures routine commercial behavior. Measures correlate positively but are not interchangeable.
 
 ### Epic 3: Descriptive Analysis 🟡 PARTIALLY READY
@@ -88,25 +90,29 @@ Document patterns in consumer partisan lean.
 *Can start with national brands (3,543). Full analysis needs singletons (Task 1.7).*
 
 #### Phase 2: Interactive Website (Brand Partisan Lean Explorer)
-Public Vercel website for data exploration. Pattern: politicsatwork.org / whatisstrategy.org
+Password-protected Vercel website for data exploration (2-5 colleagues initially).
+Pattern: politicsatwork.org / whatisstrategy.org
 **Repo**: Separate repo (to be created)
 **Replaces**: `dashboard/` (Streamlit prototype requiring SSH tunnel)
+**Detailed plan**: `docs/plans/brand_explorer_website_plan.md`
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 3.7 Data export for website | ⬚ Pending | JSON exports: brand summaries, time series, MSA summaries, POI data (partitioned) |
-| 3.8 Website Phase 1 (MVP) | ⬚ Pending | Next.js setup, brand search, brand profiles with time series, methodology page |
-| 3.9 Website Phase 2 (Map) | ⬚ Pending | Interactive POI map with Mapbox. Filter by brand, MSA, or both. Color by partisan lean. |
-| 3.10 Website Phase 3 (Geographic) | ⬚ Pending | MSA choropleth, MSA profiles, drill-down from MSA to brands |
-| 3.11 Website Phase 4 (Polish) | ⬚ Pending | Category explorer, rankings, dark mode, downloads (coming soon) |
+| 3.7a Extract POI coordinates | 🔄 Running | Job 31709164 (v2 parallelized). Extract placekey → lat/lon from 2096 raw Advan files with 12 workers. |
+| 3.7b Join coordinates to data | ⬚ Pending | Script ready (`join_coordinates.py`). Blocked on 3.7a. |
+| 3.7c Export JSON for website | ✅ Done | Job 31709151. brands.json (3,543 brands), brand_timeseries.json (25MB), categories.json (24 NAICS), featured_brands.json (11 brands) |
+| 3.8 Website build (full featured) | ⬚ Pending | Next.js + Tailwind, password gate, all features from start |
+| 3.9 Deploy to Vercel | ⬚ Pending | Vercel subdomain initially (e.g., brand-lean.vercel.app) |
 
-**Key features**:
-- **Brand search & profiles**: Search ~3,500 brands, view partisan lean over 79 months vs category benchmarks
-- **Interactive POI map**: Store locations colored by lean, filter by brand + MSA, see within-MSA variation
+**Key features** (per interview 2026-01-20):
+- **Landing page**: Featured household name brands (McDonald's, Walmart, etc.)
+- **Brand search & profiles**: Search ~3,500 brands, time series with user-selectable granularity
+- **Interactive POI map**: Three view modes (absolute lean, relative to local, relative to brand avg)
 - **MSA analysis**: Choropleth map, compare brands within same MSA
 - **Rankings**: Most Republican / Democratic brands
+- **Access**: Password-protected, request-based data downloads
 
-*Depends on: Task 1.5a (brand-month data) ✅, POI coordinates (need to extract)*
+*Depends on: Task 1.5a (brand-month data) ✅, POI coordinates (3.7a in progress)*
 
 ### Epic 4: Store Performance (SafeGraph Spend) 🟡 PARTIALLY READY
 Link partisan lean to business outcomes using SafeGraph Spend.
@@ -136,19 +142,19 @@ Control for geography using gravity model.
 
 *Can prototype with national brands. Full geographic coverage needs singletons (Task 1.7).*
 
-### Epic 6: Employee-Consumer Alignment ⬚ BLOCKED
+### Epic 6: Employee-Consumer Alignment 🔄 IN PROGRESS
 Link consumer partisan lean to Politics at Work employee ideology data.
 **Scripts**: `scripts/07_causal/`
 **Detailed plan**: `docs/plans/entity_resolution_paw_linkage.md`
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 6.1 PAW Company × MSA table | ✅ Done | 4.1M companies, 366 MSAs. Source: Politics at Work voter registration + employment records. |
-| 6.2 Link national brands to PAW | ✅ Done | Via brand entity resolution (Task 1.4). 3,872 brands matched to rcid. |
-| 6.3 Link singletons to PAW | ⬚ Pending | Match name×MSA entities (from Task 1.7) to PAW companies. Enables cross-MSA rollup for regional chains. |
-| 6.4 Compute employee partisanship | ⬚ Pending | Aggregate PAW VR scores (voter registration) by company. |
-| 6.5 Employee-consumer alignment analysis | ⬚ Pending | Correlate employee partisan lean with consumer partisan lean at company level. |
-| 6.6 Document PAW linkage | ⬚ Pending | LaTeX appendix: PAW data description, VR score methodology, MSA matching, coverage limitations. |
+| 6.0a PAW Company × MSA table | ✅ Done | 4.1M companies, 366 MSAs. Source: Politics at Work voter registration + employment records. |
+| 6.0b POI → MSA mapping | ✅ Done | 6.31M POIs mapped to 366 MSAs via CBG crosswalk. |
+| 6.1 Singleton embedding matching | 🔄 In Progress | Phases 1-3 complete for Columbus OH pilot. Phase 4 (prediction) running: applying logit model to 1.9M candidate pairs (Job 31709186). |
+| 6.2 Link brands to PAW employers | ✅ Done | Via brand entity resolution (Task 1.4). 3,872 brands matched to rcid. |
+| 6.3 Compute employee partisanship | ⬚ Pending | Aggregate PAW VR scores (voter registration) by company. |
+| 6.4 Alignment correlation | ⬚ Pending | Correlate employee partisan lean with consumer partisan lean at company level. |
 
 *Depends on: Epic 1 completion (especially Task 1.7 for singletons)*
 
@@ -178,14 +184,21 @@ Establish causal relationships.
   - 283 brands matched with foot traffic data
   - Scatter plot, correlation stats, divergence analysis all complete
   - LaTeX appendix fully updated with methodology and results
+  - Added Sample Attrition documentation to LaTeX appendix
+  - Created scatter plot versions v5-v8 with Advan labels and mean-based quadrants
+  - Fixed brand name selection (Tesla Motors vs Tesla Supercharger)
 - ✅ Task 1.5a: Brand-month aggregation (273K rows, 3,543 brands)
 
 **In progress**:
-- 🔄 Task 1.7: Singleton entity resolution (pilot job for Columbus OH)
+- 🔄 Task 3.7a: Coordinate extraction v2 (Job 31709164) - extracting lat/lon from 2096 Advan files
+- 🔄 Task 6.1: Singleton matching Phase 4 (Job 31709186) - applying logit model to 1.9M Columbus pairs
+
+**Completed this session**:
+- ✅ Task 3.7c: JSON export for website (Job 31709151) - brands, timeseries, categories, featured
 
 **Next up**:
 1. Epic 3 Phase 2: Interactive website (Brand Partisan Lean Explorer)
-   - Task 3.7: Data export for website (JSON files)
+   - Task 3.7b: Join coordinates to data (blocked on 3.7a)
    - Task 3.8: Website MVP (Next.js, brand search, profiles)
    - Task 3.9: Interactive POI map
 2. Epic 3 Phase 1: Static descriptive analysis
@@ -215,6 +228,7 @@ Establish causal relationships.
 | PAW Company × MSA | ✅ 4.1M companies | `project_oakland/outputs/paw_company_msa.parquet` |
 | **Validation Outputs** | | |
 | Validation Comparison | ✅ 283 brands | `outputs/validation/validation_comparison.csv` |
+| Validation with Advan Names | ✅ 283 brands | `outputs/validation/validation_with_advan_names.csv` |
 | Labeled Matches | ✅ 1,036 pairs | `outputs/validation/labeled_matches.csv` |
 | Scatter Plot | ✅ PNG/PDF | `outputs/validation/validation_scatter.pdf`, `paper/figures/` |
 | Divergent Brands | ✅ Top 20 | `outputs/validation/divergent_brands.csv` |
@@ -244,5 +258,5 @@ excess_lean = actual_lean - expected_lean_from_gravity
 
 ---
 
-*Last updated: 2026-01-20*
+*Last updated: 2026-01-20 13:20*
 *See `reference/FULL_RESEARCH_AGENDA.md` for complete research option details*
