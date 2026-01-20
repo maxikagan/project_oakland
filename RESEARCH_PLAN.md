@@ -22,7 +22,7 @@ scripts/
 
 ## Epics & Tasks
 
-### Epic 1: Data Pipeline ✅ NEARLY COMPLETE
+### Epic 1: Data Pipeline ✅ COMPLETE
 Core data infrastructure for partisan lean measurement.
 **Scripts**: `scripts/01_data_prep/`, `scripts/02_partisan_lean/`, `scripts/03_entity_resolution/`
 
@@ -32,7 +32,7 @@ Core data infrastructure for partisan lean measurement.
 | 1.2 Entity resolution (brands) | ✅ Done | 3,872 brands, 1.48M POIs |
 | 1.3 Extract normalized visits | ✅ Done | 2,096 files extracted |
 | 1.4 Join normalized visits | ✅ Done | 79 files completed |
-| 1.5 Aggregate brand-level lean | 🔄 In Progress | Job 31705749 running |
+| 1.5 Aggregate brand-level lean | ✅ Done | 273K brand-months, 3,543 brands |
 
 ### Epic 2: Validation (Schoenmueller Comparison) 🔄 IN PROGRESS
 Validate our measure against external benchmarks.
@@ -135,6 +135,7 @@ Establish causal relationships.
 | Partisan Lean | ✅ 79 months | `outputs/national/partisan_lean_*.parquet` |
 | Partisan Lean + Normalized | ✅ 79 months | `outputs/national_with_normalized/` |
 | Entity Resolution | ✅ 3,872 brands | `outputs/entity_resolution/brand_matches_validated.parquet` |
+| Brand-Month Aggregated | ✅ 273K rows | `outputs/brand_month_aggregated/brand_month_partisan_lean.parquet` |
 | POI → MSA Mapping | ✅ 6.31M POIs | `outputs/entity_resolution/unbranded_pois_by_msa/` |
 | SafeGraph Spend | ✅ 83 months | `01_foot_traffic_location/safegraph/.../spend/` |
 | Schoenmueller | ✅ 1,289 brands | `reference/other_measures/schoenmueller_et_al/` |
