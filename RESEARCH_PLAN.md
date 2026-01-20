@@ -34,6 +34,8 @@ Core data infrastructure for partisan lean measurement.
 | 1.2 Extract normalized visits | ✅ Done | 2,096 raw Advan files → extracted `normalized_visits_by_state_scaling` column |
 | 1.3 Join normalized visits | ✅ Done | Merged normalized visits into partisan lean data (79 monthly parquet files) |
 | 1.3b Filter to US states only | ⬚ Pending | **BUG**: Data includes Canadian provinces (AB, BC, MB, etc.) and US territories (AS, GU, MP, PR, VI). Filter to 50 US states + DC only. Requires re-running aggregation. |
+| 1.3c Fix multi-brand POI names | ⬚ Pending | **BUG**: Some POIs (esp. auto dealers) have comma-separated brand lists as names (e.g., "Dodge,Chrysler,Lincoln,Ford"). Need to either split, match to parent company, or flag as multi-brand. |
+| 1.3d Investigate missing major brands | ⬚ Pending | **BUG**: Target stores missing (only Target Optical exists). Check if other major retailers are missing from Advan brand data. |
 
 #### Phase 2: National Brands (COMPLETE)
 | Task | Status | Notes |
