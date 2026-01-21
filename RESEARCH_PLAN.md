@@ -38,18 +38,22 @@ Core data infrastructure for partisan lean measurement.
 | 1.3d Investigate missing major brands | ⬚ Pending | **BUG**: Target stores missing (only Target Optical exists). Check if other major retailers are missing from Advan brand data. |
 | 1.3e Fix entity resolution failures | ⬚ Pending | **BUG**: Entity resolution producing garbage matches for multi-brand POIs (e.g., "Chevrolet,Volkswagen,Toyota" → "Société Générale SA"). Review matching quality, add validation rules for multi-brand names. |
 
-#### Phase 2: National Brands (COMPLETE)
+#### Phase 2: National Brands (COMPLETE - NEEDS RERUN)
 | Task | Status | Notes |
 |------|--------|-------|
 | 1.4 Entity resolution (national brands) | ✅ Done | Matched 3,872 Advan brands → companies (gvkey, ticker, rcid). 1.48M POIs covered. |
 | 1.5a Aggregate to brand × month | ✅ Done | 273K brand-months, 3,543 brands. Weighted avg using normalized_visits. Output: `brand_month_partisan_lean.parquet` |
 
-#### Phase 3: Singletons / Unbranded POIs (IN PROGRESS)
+**⚠️ DEPENDENCY**: Phase 2 outputs need to be regenerated after Phase 1 bugs (1.3b-1.3e) are fixed. Current outputs include Canadian provinces, multi-brand garbage matches, and missing major retailers.
+
+#### Phase 3: Singletons / Unbranded POIs (IN PROGRESS - BLOCKED)
 | Task | Status | Notes |
 |------|--------|-------|
 | 1.6 POI → MSA mapping | ✅ Done | 6.31M POIs mapped to 366 MSAs via CBG crosswalk |
 | 1.7 Aggregate to name × MSA × month | ⬚ Pending | Group unbranded POIs by (poi_name, msa, year_month). Preserves `total_normalized_visits` for later rollup. |
 | 1.8 (Optional) Link to PAW for cross-MSA rollup | ⬚ Pending | If PAW identifies same company across MSAs, can re-aggregate using preserved weights. See Epic 6. |
+
+**⚠️ DEPENDENCY**: Phase 3 is blocked until Phase 1 bugs (1.3b-1.3e) are fixed. Singleton aggregation would inherit the same data quality issues (Canadian provinces, multi-brand POIs).
 
 #### Phase 4: Documentation
 | Task | Status | Notes |
@@ -183,7 +187,16 @@ Establish causal relationships.
 
 ## Current Sprint
 
-**Focus**: Epic 3 (descriptive analysis) + Epic 1 Phase 3 (singletons) in parallel
+**Focus**: Fix Phase 1 data quality bugs → rerun Phase 2 & 3
+
+### 🚨 CRITICAL BLOCKER: Phase 1 Data Quality Issues
+The following bugs must be fixed before Phase 2/3 can produce valid outputs:
+- **1.3b**: Filter out Canadian provinces (AB, BC, MB, etc.) and US territories
+- **1.3c**: Handle multi-brand POI names (comma-separated lists like "Dodge,Chrysler,Lincoln,Ford")
+- **1.3d**: Investigate missing major brands (Target, etc.)
+- **1.3e**: Fix entity resolution garbage matches for multi-brand POIs
+
+**Impact**: All downstream analyses (brand aggregation, singleton matching, website data) will need regeneration after these fixes.
 
 **Completed recently**:
 - ✅ Epic 2 COMPLETE: Schoenmueller validation (r=0.27, p<0.001)

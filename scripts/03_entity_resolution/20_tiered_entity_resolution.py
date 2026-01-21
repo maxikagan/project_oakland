@@ -29,12 +29,14 @@ from openai import OpenAI
 PROJECT_DIR = Path("/global/scratch/users/maxkagan/measuring_stakeholder_ideology")
 INPUT_DIR = PROJECT_DIR / "inputs"
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "entity_resolution"
-CACHE_DIR = OUTPUT_DIR / "embedding_cache_v3"
+CACHE_DIR = OUTPUT_DIR / "embedding_cache"  # Use existing cache with 535K company embeddings
 
 SAFEGRAPH_BRANDS = INPUT_DIR / "safegraph_brand_info" / "brand-info-spend-patterns.parquet"
 PAW_COMPANIES = OUTPUT_DIR / "paw_companies_for_matching.parquet"
 
-EMBEDDING_MODEL = "text-embedding-3-large"
+# Use text-embedding-3-small to match existing cached embeddings
+EMBEDDING_MODEL = "text-embedding-3-small"
+EMBEDDING_DIM = 1536
 BATCH_SIZE = 2000
 TOP_K = 20
 TIER3_THRESHOLD = 0.75
@@ -78,19 +80,45 @@ def get_embeddings_batch(client: OpenAI, texts: list) -> list:
     return [item.embedding for item in response.data]
 
 
+def load_cached_embeddings(cache_file: Path, expected_count: int) -> np.ndarray:
+    """Load embeddings from cache file (supports both .npy and .json formats)."""
+    npy_file = cache_file.with_suffix('.npy')
+    json_file = cache_file.with_suffix('.json')
+
+    # Try numpy format first (faster)
+    if npy_file.exists():
+        print(f"    Loading from numpy cache: {npy_file.name}")
+        data = np.load(npy_file)
+        if len(data) == expected_count:
+            return data.astype(np.float32)
+        print(f"    Cache size mismatch ({len(data)} vs {expected_count})")
+
+    # Try JSON format (existing cache)
+    if json_file.exists():
+        print(f"    Loading from JSON cache: {json_file.name}")
+        with open(json_file, 'r') as f:
+            data = json.load(f)
+        if len(data) == expected_count:
+            print(f"    Loaded {len(data):,} embeddings, converting to numpy...")
+            return np.array(data, dtype=np.float32)
+        print(f"    Cache size mismatch ({len(data)} vs {expected_count})")
+
+    return None
+
+
 def generate_embeddings(client: OpenAI, names: list, cache_file: Path, desc: str) -> np.ndarray:
-    """Generate embeddings with caching."""
-    print(f"  Generating embeddings for {len(names):,} {desc}...")
+    """Generate embeddings with caching. Checks for existing cache first."""
+    print(f"  Processing embeddings for {len(names):,} {desc}...")
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-    if cache_file.exists():
-        print(f"    Loading from cache: {cache_file.name}")
-        data = np.load(cache_file)
-        if len(data) == len(names):
-            return data
-        print(f"    Cache size mismatch ({len(data)} vs {len(names)}), regenerating...")
+    # Check for existing cache
+    cached = load_cached_embeddings(cache_file, len(names))
+    if cached is not None:
+        print(f"    Using cached embeddings ({len(cached):,} x {cached.shape[1]} dimensions)")
+        return cached
 
+    print(f"    No valid cache found, generating new embeddings...")
     all_embeddings = []
     total_batches = (len(names) + BATCH_SIZE - 1) // BATCH_SIZE
 
@@ -117,9 +145,12 @@ def generate_embeddings(client: OpenAI, names: list, cache_file: Path, desc: str
                     print(f"    Failed batch {batch_num} after {max_retries} attempts: {e}")
                     raise
 
-    embeddings_array = np.array(all_embeddings, dtype=np.float16)
-    np.save(cache_file, embeddings_array)
-    print(f"    Cached to {cache_file.name}")
+    embeddings_array = np.array(all_embeddings, dtype=np.float32)
+
+    # Save as numpy for future use
+    npy_file = cache_file.with_suffix('.npy')
+    np.save(npy_file, embeddings_array)
+    print(f"    Cached to {npy_file.name}")
 
     return embeddings_array
 
@@ -220,21 +251,22 @@ def tier3_fuzzy_matching(sg: pd.DataFrame, paw: pd.DataFrame,
 
     # Match against ALL PAW companies, not just verified ones
     # PAW has employee ideology data for private companies too
+    # IMPORTANT: Keep exact same order as parquet to match existing cached embeddings
     paw_all = paw.copy()
     paw_all['company_name_clean'] = paw_all['company_name'].apply(normalize_name)
-    paw_all = paw_all[paw_all['company_name_clean'] != ''].copy()
-    paw_all = paw_all.drop_duplicates('company_name_clean')
+    # Don't filter - keep same count as cache (535,165)
 
     print(f"  Total PAW companies for matching: {len(paw_all)}")
 
     brand_names = sg_unmatched['brand_name_clean'].tolist()
-    company_names = paw_all['company_name_clean'].tolist()
+    company_names = paw_all['company_name'].tolist()  # Use original names, not normalized, for cache
 
-    brand_cache = CACHE_DIR / "tier3_brand_embeddings.npy"
-    company_cache = CACHE_DIR / "tier3_company_embeddings.npy"
+    # Use existing cache file names (company_embeddings.json has 535K embeddings)
+    brand_cache = CACHE_DIR / "safegraph_brand_embeddings"  # New cache for SafeGraph brands
+    company_cache = CACHE_DIR / "company_embeddings"  # Existing 535K company cache
 
-    brand_embeddings = generate_embeddings(client, brand_names, brand_cache, "brand names")
-    company_embeddings = generate_embeddings(client, company_names, company_cache, "company names")
+    brand_embeddings = generate_embeddings(client, brand_names, brand_cache, "SafeGraph brand names")
+    company_embeddings = generate_embeddings(client, company_names, company_cache, "PAW company names")
 
     print("\n  Finding top-K candidates and computing features...")
 
@@ -294,6 +326,7 @@ def tier3_fuzzy_matching(sg: pd.DataFrame, paw: pd.DataFrame,
 
             if best_match and best_match['combined_score'] >= TIER3_THRESHOLD:
                 company_row = paw_all.iloc[best_match['company_idx']]
+                is_verified = (company_row['has_ticker'] == 1) or (company_row['has_gvkey'] == 1)
                 tier3_records.append({
                     'SAFEGRAPH_BRAND_ID': brand_row['SAFEGRAPH_BRAND_ID'],
                     'BRAND_NAME': brand_row['BRAND_NAME'],
@@ -302,6 +335,7 @@ def tier3_fuzzy_matching(sg: pd.DataFrame, paw: pd.DataFrame,
                     'rcid': company_row['rcid'],
                     'company_name': company_row['company_name'],
                     'gvkey': company_row['gvkey'] if pd.notna(company_row['gvkey']) else None,
+                    'is_verified': is_verified,
                     'final_parent_company': company_row['final_parent_company'] if 'final_parent_company' in company_row.index else None,
                     'final_parent_company_rcid': company_row['final_parent_company_rcid'] if 'final_parent_company_rcid' in company_row.index else None,
                     'match_tier': 3,
