@@ -1,0 +1,90 @@
+[
+  {
+    "name": "McDonald's",
+    "actual_name": "McDonald's",
+    "slug": "mcdonalds",
+    "lean_2020": 0.5018,
+    "category": "Restaurants and Other Eating Places",
+    "avg_locations": 12986.0
+  },
+  {
+    "name": "Walmart",
+    "actual_name": "Walmart",
+    "slug": "walmart",
+    "lean_2020": 0.5424,
+    "category": "General Merchandise Stores, including Warehouse Clubs and Supercenters",
+    "avg_locations": 4521.0
+  },
+  {
+    "name": "Starbucks",
+    "actual_name": "Starbucks",
+    "slug": "starbucks",
+    "lean_2020": 0.4714,
+    "category": "Restaurants and Other Eating Places",
+    "avg_locations": 13759.0
+  },
+  {
+    "name": "Target",
+    "actual_name": "Target Optical",
+    "slug": "target",
+    "lean_2020": 0.4657,
+    "category": "Offices of Other Health Practitioners",
+    "avg_locations": 548.0
+  },
+  {
+    "name": "Chick-fil-A",
+    "actual_name": "Chick-fil-A",
+    "slug": "chick-fil-a",
+    "lean_2020": 0.4972,
+    "category": "Restaurants and Other Eating Places",
+    "avg_locations": 2700.0
+  },
+  {
+    "name": "Home Depot",
+    "actual_name": "The Home Depot",
+    "slug": "home-depot",
+    "lean_2020": 0.4866,
+    "category": "Building Material and Supplies Dealers",
+    "avg_locations": 1976.0
+  },
+  {
+    "name": "Costco",
+    "actual_name": "Costco",
+    "slug": "costco",
+    "lean_2020": 0.4592,
+    "category": "General Merchandise Stores, including Warehouse Clubs and Supercenters",
+    "avg_locations": 568.0
+  },
+  {
+    "name": "Lowe's",
+    "actual_name": "Lowe's",
+    "slug": "lowes",
+    "lean_2020": 0.5343,
+    "category": "Building Material and Supplies Dealers",
+    "avg_locations": 1736.0
+  },
+  {
+    "name": "Walgreens",
+    "actual_name": "Walgreens",
+    "slug": "walgreens",
+    "lean_2020": 0.4671,
+    "category": "Health and Personal Care Stores",
+    "avg_locations": 8635.0
+  },
+  {
+    "name": "CVS",
+    "actual_name": "CVS",
+    "slug": "cvs",
+    "lean_2020": 0.4702,
+    "category": "Health and Personal Care Stores",
+    "avg_locations": 8794.0
+  },
+  {
+    "name": "Kroger",
+    "actual_name": "Kroger",
+    "slug": "kroger",
+    "lean_2020": 0.5296,
+    "category": "Grocery Stores",
+    "avg_locations": 1266.0
+  }
+]

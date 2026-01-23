@@ -58,12 +58,14 @@ Thumbs.db
 
 # Data directories (if any exist in home)
 data/
+!website/public/data/
 outputs/
 intermediate/
 
 # Credentials
 *.json
 !package.json
+!website/public/data/*.json
 .env
 *credentials*
 *secret*
